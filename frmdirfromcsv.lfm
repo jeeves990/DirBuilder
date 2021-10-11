@@ -1,0 +1,312 @@
+object frmFayesDirBuilder: TfrmFayesDirBuilder
+  Left = 1106
+  Height = 465
+  Top = 429
+  Width = 641
+  Caption = 'Fayes''s directory builder'
+  ClientHeight = 445
+  ClientWidth = 641
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  PopupMenu = popupMnu
+  LCLVersion = '2.0.12.0'
+  object pnlTop: TPanel
+    Left = 8
+    Height = 99
+    Top = 8
+    Width = 623
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = True
+    ClientHeight = 99
+    ClientWidth = 623
+    TabOrder = 0
+    object edOutDir: TEdit
+      Left = 106
+      Height = 23
+      Top = 2
+      Width = 350
+      Anchors = [akTop, akLeft, akRight]
+      TabOrder = 0
+      Text = 'd:\__tmp4test__'
+    end
+    object edCSVFile: TEdit
+      Left = 59
+      Height = 23
+      Top = 42
+      Width = 403
+      Anchors = [akTop, akLeft, akRight]
+      OnChange = edCSVFileChange
+      TabOrder = 1
+      Text = 'C:\Users\FBA_S\Dropbox\batch0001'
+    end
+    object lblOutDir: TLabel
+      Left = 1
+      Height = 15
+      Top = 5
+      Width = 88
+      Caption = 'Output directory'
+      ParentColor = False
+    end
+    object btnOutDir: TButton
+      Left = 471
+      Height = 25
+      Top = 1
+      Width = 141
+      Action = ActionFindOutputDir
+      Anchors = [akTop, akRight]
+      TabOrder = 2
+    end
+    object btnFindCSV: TButton
+      Left = 471
+      Height = 25
+      Top = 41
+      Width = 141
+      Action = ActionFindCSV
+      Anchors = [akTop, akRight]
+      TabOrder = 3
+    end
+    object btnReadCSV: TButton
+      Left = 471
+      Height = 25
+      Top = 72
+      Width = 141
+      Action = ActionReadCSV
+      Anchors = [akTop, akRight]
+      TabOrder = 4
+    end
+    object lblCSVFile: TLabel
+      Left = 1
+      Height = 15
+      Top = 45
+      Width = 40
+      Caption = 'CSV file'
+      ParentColor = False
+    end
+    object cboxOutDir: TComboBox
+      Left = 106
+      Height = 23
+      Top = 4
+      Width = 356
+      ItemHeight = 15
+      TabOrder = 5
+      Text = 'd:\__tmp4test__'
+    end
+    object Button1: TButton
+      Left = 328
+      Height = 25
+      Top = 73
+      Width = 133
+      Action = ActionResizeColumns
+      TabOrder = 6
+    end
+    object ckboxColResize: TCheckBox
+      Left = 9
+      Height = 19
+      Top = 75
+      Width = 95
+      Caption = 'Column resize'
+      OnMouseEnter = ckboxColResizeMouseEnter
+      OnMouseUp = ckboxColResizeMouseUp
+      TabOrder = 7
+    end
+    object ckbox1stRowIsTitles: TCheckBox
+      Left = 128
+      Height = 19
+      Top = 75
+      Width = 97
+      Action = ActionSetTitles
+      OnMouseEnter = ckboxColResizeMouseEnter
+      OnMouseUp = ckboxColResizeMouseUp
+      TabOrder = 8
+    end
+  end
+  object btnMkDirs: TButton
+    Left = 360
+    Height = 25
+    Top = 385
+    Width = 141
+    Action = ActionMkDirs
+    Anchors = [akRight, akBottom]
+    TabOrder = 1
+  end
+  object btnClose: TButton
+    Left = 530
+    Height = 25
+    Top = 385
+    Width = 85
+    Action = ActionClose
+    Anchors = [akRight, akBottom]
+    OnClick = btnCloseClick
+    TabOrder = 2
+  end
+  object pgCtrl: TPageControl
+    Left = 7
+    Height = 265
+    Top = 113
+    Width = 630
+    ActivePage = tabshCSVFile
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    TabIndex = 0
+    TabOrder = 3
+    object tabshCSVFile: TTabSheet
+      Caption = 'The CSV file'
+      ClientHeight = 237
+      ClientWidth = 622
+      object cboxShowLineNumbers: TCheckBox
+        Left = 488
+        Height = 19
+        Top = 8
+        Width = 121
+        Anchors = [akTop, akRight]
+        Caption = 'Show line numbers'
+        TabOrder = 0
+        Visible = False
+      end
+      object dbgridCSV: TDBGrid
+        Left = 0
+        Height = 212
+        Top = 22
+        Width = 609
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        AutoFillColumns = True
+        Color = clWindow
+        Columns = <>
+        DataSource = DirBuilder_dataModule.CSVDsDtaSrc
+        Options = [dgEditing, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+        PopupMenu = popupMnu
+        ReadOnly = True
+        TabOrder = 1
+        OnCellClick = dbgridCSVCellClick
+        OnTitleClick = dbgridCSVTitleClick
+      end
+      object lblCellContents: TLabel
+        Left = 7
+        Height = 15
+        Top = 6
+        Width = 67
+        Caption = 'Cell content:'
+        ParentColor = False
+      end
+      object dbedCellContent: TDBEdit
+        Left = 100
+        Height = 23
+        Top = -2
+        Width = 506
+        Anchors = [akTop, akLeft, akRight]
+        CharCase = ecNormal
+        MaxLength = 0
+        TabOrder = 2
+        OnMouseDown = dbedCellContentMouseDown
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'TabSheet2'
+    end
+  end
+  object StatusBar: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 422
+    Width = 641
+    Panels = <>
+  end
+  object ActionList: TActionList
+    Left = 437
+    Top = 113
+    object ActionResizeColumns: TAction
+      Caption = 'Resize table columns'
+      OnExecute = ActionResizeColumnsExecute
+    end
+    object ActionClose: TAction
+      Caption = 'Close'
+      OnExecute = ActionCloseExecute
+    end
+    object ActionFindOutputDir: TAction
+      Caption = 'Find output directory'
+      OnExecute = ActionFindOutputDirExecute
+    end
+    object ActionMkDirs: TAction
+      Caption = 'Make directories'
+      OnExecute = ActionMkDirsExecute
+    end
+    object ActionFindCSV: TAction
+      Caption = 'Find CSV file'
+      OnExecute = ActionFindCSVExecute
+    end
+    object ActionReadCSV: TAction
+      Caption = 'Read CSV file'
+      Enabled = False
+      OnExecute = ActionReadCSVExecute
+    end
+    object ActionOpen: TAction
+      Caption = '&Open'
+    end
+    object ActionSetTitles: TAction
+      Caption = '1st row is titles'
+      OnExecute = ActionSetTitlesExecute
+    end
+  end
+  object MainMenu1: TMainMenu
+    Left = 229
+    Top = 5
+    object MenuItemFile: TMenuItem
+      Caption = '&File'
+      object MenuItem1: TMenuItem
+        Action = ActionOpen
+      end
+      object N1: TMenuItem
+        Action = ActionClose
+      end
+      object MenuItem2: TMenuItem
+        Action = ActionClose
+        OnClick = MenuItem2Click
+      end
+    end
+    object Operations: TMenuItem
+      Caption = 'Operations'
+      object MenuItem3: TMenuItem
+        Action = ActionFindOutputDir
+      end
+      object MenuItem4: TMenuItem
+        Action = ActionFindCSV
+      end
+      object MenuItem5: TMenuItem
+        Action = ActionReadCSV
+      end
+      object N2: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem6: TMenuItem
+        Action = ActionMkDirs
+      end
+    end
+  end
+  object popupMnu: TPopupMenu
+    Left = 404
+    Top = 217
+    object MenuItem9: TMenuItem
+      Action = ActionFindOutputDir
+    end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem7: TMenuItem
+      Action = ActionFindCSV
+    end
+    object MenuItem8: TMenuItem
+      Action = ActionReadCSV
+    end
+    object N4: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem10: TMenuItem
+      Action = ActionResizeColumns
+    end
+    object N5: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem11: TMenuItem
+      Action = ActionMkDirs
+    end
+  end
+end
