@@ -2,8 +2,8 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
   OnCreate = DataModuleCreate
   OldCreateOrder = False
   Height = 230
-  HorizontalOffset = 1223
-  VerticalOffset = 199
+  HorizontalOffset = 1161
+  VerticalOffset = 84
   Width = 505
   object CSVDataset: TCSVDataset
     FieldDefs = <>
@@ -18,6 +18,8 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
     Top = 16
   end
   object CSVDsDtaSrc: TDataSource
+    AutoEdit = False
+    DataSet = CSVDataset
     Left = 48
     Top = 16
   end

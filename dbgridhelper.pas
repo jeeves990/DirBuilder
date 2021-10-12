@@ -15,11 +15,12 @@ type
   TDbGridHelper = class
     theGrid: TDbGrid;
   private
+    _maxSize : Integer;
   public
     property dbGrid: TDBGrid read theGrid write theGrid;
     function AutoSizeColumns(const MaxRows: integer = 25): integer;
     procedure SetGridColumnWidths;
-
+    property maxSize : Integer read _maxSize write _maxSize;
     constructor Create;
   end;
 
@@ -29,6 +30,7 @@ implementation
 constructor TDbGridHelper.Create;
 begin
   inherited Create;
+  _maxSize := 500;
 end;
 
 
@@ -60,7 +62,11 @@ begin
     theGrid.DataSource.DataSet.First;
     for n := 0 to Columns.Count - 1 do
       if lmax[n] > 0 then
+      begin
+        if lmax[n] > _maxSize then
+            lmax[n] := _maxSize;
         Columns[n].Width := lmax[n];
+      end;
   end; { With }
 end; {SetGridColumnWidths  }
 

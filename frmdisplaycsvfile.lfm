@@ -1,0 +1,80 @@
+object fmDisplayCSVFile: TfmDisplayCSVFile
+  Left = 804
+  Height = 541
+  Top = 197
+  Width = 569
+  Caption = 'fmDisplayCSVFile'
+  ClientHeight = 541
+  ClientWidth = 569
+  LCLVersion = '2.0.12.0'
+  object mmo: TMemo
+    Left = 4
+    Height = 475
+    Top = 8
+    Width = 559
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Lines.Strings = (
+      'mmo'
+    )
+    PopupMenu = CSVDisplayPopup
+    ScrollBars = ssVertical
+    TabOrder = 0
+  end
+  object Button1: TButton
+    Left = 348
+    Height = 25
+    Top = 499
+    Width = 204
+    Action = ActionAddQuotes
+    Anchors = [akRight, akBottom]
+    TabOrder = 1
+  end
+  object ActList4DspCSV: TActionList
+    Left = 283
+    Top = 157
+    object ActionReadNewFile: TAction
+      Caption = 'ActionReadNewFile'
+      OnExecute = ActionReadNewFileExecute
+    end
+    object ActionAddQuotes: TAction
+      Caption = 'Add double quotes where needed'
+      OnExecute = ActionAddQuotesExecute
+    end
+    object ActionShowLine4Examination: TAction
+      Caption = 'Show selected line for examination'
+    end
+    object ActionChangeMaxLines2Read: TAction
+      Caption = 'Change max lines to read'
+      OnExecute = ActionChangeMaxLines2ReadExecute
+    end
+    object ActionReloadFile: TAction
+      Caption = 'Reload file from disk'
+      OnExecute = ActionReloadFileExecute
+    end
+  end
+  object CSVDisplayPopup: TPopupMenu
+    Left = 212
+    Top = 225
+    object MenuItem1: TMenuItem
+      Action = ActionAddQuotes
+    end
+    object MenuItem2: TMenuItem
+      Action = ActionShowLine4Examination
+    end
+    object N1: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem3: TMenuItem
+      Action = ActionReadNewFile
+    end
+    object MenuItem5: TMenuItem
+      Action = ActionReloadFile
+    end
+    object N2: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem4: TMenuItem
+      Action = ActionChangeMaxLines2Read
+    end
+  end
+end

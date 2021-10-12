@@ -1,44 +1,25 @@
 object frmFayesDirBuilder: TfrmFayesDirBuilder
-  Left = 1106
-  Height = 465
-  Top = 429
-  Width = 641
+  Left = 1093
+  Height = 429
+  Top = 221
+  Width = 725
   Caption = 'Fayes''s directory builder'
-  ClientHeight = 445
-  ClientWidth = 641
+  ClientHeight = 409
+  ClientWidth = 725
   Menu = MainMenu1
   OnCreate = FormCreate
   PopupMenu = popupMnu
   LCLVersion = '2.0.12.0'
   object pnlTop: TPanel
     Left = 8
-    Height = 99
+    Height = 101
     Top = 8
-    Width = 623
+    Width = 707
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
-    ClientHeight = 99
-    ClientWidth = 623
+    ClientHeight = 101
+    ClientWidth = 707
     TabOrder = 0
-    object edOutDir: TEdit
-      Left = 106
-      Height = 23
-      Top = 2
-      Width = 350
-      Anchors = [akTop, akLeft, akRight]
-      TabOrder = 0
-      Text = 'd:\__tmp4test__'
-    end
-    object edCSVFile: TEdit
-      Left = 59
-      Height = 23
-      Top = 42
-      Width = 403
-      Anchors = [akTop, akLeft, akRight]
-      OnChange = edCSVFileChange
-      TabOrder = 1
-      Text = 'C:\Users\FBA_S\Dropbox\batch0001'
-    end
     object lblOutDir: TLabel
       Left = 1
       Height = 15
@@ -48,36 +29,27 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       ParentColor = False
     end
     object btnOutDir: TButton
-      Left = 471
+      Left = 555
       Height = 25
       Top = 1
       Width = 141
       Action = ActionFindOutputDir
       Anchors = [akTop, akRight]
-      TabOrder = 2
+      TabOrder = 0
     end
     object btnFindCSV: TButton
-      Left = 471
+      Left = 555
       Height = 25
-      Top = 41
+      Top = 36
       Width = 141
       Action = ActionFindCSV
       Anchors = [akTop, akRight]
-      TabOrder = 3
-    end
-    object btnReadCSV: TButton
-      Left = 471
-      Height = 25
-      Top = 72
-      Width = 141
-      Action = ActionReadCSV
-      Anchors = [akTop, akRight]
-      TabOrder = 4
+      TabOrder = 1
     end
     object lblCSVFile: TLabel
       Left = 1
       Height = 15
-      Top = 45
+      Top = 40
       Width = 40
       Caption = 'CSV file'
       ParentColor = False
@@ -86,53 +58,71 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       Left = 106
       Height = 23
       Top = 4
-      Width = 356
+      Width = 441
+      Anchors = [akTop, akLeft, akRight]
       ItemHeight = 15
-      TabOrder = 5
+      TabOrder = 2
       Text = 'd:\__tmp4test__'
     end
-    object Button1: TButton
-      Left = 328
+    object btnResizeTableColumns: TButton
+      Left = 249
       Height = 25
-      Top = 73
+      Top = 75
       Width = 133
       Action = ActionResizeColumns
-      TabOrder = 6
-    end
-    object ckboxColResize: TCheckBox
-      Left = 9
-      Height = 19
-      Top = 75
-      Width = 95
-      Caption = 'Column resize'
-      OnMouseEnter = ckboxColResizeMouseEnter
-      OnMouseUp = ckboxColResizeMouseUp
-      TabOrder = 7
+      Enabled = False
+      TabOrder = 3
+      Visible = False
     end
     object ckbox1stRowIsTitles: TCheckBox
-      Left = 128
+      Left = 25
       Height = 19
-      Top = 75
+      Top = 78
       Width = 97
       Action = ActionSetTitles
-      OnMouseEnter = ckboxColResizeMouseEnter
-      OnMouseUp = ckboxColResizeMouseUp
-      TabOrder = 8
+      TabOrder = 4
+    end
+    object btnReadRawFile: TButton
+      Left = 405
+      Height = 22
+      Top = 75
+      Width = 133
+      Action = ActionReadRawFile
+      TabOrder = 5
+    end
+    object cboxCSVFile: TComboBox
+      Left = 55
+      Height = 23
+      Top = 37
+      Width = 487
+      Anchors = [akTop, akLeft, akRight]
+      ItemHeight = 15
+      OnCloseUp = cboxCSVFileCloseUp
+      TabOrder = 6
+      Text = 'C:\Users\FBA_S\Dropbox\batch0001'
+    end
+    object btnReadCSV: TButton
+      Left = 555
+      Height = 22
+      Top = 75
+      Width = 141
+      Action = ActionReadCSV
+      TabOrder = 7
     end
   end
   object btnMkDirs: TButton
-    Left = 360
+    Left = 445
     Height = 25
-    Top = 385
+    Top = 357
     Width = 141
     Action = ActionMkDirs
     Anchors = [akRight, akBottom]
     TabOrder = 1
   end
   object btnClose: TButton
-    Left = 530
+    Left = 615
     Height = 25
-    Top = 385
+    Top = 357
     Width = 85
     Action = ActionClose
     Anchors = [akRight, akBottom]
@@ -141,44 +131,17 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
   end
   object pgCtrl: TPageControl
     Left = 7
-    Height = 265
-    Top = 113
-    Width = 630
+    Height = 240
+    Top = 112
+    Width = 714
     ActivePage = tabshCSVFile
     Anchors = [akTop, akLeft, akRight, akBottom]
     TabIndex = 0
     TabOrder = 3
     object tabshCSVFile: TTabSheet
       Caption = 'The CSV file'
-      ClientHeight = 237
-      ClientWidth = 622
-      object cboxShowLineNumbers: TCheckBox
-        Left = 488
-        Height = 19
-        Top = 8
-        Width = 121
-        Anchors = [akTop, akRight]
-        Caption = 'Show line numbers'
-        TabOrder = 0
-        Visible = False
-      end
-      object dbgridCSV: TDBGrid
-        Left = 0
-        Height = 212
-        Top = 22
-        Width = 609
-        Anchors = [akTop, akLeft, akRight, akBottom]
-        AutoFillColumns = True
-        Color = clWindow
-        Columns = <>
-        DataSource = DirBuilder_dataModule.CSVDsDtaSrc
-        Options = [dgEditing, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
-        PopupMenu = popupMnu
-        ReadOnly = True
-        TabOrder = 1
-        OnCellClick = dbgridCSVCellClick
-        OnTitleClick = dbgridCSVTitleClick
-      end
+      ClientHeight = 212
+      ClientWidth = 706
       object lblCellContents: TLabel
         Left = 7
         Height = 15
@@ -190,13 +153,24 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       object dbedCellContent: TDBEdit
         Left = 100
         Height = 23
-        Top = -2
-        Width = 506
+        Top = 1
+        Width = 603
         Anchors = [akTop, akLeft, akRight]
         CharCase = ecNormal
         MaxLength = 0
-        TabOrder = 2
+        TabOrder = 0
         OnMouseDown = dbedCellContentMouseDown
+      end
+      object dbgridCSV: TDBGrid
+        Left = 2
+        Height = 169
+        Top = 26
+        Width = 705
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Color = clWindow
+        Columns = <>
+        DataSource = DirBuilder_dataModule.CSVDsDtaSrc
+        TabOrder = 1
       end
     end
     object TabSheet2: TTabSheet
@@ -206,13 +180,13 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
   object StatusBar: TStatusBar
     Left = 0
     Height = 23
-    Top = 422
-    Width = 641
+    Top = 386
+    Width = 725
     Panels = <>
   end
   object ActionList: TActionList
-    Left = 437
-    Top = 113
+    Left = 544
+    Top = 184
     object ActionResizeColumns: TAction
       Caption = 'Resize table columns'
       OnExecute = ActionResizeColumnsExecute
@@ -233,17 +207,21 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       Caption = 'Find CSV file'
       OnExecute = ActionFindCSVExecute
     end
-    object ActionReadCSV: TAction
-      Caption = 'Read CSV file'
-      Enabled = False
-      OnExecute = ActionReadCSVExecute
-    end
     object ActionOpen: TAction
       Caption = '&Open'
     end
     object ActionSetTitles: TAction
       Caption = '1st row is titles'
       OnExecute = ActionSetTitlesExecute
+    end
+    object ActionReadRawFile: TAction
+      Caption = 'Read raw file'
+      Enabled = False
+      OnExecute = ActionReadRawFileExecute
+    end
+    object ActionReadCSV: TAction
+      Caption = 'Read CSV File'
+      OnExecute = ActionReadCSVExecute
     end
   end
   object MainMenu1: TMainMenu
@@ -271,7 +249,14 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
         Action = ActionFindCSV
       end
       object MenuItem5: TMenuItem
-        Action = ActionReadCSV
+        Caption = 'Read CSV file'
+        Enabled = False
+      end
+      object N6: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem12: TMenuItem
+        Caption = 'Read raw csv file'
       end
       object N2: TMenuItem
         Caption = '-'
@@ -294,7 +279,8 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       Action = ActionFindCSV
     end
     object MenuItem8: TMenuItem
-      Action = ActionReadCSV
+      Caption = 'Read CSV file'
+      Enabled = False
     end
     object N4: TMenuItem
       Caption = '-'

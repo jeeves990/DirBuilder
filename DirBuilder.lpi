@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="6">
       <Unit0>
         <Filename Value="DirBuilder.pas"/>
         <IsPartOfProject Value="True"/>
@@ -59,9 +59,25 @@
         <Filename Value="dirbuilder_dmod.pp"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DirBuilder_dataModule"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="DirBuilder_dmod"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="frmdisplaycsvfile.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmDisplayCSVFile"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmDisplayCSVFile"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="frminputnewvalue.pp"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmGetNewValue"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmInputNewValue"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -83,7 +99,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="3">
+    <Exceptions Count="5">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -93,6 +109,12 @@
       <Item3>
         <Name Value="EFOpenError"/>
       </Item3>
+      <Item4>
+        <Name Value="EDatabaseError"/>
+      </Item4>
+      <Item5>
+        <Name Value="EListError"/>
+      </Item5>
     </Exceptions>
   </Debugging>
 </CONFIG>

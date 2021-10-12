@@ -6,38 +6,34 @@ interface
 
 uses
   ActnList, Classes, ComCtrls, csvdataset, DB, DBCtrls, DBGrids, ExtCtrls,
-  Menus, StdCtrls, SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd,
-  DirBuilder_dmod,
-  RTTICtrls;
+	Menus, StdCtrls, SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd,
+	ComboEx, DirBuilder_dmod, dbgridhelper, frmDisplayCSVFile, RTTICtrls;
 
 type
 
   { TfrmFayesDirBuilder }
 
   TfrmFayesDirBuilder = class(TForm)
+    ActionReadRawFile: TAction;
     ActionSetTitles: TAction;
     ActionFindOutputDir : TAction;
     ActionMkDirs : TAction;
     ActionFindCSV : TAction;
-    ActionReadCSV : TAction;
     ActionOpen : TAction;
     ActionResizeColumns : TAction;
     ActionClose : TAction;
     ActionList : TActionList;
     btnOutDir : TButton;
-    btnReadCSV : TButton;
     btnMkDirs : TButton;
     btnClose : TButton;
     btnFindCSV : TButton;
-    Button1 : TButton;
+    btnResizeTableColumns : TButton;
+    btnReadRawFile: TButton;
     cboxOutDir : TComboBox;
-    cboxShowLineNumbers : TCheckBox;
-    ckboxColResize: TCheckBox;
     ckbox1stRowIsTitles: TCheckBox;
+    cboxCSVFile: TComboBox;
     dbedCellContent : TDBEdit;
-    dbgridCSV : TDBGrid;
-    edOutDir : TEdit;
-    edCSVFile : TEdit;
+    dbgridCSV: TDBGrid;
     lblCellContents : TLabel;
     lblOutDir : TLabel;
     lblCSVFile : TLabel;
@@ -45,6 +41,8 @@ type
     MenuItem1 : TMenuItem;
     MenuItem10: TMenuItem;
     MenuItem11: TMenuItem;
+    MenuItem12: TMenuItem;
+    N6: TMenuItem;
     N5: TMenuItem;
     N4: TMenuItem;
     N3: TMenuItem;
@@ -66,17 +64,18 @@ type
     StatusBar: TStatusBar;
     tabshCSVFile : TTabSheet;
     TabSheet2 : TTabSheet;
+		ActionReadCSV: TAction;
+		btnReadCSV: TButton;
     procedure ActionCloseExecute(Sender : TObject);
     procedure ActionFindCSVExecute(Sender : TObject);
     procedure ActionFindOutputDirExecute(Sender : TObject);
     procedure ActionMkDirsExecute(Sender : TObject);
     procedure ActionReadCSVExecute(Sender : TObject);
+    procedure ActionReadRawFileExecute(Sender: TObject);
     procedure ActionResizeColumnsExecute(Sender : TObject);
     procedure ActionSetTitlesExecute(Sender: TObject);
     procedure btnCloseClick(Sender : TObject);
-    procedure ckboxColResizeMouseEnter(Sender: TObject);
-    procedure ckboxColResizeMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure cboxCSVFileCloseUp(Sender: TObject);
     procedure ckboxShowLineNumbersChange(Sender : TObject);
     procedure dbedCellContentMouseDown(Sender : TObject; Button : TMouseButton;
       Shift : TShiftState; X, Y : Integer);
@@ -84,14 +83,12 @@ type
     procedure dbgridCSVTitleClick(Column: TColumn);
     procedure edCSVFileChange(Sender : TObject);
     procedure FormCreate(Sender : TObject);
-    procedure AutoResizeDbGridColumns;
     procedure MenuItem2Click(Sender : TObject);
   private
     checkFlag : Boolean;
     dirListColumn : Integer;
     dmod : TDirBuilder_dataModule;
     function countSubDirs(path: String): Integer;
-    procedure FixDBGridColumnsWidth(const DBGrid: TDBGrid);
   public
 
   end;
@@ -110,10 +107,18 @@ begin
   Close;
 end;
 
-procedure TfrmFayesDirBuilder.ckboxColResizeMouseEnter(Sender: TObject);
+procedure TfrmFayesDirBuilder.cboxCSVFileCloseUp(Sender: TObject);
+var
+  idx : Integer;
+  txt : String;
 begin
-  checkFlag := ckboxColResize.Checked;
+  txt := cboxCSVFile.Text;
+  for idx := 0 to cboxCSVFile.Items.Count -1 do
+    if txt = cboxCSVFile.Items[idx] then
+      Exit;
+  cboxCSVFile.Items.Add(txt);
 end;
+
 
 procedure TfrmFayesDirBuilder.ckboxShowLineNumbersChange(Sender : TObject);
 begin
@@ -128,13 +133,13 @@ begin
   ckboxShowLineNumbersChange(self);
   if DirectoryExists(cboxOutDir.Text) then
      cboxOutDir.Items.Add(cboxOutDir.Text);
-  dmod := DirBuilder_dataModule.Create(self);
+  dmod := DirBuilder_dataModule;
 
 end;
 
 procedure TfrmFayesDirBuilder.edCSVFileChange(Sender : TObject);
 begin
-  ActionReadCSV.Enabled := FileExists(edCSVFile.Text);
+  ActionReadCSV.Enabled := FileExists(cboxCSVFile.Text);
 end;
 
 procedure TfrmFayesDirBuilder.dbgridCSVCellClick(Column : TColumn);
@@ -164,30 +169,31 @@ begin
   end;
 end;
 
-procedure TfrmFayesDirBuilder.AutoResizeDbGridColumns;
-//var
-  //grHelper : TDbGridHelper;
-begin
-  FixDBGridColumnsWidth(dbgridCSV);
-  //grHelper := TDbGridHelper.Create;
-  //try
-  //  grHelper.dbGrid := dbgridCSV;
-  //  //grHelper.AutoSizeColumns();
-  //  grHelper.SetGridColumnWidths;
-  //finally
-  //  grHelper.Free;
-  //end;
-end;
-
 procedure TfrmFayesDirBuilder.ActionResizeColumnsExecute(Sender : TObject);
+var
+  grHelper : TDbGridHelper;
 begin
-  AutoResizeDbGridColumns;
+  grHelper := TDbGridHelper.Create;
+  try
+    grHelper.maxSize := 250;
+    grHelper.dbGrid := dbgridCSV;
+    //grHelper.AutoSizeColumns();
+    grHelper.SetGridColumnWidths;
+  finally
+    grHelper.Free;
+    btnResizeTableColumns.Enabled := False;
+  end;
 end;
 
 procedure TfrmFayesDirBuilder.ActionSetTitlesExecute(Sender: TObject);
 begin
   if ckbox1stRowIsTitles.Checked then
-     dbgridCSV.Options := dbgridCSV.Options + [dgTitles]
+  begin
+    dmod.setFieldNames;
+    dbgridCSV.Options := dbgridCSV.Options + [dgTitles];
+    //dbgridCSV.DataSource.DataSet.Close;
+    //dbgridCSV.DataSource.DataSet.Open;
+  end
   else
      dbgridCSV.Options := dbgridCSV.Options - [dgTitles]
 end;
@@ -242,7 +248,7 @@ begin
   outPath := IncludeTrailingPathDelimiter(outPath);
   dset.DisableControls;
   try
-     bookMark := dset.Bookmark;
+    bookMark := dset.Bookmark;
     dset.First;
     while not dset.EOF do
     begin
@@ -313,33 +319,35 @@ Begin
   end;
 End  ;
 
-procedure TfrmFayesDirBuilder.ckboxColResizeMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  if checkFlag then
-      dbgridCSV.Options := dbgridCSV.Options - [dgColumnResize]
-    else
-      dbgridCSV.Options := dbgridCSV.Options + [dgColumnResize];
-    ckboxColResize.Checked := not checkFlag;
-end;
-
 procedure TfrmFayesDirBuilder.ActionFindCSVExecute(Sender : TObject);
 var
   dlg : TOpenDialog;
-  dir : String;
+  dir, fname : String;
 begin
   ActionReadCSV.Enabled := False;
   dlg := TOpenDialog.Create(nil);
   try
-     dlg.Options := [ofReadOnly];
-     dir := edCSVFile.Text;
-     if DirectoryExists(dir) then
-        dlg.InitialDir := dir
-     else
-        dlg.InitialDir := 'c:\';
-     if not dlg.Execute then
-        Exit;
-     edCSVFile.Text := dlg.FileName;
+    dlg.Options := [ofReadOnly];
+    dir := cboxCSVFile.Text;
+    if DirectoryExists(dir) then
+      dlg.InitialDir := dir    // if the whole of the cbox.text, use it
+    else
+      begin
+  		  dir := ExtractFilePath(dir);
+        if DirectoryExists(dir) then
+          dlg.InitialDir := dir
+        else
+          dlg.InitialDir := ExtractFileDrive(dir);
+			end;
+		if not dlg.Execute then
+       Exit;
+    cboxCSVFile.Text := dlg.FileName;
+    cboxCSVFileCloseUp(self);
+    ActionReadCSV.Enabled := True;
+    ActionReadRawFile.Enabled := True;
+    //btnReadCSV.Enabled := True;
+    //btnReadCSV.Enabled;
+    //btnReadRawFile.Enabled := True;
   finally
     dlg.Free;
   end;
@@ -349,7 +357,7 @@ procedure TfrmFayesDirBuilder.ActionReadCSVExecute(Sender : TObject);
 var
   fileName : String;
 begin
-  fileName := edCSVFile.Text;
+  fileName := cboxCSVFile.Text;
   if not FileExists(fileName) then
   begin
     ShowMessage(fileName + ' does not exist. Try again');
@@ -358,56 +366,25 @@ begin
   try
   begin
     dmod.FileName := fileName;
-    dmod.open_dSet(fileName);
+    dmod.open_DataSet(fileName);
+    btnResizeTableColumns.Enabled:=True;
+    ActionResizeColumns.Execute;
   end;
   except on e : Exception do
-         ShowMessage(Format('CSV did not open. %s', [e.Message]));
+    ShowMessage(Format('CSV did not open. %s', [e.Message]));
   end;
 end;
 
-procedure TfrmFayesDirBuilder.FixDBGridColumnsWidth(const DBGrid: TDBGrid);
-const
-  IndicatorWidth = 10;
+procedure TfrmFayesDirBuilder.ActionReadRawFileExecute(Sender: TObject);
 var
-  i, TotWidth, VarWidth : integer;
-  ResizableColumnCount : integer;
-  AColumn : TColumn;
-begin//total width of all columns before resize
-  TotWidth := 0;
-  //how to divide any extra space in the grid
-  VarWidth := 0;
-  //how many columns need to be auto-resized
-  ResizableColumnCount := 0;
-  for i := 0 to -1 + DBGrid.Columns.Count do
-  begin
-     TotWidth := TotWidth + DBGrid.Columns[i].Width;
-     if DBGrid.Columns[i].Field.Tag = 0 then
-        Inc(ResizableColumnCount);
-  end;
-
-  //add 1px for the column separator lineif dgColLines in DBGrid.Options then
-  TotWidth := TotWidth + DBGrid.Columns.Count;
-
-  //add indicator column widthif dgIndicator in DBGrid.Options then
-  TotWidth := TotWidth + IndicatorWidth;
-
-  //width vale "left"
-  VarWidth := DBGrid.ClientWidth - TotWidth;
-
-  //Equally distribute VarWidth
-  //to all auto-resizable columnsif ResizableColumnCount > 0 then
-  VarWidth := varWidth div ResizableColumnCount;
-  for i := 0 to -1 + DBGrid.Columns.Count do
-  begin
-    AColumn := DBGrid.Columns[i];
-    if AColumn.Field.Tag = 0 then
-    begin
-       AColumn.Width := AColumn.Width + VarWidth;
-       if AColumn.Width <= AColumn.Field.Tag then
-          AColumn.Width := AColumn.Field.Tag;
-    end;
-  end;
-end; (*FixDBGridColumnsWidth*)
+  frm : TfmDisplayCSVFile;
+  txt : TFileName;
+begin
+  txt := cboxCSVFile.Text;
+  frm := TfmDisplayCSVFile.Create(self, cboxCSVFile.Text);
+  frm.DisplayFile;
+  frm.Show;
+end;
 
 end.
 

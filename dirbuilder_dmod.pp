@@ -17,12 +17,11 @@ type
     procedure DataModuleCreate(Sender: TObject);
   private
     FFileName : TFileName;
-    procedure SetOpenDset(AValue: Boolean);
 
   public
     function open_DataSet(const fileName : TFileName) : Boolean;
-    property open_dset : Boolean write SetOpenDset;
     property FileName : TFileName read FFileName write FFileName;
+    procedure setFieldNames;
   end;
 
 var
@@ -39,29 +38,47 @@ begin
    CSVDataset.Close;
 end;
 
-procedure TDirBuilder_dataModule.SetOpenDset(AValue: Boolean);
-begin
-
-end;
-
 function TDirBuilder_dataModule.open_DataSet(const fileName : TFileName) : Boolean;
 var
-  s : string;
+  s, fldDef : string;
+  recCnt, i : Integer;
 begin
   s := 'TDirBuilder_dataModule.open_DataSet has failed.'
                        +sLineBreak +'%s';
   try
-    if CSVDataset.Active then
-        CSVDataset.Close;
-    CSVDataset.Clear;
-    CSVDataset.IndexName := '';
-    CSVDataset.IndexDefs.Clear;
-    CSVDataset.FieldDefs.Clear;
+    CSVDataset.Close;
     CSVDataset.FileName := fileName;
     CSVDataset.Open;
+    for i := 0 to CSVDataset.FieldCount -1 do
+    begin
+      fldDef := CSVDataset.FieldDefs[i].DisplayName;
+      // TODO: this fails when a differently formatted csv file is read
+    end;
+    recCnt := CSVDataset.RecordCount;
   except on e : Exception do
     ShowMessage(Format(s, [e.Message]));
 
+  end;
+end;
+
+procedure TDirBuilder_dataModule.setFieldNames;
+var
+  i : Integer;
+  bkmk : TBookMark;
+begin
+
+  CSVDataset.DisableControls;
+  bkmk := CSVDataset.Bookmark;
+  bkmk := CSVDataset.GetBookmark;
+  try
+    CSVDataset.First;
+    for i := 0 to CSVDataset.FieldCount -1 do
+    begin
+      CSVDataset.FieldDefs.Items[i].Name := CSVDataset.Fields[i].Value;
+    end;
+  finally
+    CSVDataset.EnableControls;
+    CSVDataset.GotoBookmark(bkmk);
   end;
 end;
 
