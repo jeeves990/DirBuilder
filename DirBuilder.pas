@@ -23,7 +23,7 @@ begin
   Application.CreateForm(TfmDisplayCSVFile, fmDisplayCSVFile);
 			Application.CreateForm(TfmGetNewValue, fmGetNewValue);
 			Application.CreateForm(TfmCSVParser_setup, fmCSVParser_setup);
-	Application.CreateForm(TForm1, Form1);
+			Application.CreateForm(TfmChangeCSVProperties, fmChangeCSVProperties);
   Application.Run;
 end.
 

@@ -99,7 +99,7 @@
       <Unit9>
         <Filename Value="frmchangecsvproperties.pp"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form1"/>
+        <ComponentName Value="fmChangeCSVProperties"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmChangeCSVProperties"/>
       </Unit9>

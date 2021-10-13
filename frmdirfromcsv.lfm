@@ -160,7 +160,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       end
     end
     object tabshCSVParserProps: TTabSheet
-      Caption = 'tabshCSVParserProps'
+      Caption = 'CSV parser props'
       ClientHeight = 218
       ClientWidth = 611
       object gpBoxCSVParserProperties: TGroupBox

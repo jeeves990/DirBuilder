@@ -4,6 +4,10 @@
     1. read CSV files including files from Amazon and from InventoryLab.
     2. use those files to create an inventory database for tracking items
        that, in particular, are listed on more than one internet site.
+    WARNING: Amazon reports are tab delimited so change the delimiter on
+      the "CSV parser props" tab to TAB and then click the "Read CSV file"
+      button, again.
+    TODO: write the database from the stringgrid.
 *)
 
 unit frmDirFromCSV;
@@ -16,7 +20,7 @@ uses
   ActnList, Classes, ComCtrls, csvdataset, DB, DBCtrls, DBGrids, ExtCtrls,
 	Menus, StdCtrls, SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd,
 	ComboEx, Grids, DirBuilder_dmod, stringGridHelper, frmDisplayCSVFile,
-  StringGridUtil, CSVParser_setup, dmodCSVParser,
+  StringGridUtil, CSVParser_setup, dmodCSVParser, frmChangeCSVProperties,
   RTTICtrls;
 
 type
@@ -285,8 +289,33 @@ end;
 
 
 procedure TfrmFayesDirBuilder.ActionChangeCSVDelimiterExecute(Sender: TObject);
+var
+  dlg : TfmChangeCSVProperties;
 begin
-
+  dlg := TfmChangeCSVProperties.Create(self);
+  try
+    dlg.ShowModal;
+    case dlg.DelimiterChoice of
+      ChoseNoChoice : Exit;
+      ChoseComma :
+        begin
+          SGridParserProps.Cells[1, 0] := COMMA_STRING;
+          FDelimiter := COMMA;
+				end;
+      ChoseTab :
+        begin
+          SGridParserProps.Cells[1, 0] := TAB_STRING;
+          FDelimiter:= TAB;
+				end;
+      ChoseSemicolon :
+        begin
+          SGridParserProps.Cells[1, 0] := SEMICOLON_STRING;
+          FDelimiter:= SEMICOLON;
+				end;
+		end;
+	finally
+    dlg.Free;
+	end;
 end;
 
 procedure TfrmFayesDirBuilder.ActionFindOutputDirExecute(Sender : TObject);
@@ -438,6 +467,7 @@ end;
 procedure TfrmFayesDirBuilder.ActionReadCSVExecute(Sender : TObject);
 var
   fileName : String;
+  delimiter :Char;
 begin
   fileName := cboxCSVFile.Text;
   if not FileExists(fileName) then
@@ -447,7 +477,14 @@ begin
   end;
   try
   begin
-    LoadGridFromCSVFile(sGridMain, fileName);
+    case FDelimiter of
+      SEMICOLON : delimiter := SEMICOLON;
+      COMMA : delimiter := COMMA;
+      TAB: delimiter := TAB;
+      ELSE
+        delimiter := COMMA;
+		end;
+    LoadGridFromCSVFile(sGridMain, fileName, delimiter);
     if sGridMain.RowCount = sGridMain.FixedRows then
     begin
       ShowMessage('TfrmFayesDirBuilder.ActionReadCSVExecute: '

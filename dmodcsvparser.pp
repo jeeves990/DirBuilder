@@ -24,7 +24,7 @@ const
   TAB = #09;
   TAB_STRING = 'Tab';
   COMMA = ',';
-  COMMA_STR = 'Comma';
+  COMMA_STRING = 'Comma';
 
 implementation
 

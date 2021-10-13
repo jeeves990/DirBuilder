@@ -16,7 +16,7 @@ procedure LoadGridFromCSVFile(Grid: TStringGrid;AFilename: string;
 
 var
   FLineEnding : String;
-  FDelimiter : String;
+  FDelimiter : Char;
 
 implementation
 
