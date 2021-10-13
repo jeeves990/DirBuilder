@@ -23,4 +23,9 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
     Left = 48
     Top = 16
   end
+  object BufDataset: TBufDataset
+    FieldDefs = <>
+    Left = 65
+    Top = 91
+  end
 end

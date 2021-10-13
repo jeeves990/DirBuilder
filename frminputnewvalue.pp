@@ -5,7 +5,7 @@ unit frmInputNewValue;
 interface
 
 uses
-      Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls;
+      Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, LCLType;
 
 
 const
@@ -31,6 +31,8 @@ type
 						edDataType: TEdit;
 					  procedure btnCancelClick(Sender: TObject);
 						procedure btnAcceptClick(Sender: TObject);
+						procedure edNewValueKeyUp(Sender: TObject; var Key: Word;
+									Shift: TShiftState);
 		  private
 		    FPresentValue : Variant;
 			  FNewValue: Variant;
@@ -93,6 +95,13 @@ begin
 			end;
   end;
   Close;
+end;
+
+procedure TfmGetNewValue.edNewValueKeyUp(Sender: TObject; var Key: Word;
+			Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+    btnAccept.Click;
 end;
 
 constructor TfmGetNewValue.Create(aOwner: TComponent; const curValue: Variant;

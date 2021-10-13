@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="11">
       <Unit0>
         <Filename Value="DirBuilder.pas"/>
         <IsPartOfProject Value="True"/>
@@ -51,9 +51,9 @@
         <UnitName Value="frmDirFromCSV"/>
       </Unit1>
       <Unit2>
-        <Filename Value="dbgridhelper.pas"/>
+        <Filename Value="stringgridhelper.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="DbGridHelper"/>
+        <UnitName Value="stringGridHelper"/>
       </Unit2>
       <Unit3>
         <Filename Value="dirbuilder_dmod.pp"/>
@@ -75,9 +75,41 @@
         <Filename Value="frminputnewvalue.pp"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmGetNewValue"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmInputNewValue"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="unitaddquotestofiles.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unitAddQuotesToFiles"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="stringgridutil.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="StringGridUtil"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="csvparser_setup.pp"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmCSVParser_setup"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="CSVParser_setup"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="frmchangecsvproperties.pp"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmChangeCSVProperties"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="dmodcsvparser.pp"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dmod_csv_parser"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="dmodCSVParser"/>
+      </Unit10>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

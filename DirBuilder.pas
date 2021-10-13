@@ -7,8 +7,9 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, frmDirFromCSV, DbGridHelper, runtimetypeinfocontrols, DirBuilder_dmod,
-  frmDisplayCSVFile, frmInputNewValue
+  Forms, frmDirFromCSV, stringGridHelper, runtimetypeinfocontrols,
+	DirBuilder_dmod, frmDisplayCSVFile, frmInputNewValue, unitAddQuotesToFiles,
+	stringgridutil, CSVParser_setup, frmChangeCSVProperties, dmodCSVParser
   { you can add units after this };
 
 {$R *.res}
@@ -21,6 +22,8 @@ begin
   Application.CreateForm(TfrmFayesDirBuilder, frmFayesDirBuilder);
   Application.CreateForm(TfmDisplayCSVFile, fmDisplayCSVFile);
 			Application.CreateForm(TfmGetNewValue, fmGetNewValue);
+			Application.CreateForm(TfmCSVParser_setup, fmCSVParser_setup);
+	Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.
 

@@ -62,6 +62,7 @@ object fmGetNewValue: TfmGetNewValue
       Top = 7
       Width = 398
       Anchors = [akLeft, akRight]
+      OnKeyUp = edNewValueKeyUp
       TabOrder = 0
     end
   end

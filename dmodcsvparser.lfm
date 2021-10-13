@@ -1,0 +1,7 @@
+object dmod_csv_parser: Tdmod_csv_parser
+  OldCreateOrder = False
+  Height = 213
+  HorizontalOffset = 379
+  VerticalOffset = 129
+  Width = 273
+end

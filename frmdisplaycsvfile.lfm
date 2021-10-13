@@ -1,33 +1,92 @@
 object fmDisplayCSVFile: TfmDisplayCSVFile
-  Left = 804
-  Height = 541
-  Top = 197
-  Width = 569
+  Left = 1055
+  Height = 451
+  Top = 417
+  Width = 556
   Caption = 'fmDisplayCSVFile'
-  ClientHeight = 541
-  ClientWidth = 569
+  ClientHeight = 451
+  ClientWidth = 556
   LCLVersion = '2.0.12.0'
-  object mmo: TMemo
-    Left = 4
-    Height = 475
-    Top = 8
-    Width = 559
+  object pgCtrl: TPageControl
+    Left = 0
+    Height = 403
+    Top = 34
+    Width = 556
+    ActivePage = TabSheet2
+    Align = alTop
     Anchors = [akTop, akLeft, akRight, akBottom]
-    Lines.Strings = (
-      'mmo'
-    )
-    PopupMenu = CSVDisplayPopup
-    ScrollBars = ssVertical
+    TabIndex = 1
     TabOrder = 0
+    object tabshRawFile: TTabSheet
+      Caption = 'Raw data from file'
+      ClientHeight = 375
+      ClientWidth = 548
+      object mmo: TMemo
+        Left = 0
+        Height = 346
+        Top = 0
+        Width = 548
+        Align = alTop
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Lines.Strings = (
+          'mmo'
+        )
+        PopupMenu = CSVDisplayPopup
+        ScrollBars = ssVertical
+        TabOrder = 0
+      end
+      object Button1: TButton
+        Left = 344
+        Height = 25
+        Top = 350
+        Width = 204
+        Action = ActionAddQuotes
+        Anchors = [akRight, akBottom]
+        TabOrder = 1
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'CSV data'
+      ClientHeight = 375
+      ClientWidth = 548
+      object sGrid: TStringGrid
+        Left = 0
+        Height = 374
+        Top = 0
+        Width = 548
+        Align = alTop
+        FixedCols = 0
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goColMoving, goSmoothScroll, goFixedRowNumbering, goCellEllipsis]
+        TabOrder = 0
+      end
+    end
   end
-  object Button1: TButton
-    Left = 348
-    Height = 25
-    Top = 499
-    Width = 204
-    Action = ActionAddQuotes
-    Anchors = [akRight, akBottom]
+  object pnlTop: TPanel
+    Left = 0
+    Height = 34
+    Top = 0
+    Width = 556
+    Align = alTop
+    ClientHeight = 34
+    ClientWidth = 556
     TabOrder = 1
+    object Label1: TLabel
+      Left = 8
+      Height = 15
+      Top = 9
+      Width = 54
+      Caption = 'File name:'
+      ParentColor = False
+    end
+    object edFileName: TEdit
+      Left = 76
+      Height = 23
+      Top = 4
+      Width = 472
+      Anchors = [akTop, akLeft, akRight]
+      TabOrder = 0
+      Text = 'edFileName'
+    end
   end
   object ActList4DspCSV: TActionList
     Left = 283
@@ -51,6 +110,10 @@ object fmDisplayCSVFile: TfmDisplayCSVFile
       Caption = 'Reload file from disk'
       OnExecute = ActionReloadFileExecute
     end
+    object ActionReadCSVData: TAction
+      Caption = 'Read CSV data'
+      OnExecute = ActionReadCSVDataExecute
+    end
   end
   object CSVDisplayPopup: TPopupMenu
     Left = 212
@@ -69,6 +132,12 @@ object fmDisplayCSVFile: TfmDisplayCSVFile
     end
     object MenuItem5: TMenuItem
       Action = ActionReloadFile
+    end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem6: TMenuItem
+      Action = ActionReadCSVData
     end
     object N2: TMenuItem
       Caption = '-'
