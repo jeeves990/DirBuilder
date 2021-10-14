@@ -5,10 +5,14 @@ unit dmodCSVParser;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, IniPropStorage;
 
 type
+
+	{ Tdmod_csv_parser }
+
   Tdmod_csv_parser = class(TDataModule)
+				IniPropStorage: TIniPropStorage;
   private
 
   public

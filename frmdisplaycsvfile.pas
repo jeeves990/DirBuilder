@@ -49,6 +49,7 @@ type
     FFilename : TFileName;
     FMaxLines2Read : Integer;
     FSlst : TStringList;
+    FParent : TComponent;
     procedure SetFileName(AValue: TFileName);
   public
     property filename : TFileName read FFileName write SetFileName;
@@ -136,6 +137,7 @@ end;
 constructor TfmDisplayCSVFile.Create(aOwner: TComponent; theFileName: TFileName);
 begin
   inherited Create(aOwner);
+  FParent := aOwner;
   if theFileName <> '' then
     FFileName := theFileName;
   if not FileExists(FFilename) then

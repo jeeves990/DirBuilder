@@ -2,8 +2,8 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
   OnCreate = DataModuleCreate
   OldCreateOrder = False
   Height = 230
-  HorizontalOffset = 1161
-  VerticalOffset = 84
+  HorizontalOffset = 1231
+  VerticalOffset = 184
   Width = 505
   object CSVDataset: TCSVDataset
     FieldDefs = <>
@@ -23,9 +23,26 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
     Left = 48
     Top = 16
   end
-  object BufDataset: TBufDataset
-    FieldDefs = <>
-    Left = 65
-    Top = 91
+  object BooksDbConn: TMySQL57Connection
+    Connected = True
+    LoginPrompt = False
+    DatabaseName = 'booksdb'
+    KeepConnection = False
+    Params.Strings = (
+      'Port=3305'
+    )
+    Password = 'j33ves99'
+    Transaction = BooksDbTx
+    UserName = 'root'
+    HostName = '127.0.0.1'
+    SkipLibraryVersionCheck = False
+    Left = 136
+    Top = 88
+  end
+  object BooksDbTx: TSQLTransaction
+    Active = True
+    Database = BooksDbConn
+    Left = 48
+    Top = 88
   end
 end

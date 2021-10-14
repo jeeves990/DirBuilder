@@ -1,15 +1,17 @@
 object frmFayesDirBuilder: TfrmFayesDirBuilder
-  Left = 881
+  Left = 893
   Height = 441
-  Top = 254
+  Top = 157
   Width = 631
   Caption = 'Fayes''s directory builder'
   ClientHeight = 421
   ClientWidth = 631
   Menu = MainMenu1
+  OnClose = FormClose
   OnCreate = FormCreate
   PopupMenu = popupMnu
-  LCLVersion = '2.0.12.0'
+  SessionProperties = 'Height;Position;Width;Left;Top'
+  LCLVersion = '2.2.0.1'
   object pnlTop: TPanel
     Left = 8
     Height = 101
@@ -26,7 +28,6 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       Top = 5
       Width = 88
       Caption = 'Output directory'
-      ParentColor = False
     end
     object btnOutDir: TButton
       Left = 453
@@ -52,7 +53,6 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       Top = 40
       Width = 40
       Caption = 'CSV file'
-      ParentColor = False
     end
     object cboxOutDir: TComboBox
       Left = 106
@@ -119,9 +119,9 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     Height = 246
     Top = 112
     Width = 619
-    ActivePage = tabshCSVParserProps
+    ActivePage = tabshCSVFile
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 1
     object tabshCSVFile: TTabSheet
       Caption = 'The CSV file'
@@ -133,7 +133,6 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
         Top = 8
         Width = 67
         Caption = 'Cell content:'
-        ParentColor = False
       end
       object sGridMain: TStringGrid
         Left = 0
@@ -270,6 +269,9 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       Caption = 'ActionChangeCSV delimiter'
       OnExecute = ActionChangeCSVDelimiterExecute
     end
+    object ActionAddToDB: TAction
+      Caption = 'Add to DB'
+    end
   end
   object MainMenu1: TMainMenu
     Left = 229
@@ -341,6 +343,9 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     object MenuItem11: TMenuItem
       Action = ActionMkDirs
     end
+    object MenuItem14: TMenuItem
+      Action = ActionAddToDB
+    end
   end
   object popupMnu1: TPopupMenu
     Left = 264
@@ -351,5 +356,12 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     object MenuItem13: TMenuItem
       Action = ActionChangeCSVDelimiter
     end
+  end
+  object DirBuilderPropIni: TIniPropStorage
+    StoredValues = <>
+    IniFileName = 'DirBuilder.ini'
+    IniSection = 'DirBuilderMain'
+    Left = 408
+    Top = 240
   end
 end

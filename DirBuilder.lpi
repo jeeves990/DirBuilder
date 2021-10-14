@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
+      <Flags>
+        <CompatibilityMode Value="True"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <Title Value="DirBuilder"/>
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
@@ -24,7 +26,6 @@
     </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
-      <Modes Count="0"/>
     </RunParams>
     <RequiredPackages Count="3">
       <Item1>
@@ -37,7 +38,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="12">
       <Unit0>
         <Filename Value="DirBuilder.pas"/>
         <IsPartOfProject Value="True"/>
@@ -107,9 +108,17 @@
         <Filename Value="dmodcsvparser.pp"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="dmod_csv_parser"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="dmodCSVParser"/>
       </Unit10>
+      <Unit11>
+        <Filename Value="frmbooksdb.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmBooksDb"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmBooksDb"/>
+      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -123,6 +132,9 @@
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>

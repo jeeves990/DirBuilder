@@ -18,10 +18,10 @@ interface
 
 uses
   ActnList, Classes, ComCtrls, csvdataset, DB, DBCtrls, DBGrids, ExtCtrls,
-	Menus, StdCtrls, SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd,
-	ComboEx, Grids, DirBuilder_dmod, stringGridHelper, frmDisplayCSVFile,
-  StringGridUtil, CSVParser_setup, dmodCSVParser, frmChangeCSVProperties,
-  RTTICtrls;
+  Menus, StdCtrls, SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd,
+  ComboEx, Grids, IniPropStorage, DirBuilder_dmod, stringGridHelper,
+  frmDisplayCSVFile, StringGridUtil, CSVParser_setup, dmodCSVParser,
+  frmChangeCSVProperties, RTTICtrls;
 
 type
   EMyDBNotOpenException = class(Exception);
@@ -45,6 +45,7 @@ type
     cboxOutDir : TComboBox;
     ckbox1stRowIsTitles: TCheckBox;
     cboxCSVFile: TComboBox;
+    DirBuilderPropIni: TIniPropStorage;
     lblCellContents : TLabel;
     lblOutDir : TLabel;
     lblCSVFile : TLabel;
@@ -75,19 +76,21 @@ type
     StatusBar: TStatusBar;
     tabshCSVFile : TTabSheet;
     tabshCSVParserProps : TTabSheet;
-		ActionReadCSV: TAction;
-		btnReadCSV: TButton;
-		sGridMain: TStringGrid;
-		pnlBottom: TPanel;
-		btnMkDirs: TButton;
-		btnClose: TButton;
-		edCellContent: TEdit;
-		gpBoxCSVParserProperties: TGroupBox;
-		SGridParserProps: TStringGrid;
-		ActionChangeCSVDelimiter: TAction;
-		popupMnu1: TPopupMenu;
-		N9: TMenuItem;
-		MenuItem13: TMenuItem;
+    ActionReadCSV: TAction;
+    btnReadCSV: TButton;
+    sGridMain: TStringGrid;
+    pnlBottom: TPanel;
+    btnMkDirs: TButton;
+    btnClose: TButton;
+    edCellContent: TEdit;
+    gpBoxCSVParserProperties: TGroupBox;
+    SGridParserProps: TStringGrid;
+    ActionChangeCSVDelimiter: TAction;
+    popupMnu1: TPopupMenu;
+    N9: TMenuItem;
+    MenuItem13: TMenuItem;
+    ActionAddToDB: TAction;
+    MenuItem14: TMenuItem;
     procedure ActionCloseExecute(Sender : TObject);
     procedure ActionFindCSVExecute(Sender : TObject);
     procedure ActionFindOutputDirExecute(Sender : TObject);
@@ -102,14 +105,15 @@ type
     procedure dbgridCSVCellClick(Column : TColumn);
     procedure dbgridCSVTitleClick(Column: TColumn);
     procedure edCSVFileChange(Sender : TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender : TObject);
     procedure MenuItem2Click(Sender : TObject);
-		procedure cboxCSVFileChange(Sender: TObject);
-		procedure sGridMainHeaderClick(Sender: TObject; IsColumn: Boolean;
-					Index: Integer);
-		procedure sGridMainDblClick(Sender: TObject);
-		procedure sGridMainClick(Sender: TObject);
-		procedure ActionChangeCSVDelimiterExecute(Sender: TObject);
+    procedure cboxCSVFileChange(Sender: TObject);
+    procedure sGridMainHeaderClick(Sender: TObject; IsColumn: Boolean;
+    			Index: Integer);
+    procedure sGridMainDblClick(Sender: TObject);
+    procedure sGridMainClick(Sender: TObject);
+    procedure ActionChangeCSVDelimiterExecute(Sender: TObject);
   private
     checkFlag : Boolean;
     FDirListColumn : Integer;
@@ -157,6 +161,8 @@ begin
 end;
 
 procedure TfrmFayesDirBuilder.FormCreate(Sender : TObject);
+var
+  g_path : TFileName;
 begin
   ckboxShowLineNumbersChange(self);
   if DirectoryExists(cboxOutDir.Text) then
@@ -165,6 +171,9 @@ begin
   sGridMain.Clear;
   GetCSVParserProps;
   pgCtrl.ActivePage := tabshCSVFile;
+  //g_path := ExtractFilePath(Application.ExeName);
+  //ShowMessage(g_path);
+  DirBuilderPropIni.Restore;
 end;
 
 procedure TfrmFayesDirBuilder.GetCSVParserProps;
@@ -187,6 +196,12 @@ end;
 procedure TfrmFayesDirBuilder.edCSVFileChange(Sender : TObject);
 begin
   ActionReadCSV.Enabled := FileExists(cboxCSVFile.Text);
+end;
+
+procedure TfrmFayesDirBuilder.FormClose(Sender: TObject;
+  var CloseAction: TCloseAction);
+begin
+  DirBuilderPropIni.Save;
 end;
 
 procedure TfrmFayesDirBuilder.dbgridCSVCellClick(Column : TColumn);

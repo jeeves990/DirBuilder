@@ -5,7 +5,7 @@ unit DirBuilder_dmod;
 interface
 
 uses
-  Classes, SysUtils, csvdataset, DB, BufDataset, Dialogs;
+  Classes, SysUtils, csvdataset, DB, mysql57conn, SQLDB, Dialogs, IniPropStorage;
 
 type
 
@@ -19,7 +19,8 @@ type
   TDirBuilder_dataModule = class(TDataModule)
     CSVDataset: TCSVDataset;
     CSVDsDtaSrc: TDataSource;
-		BufDataset: TBufDataset;
+    BooksDbConn: TMySQL57Connection;
+    BooksDbTx: TSQLTransaction;
     procedure DataModuleCreate(Sender: TObject);
   private
     FFileName : TFileName;
