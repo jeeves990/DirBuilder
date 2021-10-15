@@ -116,6 +116,7 @@
         <Filename Value="frmbooksdb.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmBooksDb"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmBooksDb"/>
       </Unit11>

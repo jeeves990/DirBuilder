@@ -22,10 +22,10 @@ begin
   Application.CreateForm(TDirBuilder_dataModule, DirBuilder_dataModule);
   Application.CreateForm(TfrmFayesDirBuilder, frmFayesDirBuilder);
   Application.CreateForm(TfmDisplayCSVFile, fmDisplayCSVFile);
-	Application.CreateForm(TfmGetNewValue, fmGetNewValue);
-	Application.CreateForm(TfmCSVParser_setup, fmCSVParser_setup);
-	Application.CreateForm(TfmChangeCSVProperties, fmChangeCSVProperties);
-  Application.CreateForm(TfmBooksDb, fmBooksDb);
+  Application.CreateForm(TfmGetNewValue, fmGetNewValue);
+  Application.CreateForm(TfmCSVParser_setup, fmCSVParser_setup);
+  Application.CreateForm(TfmChangeCSVProperties, fmChangeCSVProperties);
+  //Application.CreateForm(TfmBooksDb, fmBooksDb);
   Application.Run;
 end.
 

@@ -21,7 +21,7 @@ uses
   Menus, StdCtrls, SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd,
   ComboEx, Grids, IniPropStorage, DirBuilder_dmod, stringGridHelper,
   frmDisplayCSVFile, StringGridUtil, CSVParser_setup, dmodCSVParser,
-  frmChangeCSVProperties, RTTICtrls;
+  frmChangeCSVProperties, frmBooksDb, RTTICtrls;
 
 type
   EMyDBNotOpenException = class(Exception);
@@ -29,6 +29,7 @@ type
   { TfrmFayesDirBuilder }
 
   TfrmFayesDirBuilder = class(TForm)
+    ActionBooksDb: TAction;
     ActionReadRawFile: TAction;
     ActionSetTitles: TAction;
     ActionFindOutputDir : TAction;
@@ -54,6 +55,8 @@ type
     MenuItem10: TMenuItem;
     MenuItem11: TMenuItem;
     MenuItem12: TMenuItem;
+    MenuItem15: TMenuItem;
+    N7: TMenuItem;
     N6: TMenuItem;
     N5: TMenuItem;
     N4: TMenuItem;
@@ -91,6 +94,7 @@ type
     MenuItem13: TMenuItem;
     ActionAddToDB: TAction;
     MenuItem14: TMenuItem;
+    procedure ActionBooksDbExecute(Sender: TObject);
     procedure ActionCloseExecute(Sender : TObject);
     procedure ActionFindCSVExecute(Sender : TObject);
     procedure ActionFindOutputDirExecute(Sender : TObject);
@@ -119,6 +123,7 @@ type
     FDirListColumn : Integer;
     FCSVDelimiter : String;
     //dmod : TDirBuilder_dataModule;
+    FBooksDbDlg : TfmBooksDb;
     function countSubDirs(path: String): Integer;
 		procedure GetCSVParserProps;
   public
@@ -174,6 +179,7 @@ begin
   //g_path := ExtractFilePath(Application.ExeName);
   //ShowMessage(g_path);
   DirBuilderPropIni.Restore;
+  FBooksDbDlg := nil;
 end;
 
 procedure TfrmFayesDirBuilder.GetCSVParserProps;
@@ -262,6 +268,13 @@ end;
 procedure TfrmFayesDirBuilder.ActionCloseExecute(Sender : TObject);
 begin
   Close;
+end;
+
+procedure TfrmFayesDirBuilder.ActionBooksDbExecute(Sender: TObject);
+begin
+  if FBooksDbDlg = nil then
+    FBooksDbDlg := TfmBooksDb.Create(self);
+  FBooksDbDlg.Show;
 end;
 
 procedure TfrmFayesDirBuilder.MenuItem2Click(Sender : TObject);

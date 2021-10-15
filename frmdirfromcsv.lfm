@@ -272,6 +272,10 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     object ActionAddToDB: TAction
       Caption = 'Add to DB'
     end
+    object ActionBooksDb: TAction
+      Caption = 'View books db'
+      OnExecute = ActionBooksDbExecute
+    end
   end
   object MainMenu1: TMainMenu
     Left = 229
@@ -345,6 +349,12 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     end
     object MenuItem14: TMenuItem
       Action = ActionAddToDB
+    end
+    object N7: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem15: TMenuItem
+      Action = ActionBooksDb
     end
   end
   object popupMnu1: TPopupMenu

@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, SQLDB, DB, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Grids, DBGrids, ActnList, Menus, IniPropStorage,  mysql57conn,
-  DirBuilder_dmod;
+  Grids, DBGrids, ActnList, Menus, IniPropStorage, ComCtrls, PairSplitter,
+  StdCtrls, mysql57conn, DirBuilder_dmod;
 
 type
 
@@ -15,17 +15,33 @@ type
 
   TfmBooksDb = class(TForm)
     ActionGetBooks: TAction;
+    ActionGetBooks1: TAction;
     ActionList: TActionList;
+    booksPopup: TPopupMenu;
     fmBooksDbProps: TIniPropStorage;
+    lblBooksStoredAt: TLabel;
+    lblStorageLocations: TLabel;
+    lblBooksListedOn: TLabel;
+    lblEntities: TLabel;
     MenuItem1: TMenuItem;
+    pnlStorageLocations: TPanel;
+    pnlEntities: TPanel;
+    pgctrlBooksDb: TPageControl;
     pnlBooks: TPanel;
     pnlBooksListedOn: TPanel;
     pnlBooksStoredAt: TPanel;
-    booksPopup: TPopupMenu;
+    pnlName: TPanel;
+    qryBooks: TSQLQuery;
     sgridBooks: TStringGrid;
     sgridBooksListedOn: TStringGrid;
     sgridBooksStoredAt: TStringGrid;
-    qryBooks: TSQLQuery;
+    sgridStorageLocations: TStringGrid;
+    sgridEntities: TStringGrid;
+    Splitter1: TSplitter;
+    spltrEntities: TSplitter;
+    spltrMain: TSplitter;
+    tabshEntity: TTabSheet;
+    tabshLocal: TTabSheet;
     procedure ActionGetBooksExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -105,6 +121,7 @@ end;
 procedure TfmBooksDb.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
     fmBooksDbProps.Save;
+    CloseAction := caFree;
 end;
 
 procedure TfmBooksDb.FormCreate(Sender: TObject);
