@@ -21,7 +21,7 @@ uses
   Menus, StdCtrls, SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd,
   ComboEx, Grids, IniPropStorage, DirBuilder_dmod, stringGridHelper,
   frmDisplayCSVFile, StringGridUtil, CSVParser_setup, dmodCSVParser,
-  frmChangeCSVProperties, frmBooksDb, RTTICtrls;
+  frmChangeCSVProperties, frmNewBooksDb, RTTICtrls;
 
 type
   EMyDBNotOpenException = class(Exception);
@@ -122,8 +122,8 @@ type
     checkFlag : Boolean;
     FDirListColumn : Integer;
     FCSVDelimiter : String;
-    //dmod : TDirBuilder_dataModule;
-    FBooksDbDlg : TfmBooksDb;
+    dmod : TDirBuilder_dataModule;
+    FBooksDbDlg : TfmNewBooksDb;
     function countSubDirs(path: String): Integer;
 		procedure GetCSVParserProps;
   public
@@ -172,7 +172,7 @@ begin
   ckboxShowLineNumbersChange(self);
   if DirectoryExists(cboxOutDir.Text) then
      cboxOutDir.Items.Add(cboxOutDir.Text);
-  //dmod := DirBuilder_dataModule;
+  dmod := TDirBuilder_dataModule.Create(self);
   sGridMain.Clear;
   GetCSVParserProps;
   pgCtrl.ActivePage := tabshCSVFile;
@@ -273,7 +273,7 @@ end;
 procedure TfrmFayesDirBuilder.ActionBooksDbExecute(Sender: TObject);
 begin
   if FBooksDbDlg = nil then
-    FBooksDbDlg := TfmBooksDb.Create(self);
+    FBooksDbDlg := TfmNewBooksDb.Create(self);
   FBooksDbDlg.Show;
 end;
 
@@ -316,6 +316,10 @@ begin
 end;
 
 
+(*
+    procedure TfrmFayesDirBuilder.ActionChangeCSVDelimiterExecute(Sender: TObject);
+    this may not be used.
+*)
 procedure TfrmFayesDirBuilder.ActionChangeCSVDelimiterExecute(Sender: TObject);
 var
   dlg : TfmChangeCSVProperties;

@@ -27,18 +27,21 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="4">
       <Item1>
-        <PackageName Value="RunTimeTypeInfoControls"/>
+        <PackageName Value="eccontrols"/>
       </Item1>
       <Item2>
-        <PackageName Value="FCL"/>
+        <PackageName Value="RunTimeTypeInfoControls"/>
       </Item2>
       <Item3>
-        <PackageName Value="LCL"/>
+        <PackageName Value="FCL"/>
       </Item3>
+      <Item4>
+        <PackageName Value="LCL"/>
+      </Item4>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="13">
       <Unit0>
         <Filename Value="DirBuilder.pas"/>
         <IsPartOfProject Value="True"/>
@@ -101,6 +104,7 @@
         <Filename Value="frmchangecsvproperties.pp"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmChangeCSVProperties"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmChangeCSVProperties"/>
       </Unit9>
@@ -120,6 +124,14 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmBooksDb"/>
       </Unit11>
+      <Unit12>
+        <Filename Value="frmnewbooksdb.pp"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmNewBooksDb"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmNewBooksDB"/>
+      </Unit12>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

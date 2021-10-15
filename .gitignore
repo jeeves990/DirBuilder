@@ -27,5 +27,11 @@
 ./lib/*
 lib/*
 backup/*
+clone/*
+./clone/*
 *~
 *.ppu
+
+# my files to ignore
+test*
+frmbooksdb*

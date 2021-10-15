@@ -5,21 +5,21 @@ unit frmChangeCSVProperties;
 interface
 
 uses
-  Win32Proc,      Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls;
+  Win32Proc, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls;
 
 type
 
 	{ TfmChangeCSVProperties }
 
   TfmChangeCSVProperties = class(TForm)
-		rgrpCSVDelimiter: TRadioGroup;
-		rbtnComma: TRadioButton;
-		rbtnTab: TRadioButton;
-		rbtnSemicolon: TRadioButton;
-		btnAccept: TButton;
-		btnCancel: TButton;
-		procedure btnCancelClick(Sender: TObject);
-		procedure btnAcceptClick(Sender: TObject);
+    rgrpCSVDelimiter: TRadioGroup;
+    rbtnComma: TRadioButton;
+    rbtnTab: TRadioButton;
+    rbtnSemicolon: TRadioButton;
+    btnAccept: TButton;
+    btnCancel: TButton;
+    procedure btnCancelClick(Sender: TObject);
+    procedure btnAcceptClick(Sender: TObject);
   private
     FDelimiterChoice : Integer;
   public
