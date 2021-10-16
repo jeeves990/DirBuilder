@@ -117,20 +117,19 @@
         <UnitName Value="dmodCSVParser"/>
       </Unit10>
       <Unit11>
-        <Filename Value="frmbooksdb.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="fmBooksDb"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="frmBooksDb"/>
-      </Unit11>
-      <Unit12>
         <Filename Value="frmnewbooksdb.pp"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmNewBooksDb"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmNewBooksDB"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="frmaddedit.pp"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmAddEdit"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmAddEdit"/>
       </Unit12>
     </Units>
   </ProjectOptions>

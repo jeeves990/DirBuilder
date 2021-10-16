@@ -5,34 +5,41 @@ unit frame4table;
 interface
 
 uses
-  Classes, SysUtils, DB, SQLDB, Forms, Controls, ExtCtrls, Grids, ActnList,
-  StdCtrls, ComCtrls, Menus, ECGrid;
+  Classes, SysUtils, SQLDB, Forms, Controls, ExtCtrls, Grids, ActnList,
+  StdCtrls, ComCtrls, Menus
+  ;
 
 type
 
   { TframeTable }
 
   TframeTable = class(TFrame)
-    ActionAddRow: TAction;
-    ActionDeleteRow: TAction;
+    Action1: TAction;
     ActionEditRow: TAction;
+    ActionRefresh: TAction;
+    ActionDeleteRow: TAction;
+    ActionAddRow: TAction;
+    Actions: TActionList;
     frameTblimgList: TImageList;
-    sGrid: TECGrid;
     edTableName: TEdit;
     Label1: TLabel;
     pnlAnnunciator: TPanel;
     pnl: TPanel;
+    sGrid: TStringGrid;
     ToolBar1: TToolBar;
-    bntAdd: TToolButton;
+    btnAdd: TToolButton;
     btnEdit: TToolButton;
     toolBtnSeparator: TToolButton;
     btnRemove: TToolButton;
+    btnRefresh: TToolButton;
+    ToolButton1: TToolButton;
+    procedure ActionAddRowExecute(Sender: TObject);   virtual;
+    procedure ActionDeleteRowExecute(Sender: TObject);    virtual;
+    procedure ActionEditRowExecute(Sender: TObject);  virtual;
+    procedure ActionRefreshExecute(Sender: TObject);  virtual;
   private
     qry : TSQLQuery;
   public
-    procedure ActionAddRowExecute(Sender: TObject);
-    procedure ActionDeleteRowExecute(Sender: TObject);
-    procedure ActionEditRowExecute(Sender: TObject);
   end;
 
 implementation
@@ -41,19 +48,24 @@ implementation
 
 { TframeTable }
 
-procedure TframeTable.ActionAddRowExecute(Sender: TObject);
-begin
-//
-end;
-
 procedure TframeTable.ActionDeleteRowExecute(Sender: TObject);
 begin
-//
+  //   virtual
+end;
+
+procedure TframeTable.ActionAddRowExecute(Sender: TObject);
+begin
+//   virtual
 end;
 
 procedure TframeTable.ActionEditRowExecute(Sender: TObject);
 begin
-//
+  //   virtual
+end;
+
+procedure TframeTable.ActionRefreshExecute(Sender: TObject);
+begin
+  //   virtual
 end;
 
 end.

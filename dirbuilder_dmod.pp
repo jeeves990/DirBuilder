@@ -34,6 +34,13 @@ type
 var
   DirBuilder_dataModule: TDirBuilder_dataModule;
 
+const
+  SQL4BOOKS = 'SELECT * FROM BOOKS';
+  HYPHEN = '-';
+  SEMICOLON = ';';
+  COLON = ':';
+  UNDERSCORE = '_';
+
 implementation
 
 {$R *.lfm}

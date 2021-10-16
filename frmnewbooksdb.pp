@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
-  ActnList, Menus, frame4Table, ECGrid, DirBuilder_dmod, SQLDB
+  ActnList, Menus, frame4Table, ECGrid, DirBuilder_dmod, SQLDB, grids,
+  frmAddEdit, Mouse
   ;
 
 type
@@ -31,21 +32,23 @@ type
     ActionDeleteStorageLocation: TAction;
     Actions: TActionList;
     frameBooksTable: TframeTable;
-    frameStoredAt: TframeTable;
     frameStorageLocations: TframeTable;
-    frameBooksListedOn: TframeTable;
+    frameStoredAt: TframeTable;
+    frameBooksToEntity: TframeTable;
     frameInternetEntities: TframeTable;
     ImageList1: TImageList;
     pgCtrl: TPageControl;
     booksDbPopupMnu: TPopupMenu;
+    Splitter1: TSplitter;
     spltrMain: TSplitter;
     spltrBookStorage: TSplitter;
-    SQLQuery1: TSQLQuery;
     tabshBookStorage: TTabSheet;
     tabshInternetEntities: TTabSheet;
     ToolButton3: TToolButton;
     procedure ActionAddBookExecute(Sender: TObject);
     procedure ActionAddMapBook2StorageLocationExecute(Sender: TObject);
+    procedure ActionAddRowExecute(Sender: TObject);
+    procedure ActionEditRowExecute(Sender: TObject);
     procedure booksDbPopupMnuPopup(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -55,13 +58,19 @@ type
     procedure frameStorageLocationsMouseEnter(Sender: TObject);
     procedure frameStoredAtMouseEnter(Sender: TObject);
   private
+    FaddEdDlg: TfmAddEdit;
     FCurrentComponent : TComponent;
     FCurrentTag : Integer;
     FQry : TSQLQuery;
-    dmod : TDirBuilder_dataModule;
+    FDmod : TDirBuilder_dataModule;
+    F_sql: String;
     mnuItmAra : array of TMenuItem;
+    function ComponentUnderMouse: TComponent;
   public
-
+    constructor Create(aOwner : TComponent); override;
+    property Dmod : TDirBuilder_dataModule read FDmod write FDmod;
+    property _sql : String read F_sql write F_sql;
+    property addEdDlg : TfmAddEdit read FaddEdDlg write FaddEdDlg;
   end;
 
 var
@@ -69,20 +78,32 @@ var
 
 implementation
 
+{$R *.lfm}
+
+uses frmDirFromCSV;
+
 const
   BOOKS_TAG                    = 100000;
   BOOKS_STORAGE_MAP_TAG        = 100001;
   STORAGE_LOCATION_TAG         = 100002;
   BOOKS_TO_ENTITIES_TAG        = 100003;
   ENTITIES_TAG                 = 100004;
-
-{$R *.lfm}
+  SQL4BOOKS                    = 'SELECT * FROM BOOKS';
 
 { TfmNewBooksDb }
 
 procedure TfmNewBooksDb.frameStoredAtMouseEnter(Sender: TObject);
 begin
   FCurrentTag := BOOKS_STORAGE_MAP_TAG;
+end;
+
+constructor TfmNewBooksDb.Create(aOwner: TComponent);
+begin
+  try
+  inherited Create(aOwner);
+  except on e : Exception do
+    ShowMessage(e.Message);
+  end;
 end;
 
 procedure TfmNewBooksDb.frameBooksTableMouseEnter(Sender: TObject);
@@ -169,14 +190,21 @@ begin
   SetLength(mnuItmAra, 0);
 end;
 
+{$DEFINE DEBUG}
 procedure TfmNewBooksDb.FormCreate(Sender: TObject);
 var
   i : Integer;
 begin
-  dmod := DirBuilder_dataModule;
+  FDmod := frmFayesDirBuilder.dmod;
   FQry := TSQLQuery.Create(self);
-  FQry.DataBase := dmod.BooksDbConn;
-  FQry.Transaction := dmod.BooksDbConn.Transaction;
+  FQry.DataBase := FDmod.BooksDbConn;
+  FQry.Transaction := FDmod.BooksDbConn.Transaction;
+
+  {$IFDEF DEBUG}
+  FQry.SQL.Add(SQL4BOOKS);
+  {$ELSE}
+  FQry.SQL.Add(F_sql);
+  {$ENDIF}
   SetLength(mnuItmAra, 3);
   i := 0;
   while i < Length(mnuItmAra) do
@@ -187,33 +215,64 @@ begin
   booksDbPopupMnu.Items.Add(mnuItmAra);
 end;
 
+function TfmNewBooksDb.ComponentUnderMouse : TComponent;
+var
+  ctrl: TControl;
+  pt: TPoint;
+begin
+  pt.X := GetMouseX;
+  pt.Y := GetMouseY;
+  pt := ScreenToClient(pt);
+  ctrl := ControlAtPos(pt, [capfRecursive, capfAllowWinControls]);
+  if Assigned(ctrl) then
+    Result := ctrl;
+end;
+
+
 procedure TfmNewBooksDb.ActionAddMapBook2StorageLocationExecute(Sender: TObject);
 begin
   FQry.SQL.Clear;
 end;
 
+procedure TfmNewBooksDb.ActionAddRowExecute(Sender: TObject);
+var
+  ctrl : TComponent;
+begin
+  ctrl := ComponentUnderMouse;
+  ShowMessage(ctrl.Name);
+  // display a dialog to add the row
+  ActionAddBook.Execute;
+end;
+
+procedure TfmNewBooksDb.ActionEditRowExecute(Sender: TObject);
+begin
+  ActionEditBook.Execute;
+end;
+
 procedure TfmNewBooksDb.ActionAddBookExecute(Sender: TObject);
 var
   col, row : Integer;
-  grid : TECGrid;
-const
-  _sql = 'SELECT * FROM BOOKS';
+  grid : TStringGrid;
 begin
   FQry.SQL.Clear;
-  FQry.SQL.Add(_sql);
+  {$IFDEF DEBUG}
+  FQry.SQL.Add(SQL4BOOKS);
+  {$ELSE}
+  FQry.SQL.Add(Fsql);
+
+  {$ENDIF}
   FQry.Open;
-  grid := frameBooksTable.sGrid;
-  //grid.Color:=clBlue;
+  grid := self.frameBooksTable.sGrid;
   grid.ColCount := FQry.FieldDefs.Count +grid.FixedCols;
   for col := 0 to FQry.FieldDefs.Count -1 do
-    grid.Columns[col +grid.FixedCols].Title := FQry.FieldDefs[col].DisplayName;
+    grid.Columns[col +grid.FixedCols].Title.Caption := FQry.FieldDefs[col].DisplayName;
 
   row := 0;
   FQry.First;
   while not FQry.EOF do
   begin
-    grid.RowCount := gridRowCount +1;
-    row := gridRowCount -1;
+    grid.RowCount := grid.RowCount +1;
+    row := grid.RowCount -1;
     for col := 0 to FQry.Fields.Count -1 do
       grid.Cells[col, row] := FQry.Fields.Fields[col].AsString;
   end;

@@ -10,7 +10,7 @@ uses
   Forms, frmDirFromCSV, stringGridHelper, runtimetypeinfocontrols,
 	DirBuilder_dmod, frmDisplayCSVFile, frmInputNewValue, unitAddQuotesToFiles,
 	stringgridutil, CSVParser_setup, frmChangeCSVProperties, dmodCSVParser,
-frmBooksDb, frmNewBooksDB
+frmNewBooksDB, frmAddEdit
   { you can add units after this };
 
 {$R *.res}
@@ -21,6 +21,7 @@ begin
   Application.Initialize;
   //Application.CreateForm(TDirBuilder_dataModule, DirBuilder_dataModule);
   Application.CreateForm(TfrmFayesDirBuilder, frmFayesDirBuilder);
+  Application.CreateForm(TfmAddEdit, fmAddEdit);
   //Application.CreateForm(TfmDisplayCSVFile, fmDisplayCSVFile);
   //Application.CreateForm(TfmGetNewValue, fmGetNewValue);
   //Application.CreateForm(TfmCSVParser_setup, fmCSVParser_setup);

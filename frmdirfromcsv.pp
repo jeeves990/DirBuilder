@@ -122,12 +122,13 @@ type
     checkFlag : Boolean;
     FDirListColumn : Integer;
     FCSVDelimiter : String;
-    dmod : TDirBuilder_dataModule;
+    Fdmod : TDirBuilder_dataModule;
     FBooksDbDlg : TfmNewBooksDb;
     function countSubDirs(path: String): Integer;
 		procedure GetCSVParserProps;
   public
     property CSVDelimiter : String read FCSVDelimiter write FCSVDelimiter;
+    property dmod : TDirBuilder_dataModule read Fdmod write Fdmod;
   end;
 
 var
@@ -172,7 +173,7 @@ begin
   ckboxShowLineNumbersChange(self);
   if DirectoryExists(cboxOutDir.Text) then
      cboxOutDir.Items.Add(cboxOutDir.Text);
-  dmod := TDirBuilder_dataModule.Create(self);
+  Fdmod := TDirBuilder_dataModule.Create(self);
   sGridMain.Clear;
   GetCSVParserProps;
   pgCtrl.ActivePage := tabshCSVFile;
@@ -256,7 +257,7 @@ procedure TfrmFayesDirBuilder.ActionSetTitlesExecute(Sender: TObject);
 begin
   //if ckbox1stRowIsTitles.Checked then
   //begin
-  //  dmod.setFieldNames;
+  //  Fdmod.setFieldNames;
   //  dbgridCSV.Options := dbgridCSV.Options + [dgTitles];
   //  //dbgridCSV.DataSource.DataSet.Close;
   //  //dbgridCSV.DataSource.DataSet.Open;
@@ -284,7 +285,7 @@ end;
 
 procedure TfrmFayesDirBuilder.cboxCSVFileChange(Sender: TObject);
 begin
-  //if dmod.CSVDataset.Active then
+  //if Fdmod.CSVDataset.Active then
   //  ckbox1stRowIsTitles.Checked:=False;
 end;
 
@@ -525,12 +526,12 @@ begin
 		end
     else
       //ShowMessage('string grid line count is ' +IntToStr(sGridMain.RowCount));
-		//dmod.FileName := fileName;
-    //dmod.open_DataSet(fileName, ckbox1stRowIsTitles.Checked);
-    //if not dmod.CSVDataset.Active then
+		//Fdmod.FileName := fileName;
+    //Fdmod.open_DataSet(fileName, ckbox1stRowIsTitles.Checked);
+    //if not Fdmod.CSVDataset.Active then
     //  raise EMyDBNotOpenException.Create('ActionReadCSVExecute(0): Unknown reason.');
     //btnResizeTableColumns.Enabled := True;
-    //if not dmod.CSVDataset.Active then
+    //if not Fdmod.CSVDataset.Active then
     //  raise EMyDBNotOpenException.Create('ActionReadCSVExecute(1): Unknown reason.');
     //if not dbgridCSV.DataSource.DataSet.Active then
     //  raise EMyDBNotOpenException.Create('ActionReadCSVExecute(2): Unknown reason.');

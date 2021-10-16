@@ -1,108 +1,69 @@
-object frameTable: TframeTable
-  Left = 0
-  Height = 262
-  Top = 0
-  Width = 427
-  ClientHeight = 262
-  ClientWidth = 427
-  TabOrder = 0
-  DesignLeft = 364
-  DesignTop = 293
-  object pnl: TPanel
+object fmAddEdit: TfmAddEdit
+  Left = 976
+  Height = 317
+  Top = 243
+  Width = 693
+  Caption = 'Add/Edit'
+  ClientHeight = 317
+  ClientWidth = 693
+  OnClose = FormClose
+  OnCreate = FormCreate
+  LCLVersion = '2.2.0.1'
+  object ToolBar1: TToolBar
     Left = 0
-    Height = 262
+    Height = 26
     Top = 0
-    Width = 427
-    Align = alClient
-    Anchors = []
-    ClientHeight = 262
-    ClientWidth = 427
+    Width = 693
+    Caption = 'toolBar'
+    Images = frameTblimgList
     TabOrder = 0
-    object pnlAnnunciator: TPanel
+    object btnAdd: TToolButton
       Left = 1
-      Height = 25
-      Top = 1
-      Width = 425
-      Align = alTop
-      ClientHeight = 25
-      ClientWidth = 425
-      TabOrder = 0
-      object Label1: TLabel
-        Left = 8
-        Height = 15
-        Top = 3
-        Width = 60
-        Caption = 'Table name'
-      end
-      object edTableName: TEdit
-        Left = 80
-        Height = 23
-        Top = 0
-        Width = 338
-        Anchors = [akTop, akLeft, akRight]
-        TabOrder = 0
-        Text = 'edTableName'
-      end
+      Top = 2
+      Action = ActionAddRow
     end
-    object ToolBar1: TToolBar
-      Left = 1
-      Height = 26
-      Top = 26
-      Width = 425
-      Caption = 'toolBar'
-      Images = frameTblimgList
-      TabOrder = 1
-      object btnAdd: TToolButton
-        Left = 1
-        Top = 2
-        Action = ActionAddRow
-      end
-      object btnEdit: TToolButton
-        Left = 24
-        Top = 2
-        Action = ActionEditRow
-      end
-      object toolBtnSeparator: TToolButton
-        Left = 78
-        Height = 22
-        Top = 2
-        ShowCaption = False
-        Style = tbsSeparator
-        Visible = False
-      end
-      object btnRemove: TToolButton
-        Left = 86
-        Top = 2
-        Action = ActionDeleteRow
-        Visible = False
-      end
-      object btnRefresh: TToolButton
-        Left = 55
-        Top = 2
-        Action = ActionRefresh
-      end
-      object ToolButton1: TToolButton
-        Left = 47
-        Height = 22
-        Top = 2
-        Caption = 'ToolButton1'
-        Style = tbsSeparator
-      end
+    object btnEdit: TToolButton
+      Left = 24
+      Top = 2
+      Action = ActionEditRow
     end
-    object sGrid: TStringGrid
-      Left = 1
-      Height = 209
-      Top = 52
-      Width = 425
-      Align = alClient
-      ColCount = 1
-      RowCount = 1
-      TabOrder = 2
+    object tlbtnSep02: TToolButton
+      Left = 78
+      Height = 22
+      Top = 2
+      ShowCaption = False
+      Style = tbsSeparator
+      Visible = False
+    end
+    object btnRemove: TToolButton
+      Left = 86
+      Top = 2
+      Action = ActionDeleteRow
+    end
+    object btnRefresh: TToolButton
+      Left = 55
+      Top = 2
+      Action = ActionRefresh
+    end
+    object tlBtnSep01: TToolButton
+      Left = 47
+      Height = 22
+      Top = 2
+      Caption = 'tlBtnSep01'
+      Style = tbsSeparator
     end
   end
+  object Edit1: TEdit
+    Left = 240
+    Height = 23
+    Top = 48
+    Width = 80
+    TabOrder = 1
+    Text = 'Edit1'
+  end
   object frameTblimgList: TImageList
-    Left = 224
-    Top = 88
+    Left = 240
+    Top = 72
     Bitmap = {
       4C7A0800000010000000100000003E0E00000000000078DAED9709541457BA80
       6F81302C85B213C40D8880A8105914458C0A08C605646B5183EB43340F719238
@@ -587,27 +548,35 @@ object frameTable: TframeTable
   end
   object Actions: TActionList
     Images = frameTblimgList
-    Left = 104
-    Top = 144
+    Left = 248
+    Top = 128
     object ActionAddRow: TAction
       Caption = 'Add'
       ImageIndex = 1
-      OnExecute = ActionAddRowExecute
     end
     object ActionEditRow: TAction
       Caption = 'Edit row'
       ImageIndex = 7
-      OnExecute = ActionEditRowExecute
     end
     object ActionRefresh: TAction
       Caption = 'ActionRefresh'
       ImageIndex = 6
-      OnExecute = ActionRefreshExecute
     end
     object ActionDeleteRow: TAction
       Caption = 'Delete record'
       ImageIndex = 4
-      OnExecute = ActionDeleteRowExecute
     end
+  end
+  object qry: TSQLQuery
+    FieldDefs = <>
+    Params = <>
+    Macros = <>
+    Left = 336
+    Top = 48
+  end
+  object dtaSrc: TDataSource
+    DataSet = qry
+    Left = 336
+    Top = 128
   end
 end

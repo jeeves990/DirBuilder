@@ -1,12 +1,12 @@
 object fmNewBooksDb: TfmNewBooksDb
-  Left = 265
-  Height = 639
-  Top = 115
-  Width = 716
-  Align = alTop
+  Left = 297
+  Height = 645
+  Top = 118
+  Width = 694
+  Align = alClient
   Caption = 'New books db'
-  ClientHeight = 639
-  ClientWidth = 716
+  ClientHeight = 645
+  ClientWidth = 694
   OnClose = FormClose
   OnCreate = FormCreate
   PopupMenu = booksDbPopupMnu
@@ -15,206 +15,318 @@ object fmNewBooksDb: TfmNewBooksDb
     Cursor = crVSplit
     Left = 0
     Height = 5
-    Top = 238
-    Width = 716
+    Top = 275
+    Width = 694
     Align = alTop
     ResizeAnchor = akTop
   end
   object pgCtrl: TPageControl
     Left = 0
-    Height = 396
-    Top = 243
-    Width = 716
-    ActivePage = tabshInternetEntities
+    Height = 365
+    Top = 280
+    Width = 694
+    ActivePage = tabshBookStorage
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 1
     object tabshBookStorage: TTabSheet
       Caption = 'Book storage'
-      ClientHeight = 368
-      ClientWidth = 708
-      inline frameStoredAt: TframeTable
-        Height = 225
-        Width = 708
-        Align = alTop
-        ClientHeight = 225
-        ClientWidth = 708
-        OnMouseEnter = frameStoredAtMouseEnter
-        inherited pnl: TPanel
-          Height = 203
-          Width = 689
-          ClientHeight = 203
-          ClientWidth = 689
-          inherited pnlAnnunciator: TPanel
-            Width = 687
-            ClientWidth = 687
-            inherited edTableName: TEdit
-              Width = 600
-              Text = 'Books stored at'
-            end
-          end
-          inherited sGrid: TECGrid
-            Tag = 100001
-            Height = 150
-            Width = 687
-          end
-          inherited ToolBar1: TToolBar
-            Width = 687
-            inherited btnRemove: TToolButton
-              Left = 63
-            end
-          end
-        end
-      end
+      ClientHeight = 337
+      ClientWidth = 686
       object spltrBookStorage: TSplitter
         Cursor = crVSplit
         Left = 0
         Height = 5
-        Top = 225
-        Width = 708
+        Top = 214
+        Width = 686
         Align = alTop
         ResizeAnchor = akTop
       end
       inline frameStorageLocations: TframeTable
-        Height = 138
-        Top = 230
-        Width = 708
-        Align = alClient
-        ClientHeight = 138
-        ClientWidth = 708
-        OnMouseEnter = frameStorageLocationsMouseEnter
-        TabOrder = 2
+        Height = 214
+        Width = 686
+        Align = alTop
+        ClientHeight = 214
+        ClientWidth = 686
+        TabOrder = 1
         inherited pnl: TPanel
-          Height = 116
-          Width = 689
-          ClientHeight = 116
-          ClientWidth = 689
+          Height = 214
+          Width = 686
+          ClientHeight = 214
+          ClientWidth = 686
           inherited pnlAnnunciator: TPanel
-            Width = 687
-            ClientWidth = 687
+            Width = 684
+            ClientWidth = 684
             inherited edTableName: TEdit
-              Width = 600
-              Text = 'Book storage locations'
+              Width = 597
+              Text = 'Storage locations'
             end
           end
-          inherited sGrid: TECGrid
-            Tag = 100002
-            Height = 63
-            Width = 687
+          inherited ToolBar1: TToolBar
+            Width = 684
+            object bntAdd: TToolButton[0]
+              Left = 1
+              Top = 2
+              Action = frameStorageLocations.ActionAddRow
+            end
+            inherited btnRemove: TToolButton
+              Action = frameStorageLocations.ActionClose
+            end
+          end
+          inherited sGrid: TStringGrid
+            Height = 161
+            Width = 684
+          end
+        end
+        inherited Actions: TActionList
+          inherited ActionAddRow: TAction
+            OnExecute = ActionAddRowExecute
+          end
+          inherited ActionEditRow: TAction
+            OnExecute = nil
+          end
+          inherited ActionRefresh: TAction
+            OnExecute = nil
+          end
+          object ActionClose: TAction[3]
+            Caption = 'Close'
+            ImageIndex = 4
+            OnExecute = ActionDeleteRowExecute
+          end
+        end
+      end
+      inline frameStoredAt: TframeTable
+        Height = 118
+        Top = 219
+        Width = 686
+        Align = alClient
+        ClientHeight = 118
+        ClientWidth = 686
+        TabOrder = 2
+        inherited pnl: TPanel
+          Height = 118
+          Width = 686
+          ClientHeight = 118
+          ClientWidth = 686
+          inherited pnlAnnunciator: TPanel
+            Width = 684
+            ClientWidth = 684
+            inherited edTableName: TEdit
+              Width = 597
+              Text = 'Books stored at'
+            end
           end
           inherited ToolBar1: TToolBar
-            Width = 687
+            Width = 684
+            object bntAdd: TToolButton[0]
+              Left = 1
+              Top = 2
+              Action = frameStoredAt.ActionAddRow
+            end
+            inherited btnRemove: TToolButton
+              Action = frameStoredAt.ActionClose
+            end
+          end
+          inherited sGrid: TStringGrid
+            Height = 65
+            Width = 684
+          end
+        end
+        inherited Actions: TActionList
+          inherited ActionAddRow: TAction
+            OnExecute = ActionAddRowExecute
+          end
+          inherited ActionEditRow: TAction
+            OnExecute = nil
+          end
+          inherited ActionRefresh: TAction
+            OnExecute = nil
+          end
+          object ActionClose: TAction[3]
+            Caption = 'Close'
+            ImageIndex = 4
+            OnExecute = ActionDeleteRowExecute
           end
         end
       end
     end
     object tabshInternetEntities: TTabSheet
       Caption = 'Internet entities'
-      ClientHeight = 368
-      ClientWidth = 708
-      inline frameBooksListedOn: TframeTable
-        Height = 256
-        Width = 708
+      ClientHeight = 337
+      ClientWidth = 686
+      inline frameBooksToEntity: TframeTable
+        Height = 224
+        Width = 686
         Align = alTop
-        ClientHeight = 256
-        ClientWidth = 708
-        OnMouseEnter = frameBooksListedOnMouseEnter
+        ClientHeight = 224
+        ClientWidth = 686
         inherited pnl: TPanel
-          Height = 234
-          Width = 689
-          ClientHeight = 234
-          ClientWidth = 689
+          Height = 224
+          Width = 686
+          ClientHeight = 224
+          ClientWidth = 686
           inherited pnlAnnunciator: TPanel
-            Width = 687
-            ClientWidth = 687
+            Width = 684
+            ClientWidth = 684
             inherited edTableName: TEdit
-              Width = 600
-              Text = 'Books listed on entity'
+              Width = 597
+              Text = 'Books listed on'
             end
           end
-          inherited sGrid: TECGrid
-            Tag = 100003
-            Height = 181
-            Width = 687
-          end
           inherited ToolBar1: TToolBar
-            Width = 687
+            Width = 684
+            object bntAdd: TToolButton[0]
+              Left = 1
+              Top = 2
+              Action = frameBooksToEntity.ActionAddRow
+            end
+            inherited btnRemove: TToolButton
+              Action = frameBooksToEntity.ActionClose
+            end
+          end
+          inherited sGrid: TStringGrid
+            Height = 171
+            Width = 684
+          end
+        end
+        inherited Actions: TActionList
+          inherited ActionAddRow: TAction
+            OnExecute = nil
+          end
+          inherited ActionEditRow: TAction
+            OnExecute = nil
+          end
+          inherited ActionRefresh: TAction
+            OnExecute = nil
+          end
+          object ActionClose: TAction[3]
+            Caption = 'Close'
+            ImageIndex = 4
+            OnExecute = ActionDeleteRowExecute
           end
         end
       end
+      object Splitter1: TSplitter
+        Cursor = crVSplit
+        Left = 0
+        Height = 5
+        Top = 224
+        Width = 686
+        Align = alTop
+        ResizeAnchor = akTop
+      end
       inline frameInternetEntities: TframeTable
-        Height = 112
-        Top = 256
-        Width = 708
+        Height = 108
+        Top = 229
+        Width = 686
         Align = alClient
-        ClientHeight = 112
-        ClientWidth = 708
-        OnMouseEnter = frameInternetEntitiesMouseEnter
-        TabOrder = 1
+        ClientHeight = 108
+        ClientWidth = 686
+        TabOrder = 2
         inherited pnl: TPanel
-          Height = 90
-          Width = 689
-          ClientHeight = 90
-          ClientWidth = 689
+          Height = 108
+          Width = 686
+          ClientHeight = 108
+          ClientWidth = 686
           inherited pnlAnnunciator: TPanel
-            Width = 687
-            ClientWidth = 687
+            Width = 684
+            ClientWidth = 684
             inherited edTableName: TEdit
-              Width = 600
-              Text = 'Internet entities'
+              Width = 597
+              Text = 'Listing entity'
             end
           end
-          inherited sGrid: TECGrid
-            Tag = 100004
-            Height = 37
-            Width = 687
-          end
           inherited ToolBar1: TToolBar
-            Width = 687
+            Width = 684
+            object bntAdd: TToolButton[0]
+              Left = 1
+              Top = 2
+              Action = frameInternetEntities.ActionAddRow
+            end
+            inherited btnRemove: TToolButton
+              Action = frameInternetEntities.ActionClose
+            end
+          end
+          inherited sGrid: TStringGrid
+            Height = 55
+            Width = 684
           end
         end
-        inherited frameTblimgList: TImageList
-          Left = 236
-          Top = 29
+        inherited Actions: TActionList
+          inherited ActionAddRow: TAction
+            OnExecute = nil
+          end
+          inherited ActionEditRow: TAction
+            OnExecute = nil
+          end
+          inherited ActionRefresh: TAction
+            OnExecute = nil
+          end
+          object ActionClose: TAction[3]
+            Caption = 'Close'
+            ImageIndex = 4
+            OnExecute = ActionDeleteRowExecute
+          end
         end
       end
     end
   end
   inline frameBooksTable: TframeTable
-    Height = 238
-    Width = 716
+    Height = 275
+    Width = 694
     Align = alTop
-    ClientHeight = 238
-    ClientWidth = 716
-    OnMouseEnter = frameBooksTableMouseEnter
+    ClientHeight = 275
+    ClientWidth = 694
     TabOrder = 2
     inherited pnl: TPanel
-      Height = 216
-      Width = 697
-      ClientHeight = 216
-      ClientWidth = 697
+      Height = 275
+      Width = 694
+      ClientHeight = 275
+      ClientWidth = 694
       inherited pnlAnnunciator: TPanel
-        Width = 695
-        ClientWidth = 695
+        Width = 692
+        ClientWidth = 692
         inherited edTableName: TEdit
-          Width = 608
+          Width = 605
           Text = 'Books'
         end
       end
-      inherited sGrid: TECGrid
-        Tag = 100000
-        Height = 163
-        Width = 695
-        Columns = <>
-      end
       inherited ToolBar1: TToolBar
-        Width = 695
+        Width = 692
+        object bntAdd: TToolButton[0]
+          Left = 1
+          Top = 2
+          Action = frameBooksTable.ActionAddRow
+        end
+        inherited btnRemove: TToolButton
+          Action = frameBooksTable.ActionClose
+        end
+      end
+      inherited sGrid: TStringGrid
+        Height = 222
+        Width = 692
+      end
+    end
+    inherited Actions: TActionList
+      inherited ActionAddRow: TAction
+        OnExecute = ActionAddRowExecute
+      end
+      inherited ActionEditRow: TAction
+        OnExecute = ActionEditRowExecute
+      end
+      inherited ActionRefresh: TAction
+        OnExecute = nil
+      end
+      object ActionClose: TAction[3]
+        Caption = 'Close'
+        ImageIndex = 4
+        OnExecute = ActionDeleteRowExecute
       end
     end
   end
   object ImageList1: TImageList
-    Left = 224
-    Top = 88
+    Left = 576
+    Top = 184
     Bitmap = {
       4C7A060000001000000010000000C50900000000000078DAED977B5054F715C7
       7F464D795C95E5A5B08A8A75455450404141A3028A2F4025AE1883622C5A677C
@@ -521,12 +633,8 @@ object fmNewBooksDb: TfmNewBooksDb
     }
   end
   object Actions: TActionList
-    Left = 288
-    Top = 176
-    object ActionAddBook: TAction
-      Caption = 'Add book'
-      OnExecute = ActionAddBookExecute
-    end
+    Left = 624
+    Top = 280
     object ActionEditBook: TAction
       Caption = 'Edit book'
     end
@@ -570,17 +678,13 @@ object fmNewBooksDb: TfmNewBooksDb
     object ActionDeleteBook2EntityMapping: TAction
       Caption = 'Remove book to entity mapping'
     end
+    object ActionAddBook: TAction
+      Caption = 'ActionAddBook'
+    end
   end
   object booksDbPopupMnu: TPopupMenu
     OnPopup = booksDbPopupMnuPopup
-    Left = 424
-    Top = 40
-  end
-  object SQLQuery1: TSQLQuery
-    FieldDefs = <>
-    Params = <>
-    Macros = <>
-    Left = 357
-    Top = 144
+    Left = 576
+    Top = 432
   end
 end
