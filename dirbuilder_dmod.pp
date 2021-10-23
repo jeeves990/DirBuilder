@@ -5,7 +5,9 @@ unit DirBuilder_dmod;
 interface
 
 uses
-  Classes, SysUtils, csvdataset, DB, mysql57conn, SQLDB, Dialogs, IniPropStorage;
+  Classes, SysUtils, csvdataset, DB, mysql57conn, SQLDB, Dialogs,
+  Controls,
+  Windows, IniPropStorage;
 
 type
 
@@ -21,6 +23,7 @@ type
     CSVDsDtaSrc: TDataSource;
     BooksDbConn: TMySQL57Connection;
     BooksDbTx: TSQLTransaction;
+		qryInsertBooks : TSQLQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     FFileName : TFileName;
@@ -36,12 +39,58 @@ var
 
 const
   SQL4BOOKS = 'SELECT * FROM BOOKS';
-  HYPHEN = '-';
-  SEMICOLON = ';';
-  COLON = ':';
-  UNDERSCORE = '_';
+  HYPHEN = #45;
+  SEMICOLON = #59;
+  COLON = #58;
+  UNDERSCORE = #95;
+  EQUALS = #61;
+  COMMA = #44;
+  TAB = #09;
+  CR = #13;
+  LF = #10;
+  CRLF = CR +LF;
+  BACKQUOTE = #96;
+  SINGLEQUOTE = #39;
+  DOUBLEQUOTE = #34;
+  FWDSLASH =  #47;
+  BACKSLASH =  #92;
+  OPENPAREN = #40;
+  CLOSEPAREN = #41;
+  QUOTES_SET = [BACKQUOTE, SINGLEQUOTE, DOUBLEQUOTE];
+
+  SPACE = #32;
+  PROPSTORAGE_FILENAME = 'DirBuilder.xml';
+
+procedure Write_SQL_Qry_to_CSV(qry : TSQLQuery; const fileName : TFileName);
 
 implementation
+
+procedure Write_SQL_Qry_to_CSV(qry : TSQLQuery; const fileName : TFileName);
+{   Precondition: qry parm is open   }
+var
+  fs : TFileStream;
+  fldIter : Integer;
+  fldVal, outS : String;
+begin
+  fs := TFileStream.Create(fileName, fmOpenWrite);
+  try
+    qry.First;
+    while not qry.EOF do
+    begin
+      outS := '';
+      for fldIter := 0 to qry.Fields.Count -1 do
+      begin
+        fldVal := AnsiQuotedStr(qry.Fields[fldIter].AsString, '"');
+        outS := outS + fldVal + COMMA;
+			end;
+      outS := Copy(outS, 1, Length(outS) -1);
+      fs.Write(outS, Length(outS));
+			qry.Next;
+		end;
+	finally
+    fs.Free;
+	end;
+end;
 
 {$R *.lfm}
 

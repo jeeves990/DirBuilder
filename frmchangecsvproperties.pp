@@ -5,7 +5,8 @@ unit frmChangeCSVProperties;
 interface
 
 uses
-  Win32Proc, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls;
+  Win32Proc, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+	StdCtrls, XMLPropStorage;
 
 type
 
@@ -18,12 +19,16 @@ type
     rbtnSemicolon: TRadioButton;
     btnAccept: TButton;
     btnCancel: TButton;
+		CSVPropStorage : TXMLPropStorage;
     procedure btnCancelClick(Sender: TObject);
     procedure btnAcceptClick(Sender: TObject);
   private
     FDelimiterChoice : Integer;
+    FCurrentChoice : Char;
+		procedure SetCurrentChoice(AValue : Char);
   public
     property DelimiterChoice : Integer read FDelimiterChoice write FDelimiterChoice ;
+    property CurrentChoice : Char read FCurrentChoice write SetCurrentChoice ;
   end;
 
 const
@@ -39,11 +44,15 @@ implementation
 
 {$R *.lfm}
 
+uses
+  frmNewBooksDB, DirBuilder_dmod;
+
 { TfmChangeCSVProperties }
 
 procedure TfmChangeCSVProperties.btnCancelClick(Sender: TObject);
 begin
   FDelimiterChoice := ChoseNoChoice;
+  ModalResult := ChoseNoChoice;
   Close;
 end;
 
@@ -59,12 +68,18 @@ begin
   else if rbtnSemicolon.Checked then
     FDelimiterChoice := ChoseSemicolon;
 
- // case rgrpCSVDelimiter.ItemIndex of
- //   0 :
- //   1 : FDelimiterChoice := ChoseTab;
- //   2 : FDelimiterChoice := ChoseSemicolon;
-	//end;
   Close;
+end;
+
+procedure TfmChangeCSVProperties.SetCurrentChoice(AValue : Char);
+begin
+  if FCurrentChoice = AValue then Exit;
+		FCurrentChoice := AValue;
+  case FCurrentChoice of
+    COMMA : rbtnComma.Checked := True;
+    SEMICOLON : rbtnSemicolon.Checked := True;
+    TAB : rbtnTab.Checked := True;
+	end;
 end;
 
 end.

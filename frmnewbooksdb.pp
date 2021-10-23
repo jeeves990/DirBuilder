@@ -6,8 +6,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
-  ActnList, Menus, frame4Table, ECGrid, DirBuilder_dmod, SQLDB, grids,
-  frmAddEdit, Mouse
+	ActnList, Menus, frame4Table, ECGrid, DirBuilder_dmod, SQLDB, grids, StdCtrls,
+	XMLPropStorage, frmAddEdit, Mouse, AnchorDocking, {AnchorDockPanel,}
+	AnchorDockStorage, AnchorDockOptionsDlg
   ;
 
 type
@@ -31,32 +32,21 @@ type
     ActionEditStorageLocation: TAction;
     ActionDeleteStorageLocation: TAction;
     Actions: TActionList;
-    frameBooksTable: TframeTable;
-    frameStorageLocations: TframeTable;
-    frameStoredAt: TframeTable;
-    frameBooksToEntity: TframeTable;
-    frameInternetEntities: TframeTable;
+		booksFrame : TframeTable;
     ImageList1: TImageList;
     pgCtrl: TPageControl;
     booksDbPopupMnu: TPopupMenu;
-    Splitter1: TSplitter;
     spltrMain: TSplitter;
-    spltrBookStorage: TSplitter;
-    tabshBookStorage: TTabSheet;
-    tabshInternetEntities: TTabSheet;
+		tbsStorage : TTabSheet;
+		tbsListing : TTabSheet;
     ToolButton3: TToolButton;
+		MainPropStorage : TXMLPropStorage;
     procedure ActionAddBookExecute(Sender: TObject);
-    procedure ActionAddMapBook2StorageLocationExecute(Sender: TObject);
     procedure ActionAddRowExecute(Sender: TObject);
     procedure ActionEditRowExecute(Sender: TObject);
     procedure booksDbPopupMnuPopup(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure frameBooksListedOnMouseEnter(Sender: TObject);
-    procedure frameBooksTableMouseEnter(Sender: TObject);
-    procedure frameInternetEntitiesMouseEnter(Sender: TObject);
-    procedure frameStorageLocationsMouseEnter(Sender: TObject);
-    procedure frameStoredAtMouseEnter(Sender: TObject);
   private
     FaddEdDlg: TfmAddEdit;
     FCurrentComponent : TComponent;
@@ -65,7 +55,10 @@ type
     FDmod : TDirBuilder_dataModule;
     F_sql: String;
     mnuItmAra : array of TMenuItem;
-    function ComponentUnderMouse: TComponent;
+    fmAddEdit : TfmAddEdit;
+    function ComponentUnderMouse(_parent: TWinControl=nil): TWinControl;
+		procedure DockMasterCreateControl(Sender : TObject; aName : string;
+					var AControl : TControl; DoDisableAutoSizing : boolean);
   public
     constructor Create(aOwner : TComponent); override;
     property Dmod : TDirBuilder_dataModule read FDmod write FDmod;
@@ -92,38 +85,39 @@ const
 
 { TfmNewBooksDb }
 
-procedure TfmNewBooksDb.frameStoredAtMouseEnter(Sender: TObject);
+function TfmNewBooksDb.ComponentUnderMouse(_parent: TWinControl): TWinControl;
+var
+  ctrl: TWinControl;
+  pt: TPoint;
 begin
-  FCurrentTag := BOOKS_STORAGE_MAP_TAG;
+  if not Assigned(_parent) then
+    _parent := self;
+  try
+    pt.X := Mouse.GetMouseX;
+    pt.Y := Mouse.GetMouseY;
+    pt := _parent.ScreenToClient(pt);
+    ctrl := TWinControl(_parent.ControlAtPos(pt, [capfRecursive, capfOnlyWinControls])); //, capfAllowWinControls]);
+    if Assigned(ctrl) then
+      Result := ctrl;
+  except on e: Exception do
+    ShowMessage(e.Message);
+  end;
+end;
+
+procedure TfmNewBooksDb.DockMasterCreateControl(Sender : TObject;
+			aName : string; var AControl : TControl; DoDisableAutoSizing : boolean);
+begin
+
 end;
 
 constructor TfmNewBooksDb.Create(aOwner: TComponent);
 begin
   try
-  inherited Create(aOwner);
+    inherited Create(aOwner);
   except on e : Exception do
     ShowMessage(e.Message);
   end;
-end;
-
-procedure TfmNewBooksDb.frameBooksTableMouseEnter(Sender: TObject);
-begin
-  FCurrentTag := BOOKS_TAG;
-end;
-
-procedure TfmNewBooksDb.frameInternetEntitiesMouseEnter(Sender: TObject);
-begin
-  FCurrentTag := ENTITIES_TAG;
-end;
-
-procedure TfmNewBooksDb.frameStorageLocationsMouseEnter(Sender: TObject);
-begin
-  FCurrentTag := STORAGE_LOCATION_TAG;
-end;
-
-procedure TfmNewBooksDb.frameBooksListedOnMouseEnter(Sender: TObject);
-begin
-  FCurrentTag := BOOKS_TO_ENTITIES_TAG;
+  fmAddEdit := TfmAddEdit.Create(self);
 end;
 
 procedure TfmNewBooksDb.booksDbPopupMnuPopup(Sender: TObject);
@@ -178,8 +172,11 @@ procedure TfmNewBooksDb.FormClose(Sender: TObject;
                                  var CloseAction: TCloseAction);
 var
   i : Integer;
+  pt : TPoint;
 begin
   FQry.Free;
+  if Assigned(fmAddEdit) then
+     fmAddEdit.Free;
   i := 0;
   while i < Length(mnuItmAra) do
   begin
@@ -188,58 +185,58 @@ begin
     Inc(i);
   end;
   SetLength(mnuItmAra, 0);
+  MainPropStorage.Save;
 end;
 
 {$DEFINE DEBUG}
 procedure TfmNewBooksDb.FormCreate(Sender: TObject);
 var
   i : Integer;
+  pt : TPoint;
+  ctrl : TWinControl;
 begin
+  ctrl := Parent;
   FDmod := frmFayesDirBuilder.dmod;
   FQry := TSQLQuery.Create(self);
   FQry.DataBase := FDmod.BooksDbConn;
   FQry.Transaction := FDmod.BooksDbConn.Transaction;
+  MainPropStorage.Restore;
 
   {$IFDEF DEBUG}
   FQry.SQL.Add(SQL4BOOKS);
   {$ELSE}
   FQry.SQL.Add(F_sql);
   {$ENDIF}
-  SetLength(mnuItmAra, 3);
-  i := 0;
-  while i < Length(mnuItmAra) do
-  begin
-    mnuItmAra[i] := TMenuItem.Create(self);
-    Inc(i);
-  end;
-  booksDbPopupMnu.Items.Add(mnuItmAra);
-end;
-
-function TfmNewBooksDb.ComponentUnderMouse : TComponent;
-var
-  ctrl: TControl;
-  pt: TPoint;
-begin
-  pt.X := GetMouseX;
-  pt.Y := GetMouseY;
-  pt := ScreenToClient(pt);
-  ctrl := ControlAtPos(pt, [capfRecursive, capfAllowWinControls]);
-  if Assigned(ctrl) then
-    Result := ctrl;
-end;
 
 
-procedure TfmNewBooksDb.ActionAddMapBook2StorageLocationExecute(Sender: TObject);
-begin
-  FQry.SQL.Clear;
+  DockMaster.MakeDockSite(Self,[akBottom],admrpChild);
+  DockMaster.OnCreateControl := @DockMasterCreateControl;
+  DockMaster.OnShowOptions:=@ShowAnchorDockOptions;
+
+  SetBounds(100,50,600,80);
+  //ViewSrcEditor1ToolButtonClick(Self);
+  //ViewMessagesToolButtonClick(Self);
+  //ViewOIToolButtonClick(Self);
+  //ViewFPDocEditorToolButtonClick(Self);
+  //fmAddEdit.Show;
+  //exit;
+  //SetLength(mnuItmAra, 3);
+  //i := 0;
+  //while i < Length(mnuItmAra) do
+  //begin
+  //  mnuItmAra[i] := TMenuItem.Create(self);
+  //  Inc(i);
+  //end;
+  //booksDbPopupMnu.Items.Add(mnuItmAra);
+
 end;
 
 procedure TfmNewBooksDb.ActionAddRowExecute(Sender: TObject);
 var
   ctrl : TComponent;
 begin
-  ctrl := ComponentUnderMouse;
-  ShowMessage(ctrl.Name);
+  inherited;
+  exit;
   // display a dialog to add the row
   ActionAddBook.Execute;
 end;
@@ -253,7 +250,10 @@ procedure TfmNewBooksDb.ActionAddBookExecute(Sender: TObject);
 var
   col, row : Integer;
   grid : TStringGrid;
+  ctrl : TWinControl;
 begin
+  ctrl := ComponentUnderMouse;
+  Exit;
   FQry.SQL.Clear;
   {$IFDEF DEBUG}
   FQry.SQL.Add(SQL4BOOKS);
@@ -261,21 +261,21 @@ begin
   FQry.SQL.Add(Fsql);
 
   {$ENDIF}
-  FQry.Open;
-  grid := self.frameBooksTable.sGrid;
-  grid.ColCount := FQry.FieldDefs.Count +grid.FixedCols;
-  for col := 0 to FQry.FieldDefs.Count -1 do
-    grid.Columns[col +grid.FixedCols].Title.Caption := FQry.FieldDefs[col].DisplayName;
-
-  row := 0;
-  FQry.First;
-  while not FQry.EOF do
-  begin
-    grid.RowCount := grid.RowCount +1;
-    row := grid.RowCount -1;
-    for col := 0 to FQry.Fields.Count -1 do
-      grid.Cells[col, row] := FQry.Fields.Fields[col].AsString;
-  end;
+  //FQry.Open;
+  //grid := self.frameBooksTable.sGrid;
+  //grid.ColCount := FQry.FieldDefs.Count +grid.FixedCols;
+  //for col := 0 to FQry.FieldDefs.Count -1 do
+  //  grid.Columns[col +grid.FixedCols].Title.Caption := FQry.FieldDefs[col].DisplayName;
+  //
+  //row := 0;
+  //FQry.First;
+  //while not FQry.EOF do
+  //begin
+  //  grid.RowCount := grid.RowCount +1;
+  //  row := grid.RowCount -1;
+  //  for col := 0 to FQry.Fields.Count -1 do
+  //    grid.Cells[col, row] := FQry.Fields.Fields[col].AsString;
+  //end;
 end;
 
 

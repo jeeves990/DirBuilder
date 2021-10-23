@@ -1,0 +1,30 @@
+object frmEd_multiUse: TfrmEd_multiUse
+  Left = 478
+  Height = 326
+  Top = 216
+  Width = 452
+  Caption = 'multi use editor'
+  ClientHeight = 326
+  ClientWidth = 452
+  LCLVersion = '2.2.0.1'
+  inline frame4editors: TframeTable
+    Left = 10
+    Top = 10
+    inherited pnl: TPanel
+      inherited ToolBar1: TToolBar
+        inherited toolBtnSeparator: TToolButton
+          Left = 198
+        end
+        inherited btnRemove: TToolButton
+          Left = 206
+        end
+        inherited btnRefresh: TToolButton
+          Left = 149
+        end
+      end
+      inherited sGrid: TStringGrid
+        Align = alTop
+      end
+    end
+  end
+end

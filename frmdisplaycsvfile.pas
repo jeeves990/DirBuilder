@@ -1,13 +1,16 @@
 unit frmDisplayCSVFile;
-
+{TODO's
+  1. make edFileName a combobox and save the files read.
+  2. size the columns after reading.
+}
 {$mode objfpc}{$H+}
 
 interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ActnList,
-	Menus, Grids, ComCtrls, ExtCtrls, Character, frmInputNewValue, stringgridutil,
-	unitAddQuotesToFiles, dmodCSVParser;
+	Menus, Grids, ComCtrls, ExtCtrls, XMLPropStorage, Character, frmInputNewValue,
+	stringgridutil, AddQuotes2Files_unit, dmodCSVParser;
 
 type
 
@@ -40,11 +43,14 @@ type
 		ActionReadCSVData: TAction;
 		N3: TMenuItem;
 		MenuItem6: TMenuItem;
+		CSVPropStorage : TXMLPropStorage;
 		Procedure ActionReadNewFileExecute(Sender: TObject);
 		Procedure ActionAddQuotesExecute(Sender: TObject);
 		procedure ActionChangeMaxLines2ReadExecute(Sender: TObject);
 		procedure ActionReloadFileExecute(Sender: TObject);
 		procedure ActionReadCSVDataExecute(Sender: TObject);
+		procedure FormClose(Sender : TObject; var CloseAction : TCloseAction);
+		procedure FormCreate(Sender : TObject);
   private
     FFilename : TFileName;
     FMaxLines2Read : Integer;
@@ -122,8 +128,27 @@ begin
 end;
 
 procedure TfmDisplayCSVFile.ActionReadCSVDataExecute(Sender: TObject);
+var
+  parmRec : TParmRec;
 begin
-  LoadGridFromCSVFile(sGrid,FFilename);
+  parmRec.delimiter := FDelimiter;
+  parmRec.ignoreFirstLine := False;  //ActionIgnoreFirstLine.Checked;
+  //parmRec.ignoreFirstLine := ActionIgnoreFirstLine.Checked;
+  parmRec.addRows := True;
+  parmRec.withHeader := True;
+
+  LoadGridFromCSVFile(sGrid, FFilename, parmRec);
+end;
+
+procedure TfmDisplayCSVFile.FormClose(Sender : TObject;
+			var CloseAction : TCloseAction);
+begin
+  CSVPropStorage.Save;
+end;
+
+procedure TfmDisplayCSVFile.FormCreate(Sender : TObject);
+begin
+  CSVPropStorage.Restore;
 end;
 
 

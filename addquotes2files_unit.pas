@@ -1,4 +1,4 @@
-unit unitAddQuotesToFiles;
+unit AddQuotes2Files_unit;
 
 {$mode objfpc}{$H+}
 
@@ -24,10 +24,9 @@ type
 
 
 implementation
-const
-  DOUBLEQUOTE = '"';
-  COMMA = ',';
-  SPACE = #32;
+
+uses
+  DirBuilder_dmod;
 
 { TAddQuotesToFile }
 

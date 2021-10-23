@@ -8,10 +8,9 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, frmDirFromCSV, stringGridHelper, runtimetypeinfocontrols,
-	DirBuilder_dmod, frmDisplayCSVFile, frmInputNewValue, unitAddQuotesToFiles,
-	stringgridutil, CSVParser_setup, frmChangeCSVProperties, dmodCSVParser,
-frmNewBooksDB, frmAddEdit
-  { you can add units after this };
+	anchordockpkg, DirBuilder_dmod, frmDisplayCSVFile, frmInputNewValue,
+	AddQuotes2Files_unit, stringgridutil, CSVParser_setup, frmChangeCSVProperties,
+	frmNewBooksDB, frmAddEdit;
 
 {$R *.res}
 
@@ -19,15 +18,7 @@ begin
   RequireDerivedFormResource := True;
   Application.Scaled := True;
   Application.Initialize;
-  //Application.CreateForm(TDirBuilder_dataModule, DirBuilder_dataModule);
   Application.CreateForm(TfrmFayesDirBuilder, frmFayesDirBuilder);
-  Application.CreateForm(TfmAddEdit, fmAddEdit);
-  //Application.CreateForm(TfmDisplayCSVFile, fmDisplayCSVFile);
-  //Application.CreateForm(TfmGetNewValue, fmGetNewValue);
-  //Application.CreateForm(TfmCSVParser_setup, fmCSVParser_setup);
-  //Application.CreateForm(TfmChangeCSVProperties, fmChangeCSVProperties);
-  //Application.CreateForm(TfmNewBooksDb, fmNewBooksDb);
-  //Application.CreateForm(TfmBooksDb, fmBooksDb);
   Application.Run;
 end.
 

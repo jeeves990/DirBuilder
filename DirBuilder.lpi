@@ -27,19 +27,25 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="4">
+    <RequiredPackages Count="6">
       <Item1>
-        <PackageName Value="eccontrols"/>
+        <PackageName Value="MemDSLaz"/>
       </Item1>
       <Item2>
-        <PackageName Value="RunTimeTypeInfoControls"/>
+        <PackageName Value="AnchorDocking"/>
       </Item2>
       <Item3>
-        <PackageName Value="FCL"/>
+        <PackageName Value="eccontrols"/>
       </Item3>
       <Item4>
-        <PackageName Value="LCL"/>
+        <PackageName Value="RunTimeTypeInfoControls"/>
       </Item4>
+      <Item5>
+        <PackageName Value="FCL"/>
+      </Item5>
+      <Item6>
+        <PackageName Value="LCL"/>
+      </Item6>
     </RequiredPackages>
     <Units Count="13">
       <Unit0>
@@ -84,9 +90,9 @@
         <UnitName Value="frmInputNewValue"/>
       </Unit5>
       <Unit6>
-        <Filename Value="unitaddquotestofiles.pas"/>
+        <Filename Value="addquotes2files_unit.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="unitAddQuotesToFiles"/>
+        <UnitName Value="AddQuotes2Files_unit"/>
       </Unit6>
       <Unit7>
         <Filename Value="stringgridutil.pas"/>
@@ -109,27 +115,28 @@
         <UnitName Value="frmChangeCSVProperties"/>
       </Unit9>
       <Unit10>
-        <Filename Value="dmodcsvparser.pp"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="dmod_csv_parser"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="DataModule"/>
-        <UnitName Value="dmodCSVParser"/>
-      </Unit10>
-      <Unit11>
         <Filename Value="frmnewbooksdb.pp"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmNewBooksDb"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmNewBooksDB"/>
-      </Unit11>
-      <Unit12>
+      </Unit10>
+      <Unit11>
         <Filename Value="frmaddedit.pp"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmAddEdit"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmAddEdit"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="frmeditor_multiuse.pp"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmEd_multiUse"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmEditor_multiUse"/>
       </Unit12>
     </Units>
   </ProjectOptions>

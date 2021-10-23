@@ -67,4 +67,9 @@ object fmChangeCSVProperties: TfmChangeCSVProperties
     OnClick = btnCancelClick
     TabOrder = 2
   end
+  object CSVPropStorage: TXMLPropStorage
+    StoredValues = <>
+    Left = 48
+    Top = 104
+  end
 end

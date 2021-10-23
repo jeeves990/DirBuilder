@@ -20,7 +20,7 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
   object CSVDsDtaSrc: TDataSource
     AutoEdit = False
     DataSet = CSVDataset
-    Left = 48
+    Left = 40
     Top = 16
   end
   object BooksDbConn: TMySQL57Connection
@@ -44,5 +44,125 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
     Database = BooksDbConn
     Left = 48
     Top = 88
+  end
+  object qryInsertBooks: TSQLQuery
+    FieldDefs = <>
+    Database = BooksDbConn
+    Transaction = BooksDbTx
+    SQL.Strings = (
+      'INSERT INTO ''booksdb''.''books'''
+      '(''id'','
+      '''msku'','
+      '''title'','
+      '''asin'','
+      '''list_price'','
+      '''cost_unit'','
+      '''supplier'','
+      '''date_listed'','
+      '''rank'','
+      '''condition'','
+      '''notes'','
+      '''qty'','
+      '''min_price'','
+      '''max_price'','
+      '''fnsku'','
+      '''destination'','
+      '''exp_date'')'
+      'VALUES( :id, :msku, :title,'
+      ':asin ,:list_price ,:cost_unit ,:supplier ,:date_listed ,:rank ,:condition ,:notes ,:qty ,:min_price ,'
+      ':max_price ,:fnsku ,:destination ,:exp_date );'
+    )
+    InsertSQL.Strings = (
+      'INSERT INTO books (:columns) VALUES (:values)'
+    )
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = 'id'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'msku'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'title'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'asin'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'list_price'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'cost_unit'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'supplier'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'date_listed'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'rank'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'condition'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'notes'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'qty'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'min_price'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'max_price'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'fnsku'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'destination'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'exp_date'
+        ParamType = ptInput
+      end>
+    Macros = <>
+    Left = 328
+    Top = 80
   end
 end

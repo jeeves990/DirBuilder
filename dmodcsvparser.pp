@@ -12,7 +12,6 @@ type
 	{ Tdmod_csv_parser }
 
   Tdmod_csv_parser = class(TDataModule)
-				IniPropStorage: TIniPropStorage;
   private
 
   public

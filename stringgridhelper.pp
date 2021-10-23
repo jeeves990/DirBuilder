@@ -79,11 +79,12 @@ procedure TGridHelper.SetStringGridColumnWidths;
 const
   DEFBORDER = 10;
 var
-  temp, n, txtWidth, colWidth: Integer;
+  temp, n, txtWidth, colWidth, wd: Integer;
   rowCnt, colCnt : Integer;
   araMax: array of Integer;
-  s : String;
+  msg : String;
 begin
+  msg := 'TGridHelper.SetStringGridColumnWidths';
   colCnt := FSGrid.ColCount;
   if colCnt = 0 then
   begin
@@ -114,22 +115,28 @@ begin
         if temp > araMax[colCnt] then
           araMax[colCnt] := temp;
       end; {for}
-      Inc(colCnt)
+      //Inc(colCnt)
     end;
 
     {        adjust the column width             }
-		for colCnt := FSGrid.FixedCols to FsGrid.ColCount - 1 do
+    colCnt := FSGrid.FixedCols;
+		while colCnt < FsGrid.ColCount do
+    begin
       if araMax[colCnt] > 0 then
       begin
         if araMax[colCnt] > _maxSize then
             araMax[colCnt] := _maxSize;
         try
           FSGrid.ColWidths[colCnt] := araMax[colCnt];
-          colWidth := FSGrid.Columns[colCnt].Width;
+          //wd := FSGrid.ColCount;
+          //colWidth := FSGrid.ColWidths[colCnt];
         except on E : Exception do
-          //ShowMessage(s + sLineBreak + E.Message);
+          ShowMessage(msg + sLineBreak + E.Message);
 				end;
+        Inc(colCnt);
 			end;
+
+		end;
 	finally
     SetLength(araMax, 0);
 	end;

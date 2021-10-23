@@ -84,13 +84,15 @@ begin
 
     lbl.Left := FLD_LBL_LEFT;
     lbl.Top := flds_position;
-    lbl.Name := 'lbl_' + caption;
+    lbl.Name := 'lbl_' + cap;
+    lbl.Visible := True;
 
     edt := TEdit.Create(self);
     edt.Left := FLD_EDT_LEFT;
     edt.Top := flds_position;
     edt.Tag := i;             // to find the edt later
-    edt.Name := 'edt_' + caption;
+    edt.Name := 'edt_' + cap;
+    edt.Visible := True;
 
     Inc(i);
   end;
