@@ -21,7 +21,7 @@ uses
   Menus, StdCtrls, SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd,
   {ComboEx, }Grids, IniPropStorage, {StdActns, }DirBuilder_dmod, stringGridHelper,
   frmDisplayCSVFile, StringGridUtil, CSVParser_setup, dmodCSVParser,
-  frmChangeCSVProperties, frmNewBooksDb, RTTICtrls;
+  frmChangeCSVProperties, frmNewBooksDb, unitLoad_grid_from_csv;
 
 type
   EMyDBNotOpenException = class(Exception);
@@ -51,7 +51,6 @@ type
     cboxCSVFile: TComboBox;
     DirBuilderPropIni: TIniPropStorage;
 		edCellContent : TEdit;
-		imgList : TImageList;
 		lblCellContents : TLabel;
     lblOutDir : TLabel;
     lblCSVFile : TLabel;
@@ -140,6 +139,7 @@ type
     FCSVDelimiter : String;
     Fdmod : TDirBuilder_dataModule;
     FBooksDbDlg : TfmNewBooksDb;
+    FDelimiter : Char;
     function countSubDirs(path: String): Integer;
 		procedure GetCSVParserProps;
   public
@@ -195,6 +195,7 @@ begin
   sGridMain.Clear;
   GetCSVParserProps;
   pgCtrl.ActivePage := tabshCSVFile;
+
   //g_path := ExtractFilePath(Application.ExeName);
   //ShowMessage(g_path);
   DirBuilderPropIni.Restore;
@@ -289,8 +290,14 @@ end;
 procedure TfrmFayesDirBuilder.ActionWriteGridToBooksDbExecute(Sender : TObject);
 var
   outCnt : Integer;
+  util : TStringGridUtil;
 begin
-  WriteGridToBooksDb(dmod, sGridMain, outCnt, FDelimiter);
+  util := TStringGridUtil.Create;
+  try
+    util.WriteGridToBooksDb(dmod, sGridMain, outCnt, FDelimiter);
+	finally
+    util.Free;
+	end;
 end;
 
 procedure TfrmFayesDirBuilder.ActionCloseExecute(Sender : TObject);

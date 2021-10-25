@@ -17,7 +17,9 @@ type
     FSGrid : TStringGrid;
   private
     _maxSize : Integer;
-		procedure SetFSGrid(AValue: TStringGrid);
+		function GetCellWidth(Grid : TStringGrid; const aCol, aRow : Integer;
+					defBorder : Integer) : Integer;
+  procedure SetFSGrid(AValue: TStringGrid);
   public
     property DbGrid: TDBGrid read FDBGrid write FDBGrid;
     property SGrid: TStringGrid read FSGrid write SetFSGrid;
@@ -74,6 +76,12 @@ begin
   end; { With }
 end; {SetGridColumnWidths  }
 
+function TGridHelper.GetCellWidth(Grid : TStringGrid;
+                            const aCol, aRow : Integer;
+                            defBorder : Integer) : Integer;
+begin
+  Result := Grid.Canvas.TextWidth(Grid.Cells[aCol, aRow]) + defBorder;
+end;
 
 procedure TGridHelper.SetStringGridColumnWidths;
 const

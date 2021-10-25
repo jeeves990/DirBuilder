@@ -1,0 +1,107 @@
+object fmGetNewValue: TfmGetNewValue
+  Left = 1109
+  Height = 285
+  Top = 311
+  Width = 456
+  Caption = 'fmGetNewValue'
+  ClientHeight = 285
+  ClientWidth = 456
+  LCLVersion = '2.0.12.0'
+  object capCurrentValue: TLabel
+    Left = 8
+    Height = 15
+    Top = 20
+    Width = 74
+    Caption = 'Current value:'
+    ParentColor = False
+  end
+  object edCurrentValue: TEdit
+    Left = 100
+    Height = 23
+    Top = 16
+    Width = 335
+    Anchors = [akTop, akLeft, akRight]
+    Color = clMenu
+    ReadOnly = True
+    TabOrder = 0
+    Text = 'edCurrentValue'
+  end
+  object capRepresents: TLabel
+    Left = 9
+    Height = 15
+    Top = 48
+    Width = 72
+    Caption = 'Representing:'
+    ParentColor = False
+  end
+  object mmoRepresenting: TMemo
+    Left = 100
+    Height = 71
+    Top = 48
+    Width = 336
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Color = clMenu
+    Lines.Strings = (
+      'mmoRepresenting'
+    )
+    TabOrder = 1
+  end
+  object grpboxRepresentingInput: TGroupBox
+    Left = 13
+    Height = 54
+    Top = 172
+    Width = 423
+    Anchors = [akLeft, akRight, akBottom]
+    Caption = 'Enter new value'
+    ClientHeight = 34
+    ClientWidth = 419
+    TabOrder = 2
+    object edNewValue: TEdit
+      Left = 13
+      Height = 23
+      Top = 7
+      Width = 398
+      Anchors = [akLeft, akRight]
+      OnKeyUp = edNewValueKeyUp
+      TabOrder = 0
+    end
+  end
+  object btnAccept: TButton
+    Left = 255
+    Height = 25
+    Top = 240
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Accept'
+    OnClick = btnAcceptClick
+    TabOrder = 3
+  end
+  object btnCancel: TButton
+    Left = 360
+    Height = 25
+    Top = 240
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Cancel'
+    OnClick = btnCancelClick
+    TabOrder = 4
+  end
+  object capRepresents1: TLabel
+    Left = 13
+    Height = 15
+    Top = 132
+    Width = 50
+    Caption = 'Data type'
+    ParentColor = False
+  end
+  object edDataType: TEdit
+    Left = 100
+    Height = 23
+    Top = 129
+    Width = 335
+    Anchors = [akTop, akLeft, akRight]
+    Color = clMenu
+    ReadOnly = True
+    TabOrder = 5
+  end
+end

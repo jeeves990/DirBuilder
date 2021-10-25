@@ -11,10 +11,12 @@ uses
 
 type
 
- //   TmyCSVDataset = class (TCSVDataset)
- //   TCSVDatasetHelper = class helper for TCSVDataset
- //   property _DefaultFields : Boolean read FDefaultFields write FDefaultFields; override;
-	//end;
+  TParmRec = record
+    delimiter : Char;
+    withHeader : Boolean;
+    addRows : Boolean;
+    ignoreFirstLine : Boolean;
+  end;
 
   { TDirBuilder_dataModule }
 
@@ -23,7 +25,9 @@ type
     CSVDsDtaSrc: TDataSource;
     BooksDbConn: TMySQL57Connection;
     BooksDbTx: TSQLTransaction;
+		imgList : TImageList;
 		qryInsertBooks : TSQLQuery;
+		qryWork : TSQLQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     FFileName : TFileName;

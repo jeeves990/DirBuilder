@@ -1,0 +1,125 @@
+object FmMap_to_xml: TFmMap_to_xml
+  Left = 604
+  Height = 489
+  Top = 304
+  Width = 315
+  Caption = 'Map csv fields to BooksDb.Books'
+  ClientHeight = 469
+  ClientWidth = 315
+  Menu = MainMenu
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnShow = FormShow
+  LCLVersion = '2.2.0.1'
+  object Grid: TStringGrid
+    Left = 0
+    Height = 446
+    Top = 0
+    Width = 311
+    Align = alLeft
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ColCount = 1
+    FixedRows = 0
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goColMoving, goEditing, goTabs, goThumbTracking, goRelaxedRowSelect, goSelectionActive, goFixedColSizing]
+    PopupMenu = popup
+    RowCount = 1
+    TabOrder = 0
+    OnSelectEditor = GridSelectEditor
+    OnShowHint = GridShowHint
+  end
+  object StatusBar: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 446
+    Width = 315
+    Panels = <>
+  end
+  object cboxReports: TComboBox
+    Left = 112
+    Height = 23
+    Top = 48
+    Width = 64
+    ItemHeight = 15
+    OnCloseUp = cboxReportsCloseUp
+    TabOrder = 2
+    Visible = False
+  end
+  object XMLConfig: TXMLConfig
+    StartEmpty = False
+    RootName = 'MAPPINGS'
+    ReadOnly = False
+    Left = 184
+    Top = 200
+  end
+  object popup: TPopupMenu
+    Left = 56
+    Top = 288
+    object N2: TMenuItem
+      Caption = '-'
+    end
+    object mnuAddColsFromBooks: TMenuItem
+      Action = ActionAddColumnsFromBooks
+    end
+    object MenuItem4: TMenuItem
+      Action = ActionAddNewColumn
+    end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem7: TMenuItem
+      Action = ActionReadColumnFromXML
+    end
+    object MenuItem8: TMenuItem
+      Action = ActionWriteCol2XML
+    end
+  end
+  object Actions: TActionList
+    Left = 168
+    Top = 288
+    object ActionAddColumnsFromBooks: TAction
+      Caption = 'Columns from books table'
+      OnExecute = ActionAddColumnsFromBooksExecute
+    end
+    object ActionAddNewColumn: TAction
+      Caption = 'Add new column'
+      OnExecute = ActionAddNewColumnExecute
+    end
+    object ActionResizeGridColumns: TAction
+      Caption = 'Resize grid columns'
+      OnExecute = ActionResizeGridColumnsExecute
+    end
+    object ActionAdd: TAction
+      Caption = 'ActionAdd'
+    end
+    object ActionWriteCol2XML: TAction
+      Caption = 'Write column to XML'
+      OnExecute = ActionWriteCol2XMLExecute
+    end
+    object ActionReadColumnFromXML: TAction
+      Caption = 'Read column from XML'
+      OnExecute = ActionReadColumnFromXMLExecute
+    end
+  end
+  object MainMenu: TMainMenu
+    Left = 104
+    Top = 80
+    object MenuItem1: TMenuItem
+      Caption = 'Operations'
+      object MenuItem2: TMenuItem
+        Action = ActionAddColumnsFromBooks
+      end
+      object MenuItem3: TMenuItem
+        Action = ActionAddNewColumn
+      end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem5: TMenuItem
+        Action = ActionReadColumnFromXML
+      end
+      object MenuItem6: TMenuItem
+        Action = ActionWriteCol2XML
+      end
+    end
+  end
+end

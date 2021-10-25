@@ -6,10 +6,10 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
-	ActnList, Menus, frame4Table, ECGrid, DirBuilder_dmod, SQLDB, grids, StdCtrls,
-	XMLPropStorage, frmAddEdit, Mouse, AnchorDocking, {AnchorDockPanel,}
-	AnchorDockStorage, AnchorDockOptionsDlg
-  ;
+	ActnList, Menus, frame4Table, DirBuilder_dmod, SQLDB, grids, StdCtrls,
+	XMLPropStorage, frmAddEdit,
+  Mouse;
+
 
 type
 
@@ -209,9 +209,9 @@ begin
   {$ENDIF}
 
 
-  DockMaster.MakeDockSite(Self,[akBottom],admrpChild);
-  DockMaster.OnCreateControl := @DockMasterCreateControl;
-  DockMaster.OnShowOptions:=@ShowAnchorDockOptions;
+  //DockMaster.MakeDockSite(Self,[akBottom],admrpChild);
+  //DockMaster.OnCreateControl := @DockMasterCreateControl;
+  //DockMaster.OnShowOptions:=@ShowAnchorDockOptions;
 
   SetBounds(100,50,600,80);
   //ViewSrcEditor1ToolButtonClick(Self);

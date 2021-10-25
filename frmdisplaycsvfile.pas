@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ActnList,
 	Menus, Grids, ComCtrls, ExtCtrls, XMLPropStorage, Character, frmInputNewValue,
-	stringgridutil, AddQuotes2Files_unit, dmodCSVParser;
+	stringgridutil, AddQuotes2Files_unit, dmodCSVParser, DirBuilder_dmod;
 
 type
 
@@ -56,6 +56,7 @@ type
     FMaxLines2Read : Integer;
     FSlst : TStringList;
     FParent : TComponent;
+    FDelimiter : Char;
     procedure SetFileName(AValue: TFileName);
   public
     property filename : TFileName read FFileName write SetFileName;
@@ -63,6 +64,7 @@ type
     destructor Destroy; override;
     procedure DisplayFile;
     property MaxLines2Read : Integer read FMaxLines2Read write FMaxLines2Read;
+    property _delimiter : Char read FDelimiter Write FDelimiter;
   end;
 
 var
@@ -71,6 +73,8 @@ var
 implementation
 
 {$R *.lfm}
+
+uses unitLoad_grid_from_csv;
 
 { TfmDisplayCSVFile }
 

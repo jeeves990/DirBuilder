@@ -10,7 +10,7 @@ uses
   Forms, frmDirFromCSV, stringGridHelper, runtimetypeinfocontrols,
 	anchordockpkg, DirBuilder_dmod, frmDisplayCSVFile, frmInputNewValue,
 	AddQuotes2Files_unit, stringgridutil, CSVParser_setup, frmChangeCSVProperties,
-	frmNewBooksDB, frmAddEdit;
+	frmNewBooksDB, frmAddEdit, unitLoad_grid_from_csv;
 
 {$R *.res}
 
