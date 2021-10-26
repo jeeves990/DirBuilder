@@ -107,8 +107,8 @@ begin
     for n := FSGrid.FixedCols to FsGrid.ColCount - 1 do
     begin
       txtWidth := FsGrid.Canvas.TextWidth(FSGrid.Cells[n, 0]) + DEFBORDER;
-      if txtWidth > 200 then
-        ShowMessage(Format('column: %s has width: %d', [FSGrid.cells[n, 0], txtWidth]));
+      //if txtWidth > 200 then
+      //  ShowMessage(Format('column: %s has width: %d', [FSGrid.cells[n, 0], txtWidth]));
       araMax[n] := txtWidth;
 		end;
 

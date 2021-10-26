@@ -9,7 +9,8 @@ uses
 
 function LoadGridFromCSVFile(Grid : TStringGrid;
                                AFilename : string;
-                               parmRec : TParmRec) : String;
+                               parmRec : TParmRec;
+                               out the_first_line : String) : String;
 
 implementation
 
@@ -28,12 +29,12 @@ function GetFirstLine(var fs : TFileStream) : String;
 var
   curChar : Char;
   outS : String;
-  pos, iPos : Integer;
+  _pos_, iPos : Integer;
 begin
 
   Result := '';
   outS := '';
-  pos := 0;
+  _pos_ := 0;
   while True do
   begin
     curChar := #0;
@@ -42,7 +43,7 @@ begin
       Break;  // is this the end of the file
     if curChar in LineEndingChars then
       Break;
-    Inc(pos, iPos);
+    Inc(_pos_, iPos);
     outS := outS + curChar;
 	end;
   while True do
@@ -50,17 +51,16 @@ begin
     fs.read(curChar, charSize);
     if not (curChar in LineEndingChars) then
       Break;
-    Inc(Pos);
+    Inc(_pos_);
 	end;
-  Dec(Pos);
-  fs.Seek(Pos, soFromBeginning);
+  Dec(_pos_);
+  fs.Seek(_pos_, soFromBeginning);
   Result := outS;
 end;
 
 
-function LoadGridFromCSVFile(Grid : TStringGrid;
-                               AFilename : string;
-                               parmRec : TParmRec) : String;
+function LoadGridFromCSVFile(Grid : TStringGrid; AFilename : string;
+			parmRec : TParmRec; out the_first_line : String) : String;
       { Loads (quasi)CSV document in AFilename into Grid, using ADelimiter as
         delimiter. If WithHeader is true, it won't import the first row.
         If AddRows is true, it will add rows if the existing grid is too short.
@@ -71,10 +71,10 @@ var
   fs: TFileStream;
   Parser: TCSVParser;
   RowOffset, fileOffset : integer;
-  firstLine, aStr : String;
+  aStr : String;
 begin
   Result := '';
-  firstLine := '';
+  the_first_line := '';
   Grid.BeginUpdate;
   // Reset the grid:
   Grid.Clear;
@@ -90,9 +90,9 @@ begin
   try
     if parmRec.ignoreFirstLine then
      begin
-      firstLine := GetFirstLine(fs);
+      the_first_line := GetFirstLine(fs);
       fileOffset := fs.Position;
-      Result := firstLine;
+      Result := the_first_line;
 		 end;
 		Parser.Delimiter := parmRec.delimiter;
     Parser.SetSource(fs);

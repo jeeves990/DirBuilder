@@ -78,6 +78,7 @@
         <Filename Value="frm_select_rprt_type.pp"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fm_select_rprt_type"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>

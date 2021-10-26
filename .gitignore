@@ -32,6 +32,7 @@ lib/*
 *~
 *.ppu
 **/lib/*
+**/*___
 
 # my files to ignore
 test*

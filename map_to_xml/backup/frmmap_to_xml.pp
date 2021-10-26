@@ -57,8 +57,10 @@ type
     MenuItem8: TMenuItem;
     N3: TMenuItem;
     N1: TMenuItem;
+    pgCtrl: TPageControl;
     popup: TPopupMenu;
     StatusBar: TStatusBar;
+    tsMappingData: TTabSheet;
     procedure ActionAddColumnsFromBooksExecute(Sender: TObject);
     procedure ActionAddNewColumnExecute(Sender: TObject);
     procedure ActionGetReportTypeExecute(Sender: TObject);
@@ -82,7 +84,7 @@ type
     FIinifile_handler: TIniFileHandler;
     procedure AddDBColumnNames;
     procedure clr_column_values(const pCol: integer);
-    function fillColumnFromINI(rpt_hdr: string = ''): boolean;
+    function fillColumnFromINI(rpt_hdr: string; const column: integer): boolean;
     function getComboBoxWidth: integer;
     function getDataFromINI_4_report_type(const rprt_type: string): TStrings;
     function Get_report_type(rpt_type: string): string;
@@ -91,6 +93,7 @@ type
     procedure Refresh_inifile_handler;
     procedure SetReportTypes(AValue: TStringList);
     function rptType_has_column(rpt_type: string): integer;
+    procedure write_ini_to_sGrid(const section_list: TStringList);
   public
     //procedure DisplayHint(Sender : TObject; HintInfo : PHintInfo);
     property ReportTypes: TStringList read FReportTypes write SetReportTypes;
@@ -196,6 +199,30 @@ begin
     end;
     Inc(iCol);
   end;
+end;
+
+procedure TFmMap_to_xml.write_ini_to_sGrid(const section_list: TStringList);
+var
+  i, iRow: integer;
+  _grd_: TStringGrid;
+  _name_, _cell_: string;
+begin
+  _grd_ := GridIniMapping;
+  _grd_.Clear;
+  _grd_.ColCount := 2;
+  _grd_.RowCount := 0;
+  i := 0;
+  while i < section_list.Count do
+  begin
+    _cell_ := section_list[i];
+    _grd_.RowCount := _grd_.RowCount + 1;
+    iRow := _grd_.RowCount - 1;
+    _name_ := section_list.Names[i];
+    _grd_.Cells[0, iRow] := _name_;
+    _grd_.Cells[1, iRow] := section_list.Values[_name_];
+    Inc(i);
+  end;
+  pgCtrl.ActivePage := tsIniMapping;
 end;
 
 procedure TFmMap_to_xml.GridSelectEditor(Sender: TObject; aCol, aRow: integer;
@@ -411,7 +438,8 @@ end;
 
 procedure TFmMap_to_xml.ActionReadColumnFromINIExecute(Sender: TObject);
 begin
-  fillColumnFromINI;
+  //fillColumnFromINI;
+  if True then;
 end;
 
 procedure TFmMap_to_xml.ActionRefreshIniHandlerExecute(Sender: TObject);
@@ -419,42 +447,59 @@ begin
   Refresh_inifile_handler;
 end;
 
-function TFmMap_to_xml.fillColumnFromINI(rpt_hdr: string): boolean;
+function TFmMap_to_xml.fillColumnFromINI(rpt_hdr: string;
+                                    const column: integer): boolean;
 var
-  aCol, rowDx, idx: integer;
-  aStr, aColName: string;
+  aCol, rowDx, idx, cnt, grid_row_dx: integer;
+  value_str, aColName: string;
   rpt_type, block_hdr: string;
   ini: TIniFile;
-  col_list: TStringList;
+  col_list, ini_col_list: TStringList;
+const
+  ErrMsg = 'TFmMap_to_xml.fillColumnFromINI: %s';
 begin
   Result := False;
   if (Grid.Col = 0) or (Grid.Cells[Grid.Col, 0] = EmptyStr) then Exit;
 
   col_list := TStringList(Grid.Cols[0]);
 
-  block_hdr := rpt_hdr;
-  if rpt_hdr = EmptyStr then
-    block_hdr := Format(REPORT_TYPE_FMT, [rpt_type]);
-  StatusBar.SimpleText := Format('Reading data from INI file for %s', [aStr]);
+  {  these block_hdr names are massaged before writing  }
+  block_hdr := Format(REPORT_TYPE_FMT, [rpt_hdr]);
+
+  StatusBar.SimpleText := Format('Reading data from INI file for %s', [rpt_hdr]);
   StatusBar.Update;
 
   aCol := Grid.Col;
+  ini_col_list := TStringList.Create;
   ini := TIniFile.Create(Prop_storage_ini);
   try
-    ini.ReadSection(block_hdr, col_list);
-    idx := 0;
-    while idx < col_list.Count do
-    begin
-      aStr := col_list[idx];
-      if aStr > EmptyStr then
-      begin
+    {  get the column names from the ini file  }
+    ini.ReadSection(block_hdr, ini_col_list);
+    cnt := ini_col_list.Count;
 
-      end;
+    {  iterate over those column names  }
+    idx := 0;
+    while idx < ini_col_list.Count do
+    begin
+      {  find the row in the grid where that column name resides.  }
+      grid_row_dx := Grid.Cols[0].IndexOf(ini_col_list[idx]);
+      if grid_row_dx < 0 then
+        raise Exception.Create(Format(ErrMsg,
+          ['col_name from ini not found in list']));
+      {  get the value associated with the column name from the ini file  }
+      value_str := ini.ReadString(block_hdr, ini_col_list[idx], 'not found');
+      if value_str = 'not found' then
+        raise Exception.Create(Format(ErrMsg, ['value not found in ini file']));
+
+      {  place value_str in Grid at the appropriate place.  }
+      Grid.Cells[column, grid_row_dx] := value_str;
       Inc(idx);
     end;
   finally
     StatusBar.SimpleText := EmptyStr;
     FreeAndNil(ini);
+    ini_col_list.Free;
+    ActionResizeGridColumns.Execute;
   end;
 end;
 
@@ -475,8 +520,13 @@ begin
       iCol := rptType_has_column(Result);
       if iCol < 0 then
         iCol := grid_hasEmptyColumn;
+      if iCol < 0 then
+      begin
+        Grid.ColCount := Grid.ColCount + 1;
+        iCol := Grid.ColCount - 1;
+      end;
       Grid.Cells[iCol, 0] := Result;
-      fillColumnFromINI(Result);
+      fillColumnFromINI(Result, iCol);
     end;
   finally
     dlg.Free;

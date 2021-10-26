@@ -12,27 +12,12 @@ object FmMap_to_xml: TFmMap_to_xml
   OnShow = FormShow
   SessionProperties = 'Height;Left;Top;Width'
   LCLVersion = '2.2.0.1'
-  object Grid: TStringGrid
-    Left = 0
-    Height = 446
-    Top = 0
-    Width = 311
-    Align = alLeft
-    Anchors = [akTop, akLeft, akRight, akBottom]
-    ColCount = 1
-    FixedRows = 0
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goColMoving, goEditing, goTabs, goThumbTracking, goRelaxedRowSelect, goSelectionActive, goFixedColSizing]
-    PopupMenu = popup
-    RowCount = 1
-    TabOrder = 0
-    OnSelectEditor = GridSelectEditor
-    OnShowHint = GridShowHint
-  end
   object StatusBar: TStatusBar
     Left = 0
     Height = 23
     Top = 446
     Width = 315
+    Align = alNone
     Panels = <>
   end
   object cboxReports: TComboBox
@@ -42,8 +27,40 @@ object FmMap_to_xml: TFmMap_to_xml
     Width = 64
     ItemHeight = 15
     OnCloseUp = cboxReportsCloseUp
-    TabOrder = 2
+    TabOrder = 1
     Visible = False
+  end
+  object pgCtrl: TPageControl
+    Left = 0
+    Height = 469
+    Top = 0
+    Width = 315
+    ActivePage = tsMappingData
+    Align = alClient
+    Images = DirBuilder_dataModule.imgList
+    TabIndex = 0
+    TabOrder = 2
+    object tsMappingData: TTabSheet
+      Caption = 'Mapping data'
+      ClientHeight = 441
+      ClientWidth = 307
+      ImageIndex = 22
+      object Grid: TStringGrid
+        Left = 0
+        Height = 441
+        Top = 0
+        Width = 307
+        Align = alClient
+        ColCount = 1
+        FixedRows = 0
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goColMoving, goEditing, goTabs, goThumbTracking, goRelaxedRowSelect, goSelectionActive, goFixedColSizing]
+        PopupMenu = popup
+        RowCount = 1
+        TabOrder = 0
+        OnSelectEditor = GridSelectEditor
+        OnShowHint = GridShowHint
+      end
+    end
   end
   object popup: TPopupMenu
     Left = 56
@@ -112,6 +129,7 @@ object FmMap_to_xml: TFmMap_to_xml
     end
   end
   object MainMenu: TMainMenu
+    Images = DirBuilder_dataModule.imgList
     Left = 104
     Top = 80
     object MenuItem1: TMenuItem

@@ -34,9 +34,11 @@ type
 		ActionReloadFile: TAction;
 		MenuItem5: TMenuItem;
 		pgCtrl: TPageControl;
+		StatusBar1 : TStatusBar;
+		statBarFirst_line : TStatusBar;
 		tabshRawFile: TTabSheet;
 		mmo: TMemo;
-		TabSheet2: TTabSheet;
+		tbCSV_data: TTabSheet;
 		sGrid: TStringGrid;
 		Button1: TButton;
 		pnlTop: TPanel;
@@ -136,6 +138,7 @@ end;
 procedure TfmDisplayCSVFile.ActionReadCSVDataExecute(Sender: TObject);
 var
   parmRec : TParmRec;
+  first_line : String;
 begin
   parmRec.delimiter := FDelimiter;
   parmRec.ignoreFirstLine := False;  //ActionIgnoreFirstLine.Checked;
@@ -143,7 +146,9 @@ begin
   parmRec.addRows := True;
   parmRec.withHeader := True;
 
-  LoadGridFromCSVFile(sGrid, FFilename, parmRec);
+  LoadGridFromCSVFile(sGrid, FFilename, parmRec, first_line);
+  if first_line > EmptyStr then
+
 end;
 
 procedure TfmDisplayCSVFile.FormClose(Sender : TObject;

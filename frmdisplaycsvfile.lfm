@@ -1,7 +1,7 @@
 object fmDisplayCSVFile: TfmDisplayCSVFile
-  Left = 1055
+  Left = 1234
   Height = 451
-  Top = 417
+  Top = 255
   Width = 556
   Caption = 'fmDisplayCSVFile'
   ClientHeight = 451
@@ -12,21 +12,20 @@ object fmDisplayCSVFile: TfmDisplayCSVFile
   LCLVersion = '2.2.0.1'
   object pgCtrl: TPageControl
     Left = 0
-    Height = 403
-    Top = 34
+    Height = 371
+    Top = 57
     Width = 556
-    ActivePage = TabSheet2
-    Align = alTop
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    ActivePage = tbCSV_data
+    Align = alClient
     TabIndex = 1
     TabOrder = 0
     object tabshRawFile: TTabSheet
       Caption = 'Raw data from file'
-      ClientHeight = 375
+      ClientHeight = 343
       ClientWidth = 548
       object mmo: TMemo
         Left = 0
-        Height = 346
+        Height = 314
         Top = 0
         Width = 548
         Align = alTop
@@ -41,16 +40,16 @@ object fmDisplayCSVFile: TfmDisplayCSVFile
       object Button1: TButton
         Left = 344
         Height = 25
-        Top = 350
+        Top = 318
         Width = 204
         Action = ActionAddQuotes
         Anchors = [akRight, akBottom]
         TabOrder = 1
       end
     end
-    object TabSheet2: TTabSheet
+    object tbCSV_data: TTabSheet
       Caption = 'CSV data'
-      ClientHeight = 375
+      ClientHeight = 343
       ClientWidth = 548
       object sGrid: TStringGrid
         Left = 0
@@ -89,6 +88,22 @@ object fmDisplayCSVFile: TfmDisplayCSVFile
       TabOrder = 0
       Text = 'edFileName'
     end
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 428
+    Width = 556
+    Panels = <>
+  end
+  object statBarFirst_line: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 34
+    Width = 556
+    Align = alTop
+    Panels = <>
+    Visible = False
   end
   object ActList4DspCSV: TActionList
     Left = 283

@@ -64,7 +64,7 @@ end;
 
 procedure Tfm_select_rprt_type.Action_close_DialogExecute(Sender: TObject);
 begin
-  Close
+  Close;
 end;
 
 procedure Tfm_select_rprt_type.FormCreate(Sender: TObject);

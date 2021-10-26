@@ -1,7 +1,7 @@
 object fm_select_rprt_type: Tfm_select_rprt_type
-  Left = 403
+  Left = 963
   Height = 352
-  Top = 471
+  Top = 303
   Width = 320
   Align = alBottom
   Caption = 'Select report type'
@@ -62,7 +62,7 @@ object fm_select_rprt_type: Tfm_select_rprt_type
       Style = tbsSeparator
     end
     object tbClose: TToolButton
-      Left = 207
+      Left = 166
       Top = 2
       Action = Action_close_Dialog
     end
@@ -72,7 +72,7 @@ object fm_select_rprt_type: Tfm_select_rprt_type
       Action = FileSaveAs
     end
     object ToolButton2: TToolButton
-      Left = 159
+      Left = 118
       Top = 2
       Action = Action_Cancel_dialog
     end
@@ -99,7 +99,7 @@ object fm_select_rprt_type: Tfm_select_rprt_type
     Left = 240
     Top = 248
     object Action_close_Dialog: TAction
-      Caption = 'Exit dialog'
+      Caption = 'Save && close'
       ImageIndex = 1
       OnExecute = Action_close_DialogExecute
     end
