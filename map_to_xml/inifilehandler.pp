@@ -3,11 +3,13 @@ unit IniFileHandler;
 interface
 
 uses
-  System.contnrs, System.Classes, inifiles, Vcl.Dialogs, Vcl.Forms,
-  System.SysUtils,
-  Global_stuff;
+  contnrs, Classes, inifiles, Dialogs, Forms,
+  SysUtils;
 
 type
+
+	{ TIniFileHandler }
+
   TIniFileHandler = class(TMemIniFile)
     { First element of FIniFileRecsList is a TStringList with records of inifile.
       Second element if TStringList with sections from the inifile. }
@@ -16,22 +18,21 @@ type
     FIniFileRecsList: TStringList;
     FSectionsList: TStringList;
     FFileName, errMsg: string;
-    function LoadIniFileList: Boolean;
+    function LoadIniFileList: boolean;
     procedure ParseSections;
   public
-    property IniFileRecsList: TStringList read FIniFileRecsList
-      write FIniFileRecsList;
+    property IniFileRecsList: TStringList read FIniFileRecsList write FIniFileRecsList;
     constructor Create(FName: string); reintroduce;
     destructor Destroy; override;
     property FileName: string read FFileName write FFileName;
     function GetListOfSection(section: string): TStringList;
     property SectionsList: TStringList read FSectionsList;
+    procedure RefreshIniFile;
   end;
 
-var
-  PrimaryIniFileName: string;
-  SQLIniFileName: string;
-
+const
+  OpenSquareBracket = #91;
+  CloseSquareBracket = #93;
 implementation
 
 { TIniFileHandler }
@@ -52,8 +53,10 @@ end;
 
 destructor TIniFileHandler.Destroy;
 begin
-  FIniFileRecsList.Free;
-  FSectionsList.Free;
+  if Assigned(FIniFileRecsList) then
+    FIniFileRecsList.Free;
+  if Assigned(FSectionsList) then
+    FSectionsList.Free;
   inherited;
 end;
 
@@ -63,12 +66,12 @@ function TIniFileHandler.GetListOfSection(section: string): TStringList;
   caller must free the TStringList that is returned.
   Objective: get a list of the nodes in the parm section in the memIniFile.
 }
-  function FindTheSection: Integer;
+  function FindTheSection: integer;
   {
     discover where in the memIniFile the parm section resides
   }
   var
-    i: Integer;
+    i: integer;
   begin
     Result := -9999;
 
@@ -87,8 +90,9 @@ function TIniFileHandler.GetListOfSection(section: string): TStringList;
           'IniFile section [', section, '] not found.');
         raise Exception.Create(errMsg);
       end;
-      { if execution is here, the section has been found }
-      Result := Integer(FSectionsList.Objects[i]) + 1;
+      {  if execution is here, the section has been found  }
+      {  FSectionsList.Objects[] are integers stored as objects  }
+      Result := PtrUInt(FSectionsList.Objects[i]) + 1;
     finally
       FSectionsList.EndUpdate;
     end;
@@ -96,7 +100,7 @@ function TIniFileHandler.GetListOfSection(section: string): TStringList;
   end;
 
 var
-  idx: Integer;
+  idx: integer;
   str: string;
 
 begin
@@ -114,7 +118,8 @@ begin
       if Trim(FIniFileRecsList[idx]) = EmptyStr then
       begin
         Inc(idx);
-        Continue; { we don't need blank lines } end;
+        Continue; { we don't need blank lines }
+      end;
 
       Result.Add(FIniFileRecsList[idx]);
       Inc(idx);
@@ -126,7 +131,12 @@ begin
   end;
 end;
 
-function TIniFileHandler.LoadIniFileList: Boolean;
+procedure TIniFileHandler.RefreshIniFile;
+begin
+  UpdateFile;
+end;
+
+function TIniFileHandler.LoadIniFileList: boolean;
 begin
   try
     GetStrings(FIniFileRecsList);
@@ -138,7 +148,7 @@ end;
 
 procedure TIniFileHandler.ParseSections;
 var
-  i, iPos: Integer;
+  i, iPos: Int64;
   s: string;
 begin
   FSectionsList.Clear;
@@ -148,8 +158,8 @@ begin
     begin
       iPos := Pos(CloseSquareBracket, FIniFileRecsList[i]);
       if iPos < 0 then
-        raise Exception.Create('TIniFileHandler.ParseSections' + sLineBreak +
-          'Close bracket "]" not found');
+        raise Exception.Create('TIniFileHandler.ParseSections' +
+          sLineBreak + 'Close bracket "]" not found');
       s := FIniFileRecsList[i].Substring(1, iPos - 2);
       FSectionsList.AddObject(LowerCase(s), TObject(i));
     end;

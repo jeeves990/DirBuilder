@@ -1,7 +1,7 @@
 object FmMap_to_xml: TFmMap_to_xml
-  Left = 604
+  Left = 1089
   Height = 489
-  Top = 304
+  Top = 433
   Width = 315
   Caption = 'Map csv fields to BooksDb.Books'
   ClientHeight = 469
@@ -10,7 +10,7 @@ object FmMap_to_xml: TFmMap_to_xml
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  SessionProperties = 'cboxReports.ItemIndex;ActiveControl;Height;Left;Top;Width'
+  SessionProperties = 'Height;Left;Top;Width'
   LCLVersion = '2.2.0.1'
   object Grid: TStringGrid
     Left = 0
@@ -48,12 +48,6 @@ object FmMap_to_xml: TFmMap_to_xml
   object popup: TPopupMenu
     Left = 56
     Top = 288
-    object N2: TMenuItem
-      Caption = '-'
-    end
-    object mnuAddColsFromBooks: TMenuItem
-      Action = ActionAddColumnsFromBooks
-    end
     object MenuItem4: TMenuItem
       Action = ActionAddNewColumn
     end
@@ -61,10 +55,16 @@ object FmMap_to_xml: TFmMap_to_xml
       Caption = '-'
     end
     object MenuItem7: TMenuItem
-      Action = ActionReadColumnFromXML
+      Action = ActionReadColumnFromINI
     end
     object MenuItem8: TMenuItem
-      Action = ActionWriteCol2XML
+      Action = ActionWriteCol2INI
+    end
+    object N4: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem9: TMenuItem
+      Action = ActionGetReportType
     end
   end
   object Actions: TActionList
@@ -73,7 +73,7 @@ object FmMap_to_xml: TFmMap_to_xml
     Top = 288
     object ActionAddColumnsFromBooks: TAction
       Caption = 'Columns from books table'
-      ImageIndex = 10
+      ImageIndex = 19
       OnExecute = ActionAddColumnsFromBooksExecute
     end
     object ActionAddNewColumn: TAction
@@ -90,20 +90,25 @@ object FmMap_to_xml: TFmMap_to_xml
       Caption = 'ActionAdd'
       ImageIndex = 7
     end
-    object ActionWriteCol2XML: TAction
-      Caption = 'Write column to XML'
+    object ActionWriteCol2INI: TAction
+      Caption = 'Write column to INI'
       ImageIndex = 17
-      OnExecute = ActionWriteCol2XMLExecute
+      OnExecute = ActionWriteCol2INIExecute
     end
-    object ActionReadColumnFromXML: TAction
-      Caption = 'Read column from XML'
-      ImageIndex = 17
-      OnExecute = ActionReadColumnFromXMLExecute
+    object ActionReadColumnFromINI: TAction
+      Caption = 'Read column from INI'
+      ImageIndex = 18
+      OnExecute = ActionReadColumnFromINIExecute
     end
     object ActionGetReportType: TAction
       Caption = 'Get report type'
-      ImageIndex = 12
+      ImageIndex = 21
       OnExecute = ActionGetReportTypeExecute
+    end
+    object ActionRefreshIniHandler: TAction
+      Caption = 'Refresh Ini File Handler'
+      ImageIndex = 8
+      OnExecute = ActionRefreshIniHandlerExecute
     end
   end
   object MainMenu: TMainMenu
@@ -111,32 +116,38 @@ object FmMap_to_xml: TFmMap_to_xml
     Top = 80
     object MenuItem1: TMenuItem
       Caption = 'Operations'
-      object MenuItem2: TMenuItem
-        Action = ActionAddColumnsFromBooks
-      end
       object MenuItem3: TMenuItem
         Action = ActionAddNewColumn
+      end
+      object MenuItem11: TMenuItem
+        Action = ActionAddColumnsFromBooks
       end
       object N1: TMenuItem
         Caption = '-'
       end
       object MenuItem5: TMenuItem
-        Action = ActionReadColumnFromXML
+        Action = ActionReadColumnFromINI
       end
       object MenuItem6: TMenuItem
-        Action = ActionWriteCol2XML
+        Action = ActionWriteCol2INI
+      end
+      object N2: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem2: TMenuItem
+        Action = ActionGetReportType
       end
     end
-    object MenuItem9: TMenuItem
-      Caption = 'Appearance'
+    object mnuOther: TMenuItem
+      Caption = 'Other'
       object MenuItem10: TMenuItem
-        Action = ActionResizeGridColumns
+        Action = ActionRefreshIniHandler
       end
     end
   end
   object IniPropStorage: TIniPropStorage
     StoredValues = <>
-    Left = 128
-    Top = 184
+    Left = 56
+    Top = 200
   end
 end

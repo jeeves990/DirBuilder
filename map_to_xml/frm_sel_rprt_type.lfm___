@@ -1,20 +1,21 @@
 object fmSelectReportType: TfmSelectReportType
-  Left = 403
-  Height = 232
-  Top = 146
-  Width = 198
+  Left = 1403
+  Height = 181
+  Top = 317
+  Width = 214
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Select Report Type'
-  ClientHeight = 232
-  ClientWidth = 198
+  ClientHeight = 181
+  ClientWidth = 214
   OnClose = FormClose
   OnCreate = FormCreate
+  SessionProperties = 'Height;Left;Top;Width'
   LCLVersion = '2.2.0.1'
   object rGrpReportTypes: TRadioGroup
     Left = 0
-    Height = 206
+    Height = 155
     Top = 26
-    Width = 198
+    Width = 214
     Align = alClient
     AutoFill = True
     Caption = 'Amazon report types'
@@ -31,32 +32,45 @@ object fmSelectReportType: TfmSelectReportType
     Left = 0
     Height = 26
     Top = 0
-    Width = 198
+    Width = 214
     Caption = 'ToolBar1'
     ShowCaptions = True
     TabOrder = 1
     object ToolButton1: TToolButton
       Left = 1
       Top = 2
+      Action = ActionOpen
     end
     object ToolButton2: TToolButton
-      Left = 24
+      Left = 104
       Top = 2
     end
     object ToolButton3: TToolButton
-      Left = 47
+      Left = 127
       Height = 22
       Top = 2
       Caption = 'ToolButton3'
       Style = tbsSeparator
     end
     object ToolButton4: TToolButton
-      Left = 55
+      Left = 135
       Top = 2
+      Action = FileExit1
     end
   end
   object Actions: TActionList
+    Images = DirBuilder_dataModule.imgList
     Left = 104
     Top = 168
+    object ActionOpen: TAction
+      Caption = 'Open report types'
+      ImageIndex = 4
+    end
+    object FileExit1: TFileExit
+      Category = 'File'
+      Caption = 'E&xit'
+      Hint = 'Exit'
+      ImageIndex = 1
+    end
   end
 end

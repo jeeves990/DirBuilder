@@ -70,11 +70,11 @@
         <UnitName Value="frmDisplayCSVFile"/>
       </Unit>
       <Unit>
-        <Filename Value="frmselreporttype.pp"/>
+        <Filename Value="frm_sel_rprt_type.pp"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="fmSelectReportType"/>
+        <ComponentName Value="fmsel_rprt_type"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="frmSelReportType"/>
+        <UnitName Value="frm_sel_rprt_type"/>
       </Unit>
     </Units>
   </ProjectOptions>

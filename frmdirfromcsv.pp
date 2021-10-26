@@ -17,9 +17,9 @@ unit frmDirFromCSV;
 interface
 
 uses
-  ActnList, Classes, ComCtrls, {csvdataset, DB, }DBCtrls, DBGrids, ExtCtrls,
+  ActnList, Classes, ComCtrls, DBCtrls, DBGrids, ExtCtrls,
   Menus, StdCtrls, SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd,
-  {ComboEx, }Grids, IniPropStorage, {StdActns, }DirBuilder_dmod, stringGridHelper,
+  Grids, IniPropStorage, DirBuilder_dmod, stringGridHelper,
   frmDisplayCSVFile, StringGridUtil, CSVParser_setup, dmodCSVParser,
   frmChangeCSVProperties, frmNewBooksDb, unitLoad_grid_from_csv;
 

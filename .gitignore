@@ -26,11 +26,12 @@
 *.bak
 ./lib/*
 lib/*
-backup/*
-clone/*
+**/backup/*
+**/clone/*
 ./clone/*
 *~
 *.ppu
+**/lib/*
 
 # my files to ignore
 test*

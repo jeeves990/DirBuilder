@@ -1,8 +1,0 @@
-object fmCSVParser_setup: TfmCSVParser_setup
-  Left = 758
-  Height = 421
-  Top = 287
-  Width = 476
-  Caption = 'fmCSVParser_setup'
-  LCLVersion = '2.0.12.0'
-end

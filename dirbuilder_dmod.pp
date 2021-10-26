@@ -8,6 +8,7 @@ uses
   Classes, SysUtils, csvdataset, DB, mysql57conn, SQLDB, Dialogs,
   Controls,
   Windows, IniPropStorage;
+//, XMLPropStorage;
 
 type
 
@@ -26,6 +27,7 @@ type
     BooksDbConn: TMySQL57Connection;
     BooksDbTx: TSQLTransaction;
 		imgList : TImageList;
+		IniPropStorage : TIniPropStorage;
 		qryInsertBooks : TSQLQuery;
 		qryWork : TSQLQuery;
     procedure DataModuleCreate(Sender: TObject);
@@ -40,6 +42,9 @@ type
 
 var
   DirBuilder_dataModule: TDirBuilder_dataModule;
+  Prop_storage_ini : String;
+  Report_type_list : TStringList;
+
 
 const
   SQL4BOOKS = 'SELECT * FROM BOOKS';
@@ -63,7 +68,7 @@ const
   QUOTES_SET = [BACKQUOTE, SINGLEQUOTE, DOUBLEQUOTE];
 
   SPACE = #32;
-  PROPSTORAGE_FILENAME = 'DirBuilder.xml';
+  PROPSTORAGE_FILENAME_INI = 'DirBuilder.ini';
 
 procedure Write_SQL_Qry_to_CSV(qry : TSQLQuery; const fileName : TFileName);
 
@@ -105,6 +110,7 @@ var
   b : Boolean;
 begin
    CSVDataset.Close;
+   IniPropStorage.IniFileName := PROPSTORAGE_FILENAME_INI;
 end;
 
 procedure TDirBuilder_dataModule.ReadCSVWithMemDataset(

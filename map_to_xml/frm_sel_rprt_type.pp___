@@ -1,4 +1,4 @@
-unit frmSelReportType;
+unit frm_sel_rprt_type;
 
 {$mode ObjFPC}{$H+}
 
@@ -11,9 +11,9 @@ uses
 
 type
 
-  { TfmSelectReportType }
+  { TfmSel_rprt_type }
 
-  TfmSelectReportType = class(TForm)
+  TfmSel_rprt_type = class(TForm)
     ActionOpen: TAction;
     Actions: TActionList;
     FileExit1: TFileExit;
@@ -36,15 +36,15 @@ type
   end;
 
 var
-  fmSelectReportType: TfmSelectReportType;
+  fmSel_rprt_type: TfmSel_rprt_type;
 
 implementation
 
 {$R *.lfm}
 
-{ TfmSelectReportType }
+{ TfmSel_rprt_type }
 
-procedure TfmSelectReportType.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+procedure TfmSel_rprt_type.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   ModalResult := -1;
   if rGrpReportTypes.ItemIndex >= 0 then
@@ -56,12 +56,12 @@ begin
   //  FreeAndNil(FReportTypeList.Free);
 end;
 
-procedure TfmSelectReportType.FormCreate(Sender: TObject);
+procedure TfmSel_rprt_type.FormCreate(Sender: TObject);
 begin
   SetReportList(nil);
 end;
 
-procedure TfmSelectReportType.SetReportList(AValue: TStringList);
+procedure TfmSel_rprt_type.SetReportList(AValue: TStringList);
 var
   i: integer;
 begin
@@ -77,7 +77,7 @@ begin
 
 end;
 
-procedure TfmSelectReportType.SetChosenReport(AValue: string);
+procedure TfmSel_rprt_type.SetChosenReport(AValue: string);
 begin
   if FChosenReport = AValue then Exit;
   FChosenReport := AValue;

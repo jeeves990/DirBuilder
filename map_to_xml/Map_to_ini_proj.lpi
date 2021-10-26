@@ -62,16 +62,23 @@
         <UnitName Value="frmDisplayCSVFile"/>
       </Unit>
       <Unit>
-        <Filename Value="frmselreporttype.pp"/>
+        <Filename Value="frmmap_to_xml.pp"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="fmSelectReportType"/>
+        <ComponentName Value="FmMap_to_xml"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="frmSelReportType"/>
+        <UnitName Value="frmMap_to_XML"/>
       </Unit>
       <Unit>
-        <Filename Value="DirBuilder.xml"/>
+        <Filename Value="inifilehandler.pp"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="IniFileHandler"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frm_select_rprt_type.pp"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fm_select_rprt_type"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>
   </ProjectOptions>

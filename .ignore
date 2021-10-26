@@ -33,5 +33,5 @@ backup/*
 .*/backup/*
 
 ./map_to_xml/backup/*
-./map_to_xml/lib/*
+. /map_to_xml/lib/*
 

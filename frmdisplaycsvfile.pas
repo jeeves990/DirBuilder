@@ -9,7 +9,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ActnList,
-	Menus, Grids, ComCtrls, ExtCtrls, XMLPropStorage, Character, frmInputNewValue,
+	Menus, Grids, ComCtrls, ExtCtrls,
+  XMLPropStorage,
+  Character, frmInputNewValue,
 	stringgridutil, AddQuotes2Files_unit, dmodCSVParser, DirBuilder_dmod;
 
 type

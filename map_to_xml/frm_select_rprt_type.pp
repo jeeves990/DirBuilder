@@ -1,4 +1,4 @@
-unit frmSelReportType;
+unit frm_select_rprt_type;
 
 {$mode ObjFPC}{$H+}
 
@@ -6,23 +6,29 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
-  DirBuilder_dmod,
-  Menus, ActnList, StdActns;
+  ActnList, StdActns, StdCtrls, Buttons, DirBuilder_dmod;
 
 type
 
-  { TfmSelectReportType }
+  { Tfm_select_rprt_type }
 
-  TfmSelectReportType = class(TForm)
-    ActionOpen: TAction;
+  Tfm_select_rprt_type = class(TForm)
+    Action_close_Dialog: TAction;
+    Action_Cancel_dialog: TAction;
     Actions: TActionList;
-    FileExit1: TFileExit;
+		btnClose : TBitBtn;
+		btn_cancel_dialog : TBitBtn;
+    FileOpen1: TFileOpen;
+    FileSaveAs: TFileSaveAs;
+    pnlButtons: TPanel;
     rGrpReportTypes: TRadioGroup;
-    ToolBar1: TToolBar;
+    ToolBar: TToolBar;
+    tbOpen: TToolButton;
     ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
+		ToolButton2 : TToolButton;
     ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
+    tbClose: TToolButton;
+    procedure Action_close_DialogExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
   private
@@ -33,18 +39,20 @@ type
   public
     property ReportTypeList: TStringList read FReportTypeList write SetReportList;
     property ChosenReport: string read FChosenReport write SetChosenReport;
+
   end;
 
 var
-  fmSelectReportType: TfmSelectReportType;
+  fm_select_rprt_type: Tfm_select_rprt_type;
 
 implementation
 
 {$R *.lfm}
 
-{ TfmSelectReportType }
+{ Tfm_select_rprt_type }
 
-procedure TfmSelectReportType.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+procedure Tfm_select_rprt_type.FormClose(Sender: TObject;
+  var CloseAction: TCloseAction);
 begin
   ModalResult := -1;
   if rGrpReportTypes.ItemIndex >= 0 then
@@ -52,16 +60,19 @@ begin
     FChosenReport := rGrpReportTypes.Items[rGrpReportTypes.ItemIndex];
     ModalResult := 1;
   end;
-  //if Assigned(FReportTypeList) then
-  //  FreeAndNil(FReportTypeList.Free);
 end;
 
-procedure TfmSelectReportType.FormCreate(Sender: TObject);
+procedure Tfm_select_rprt_type.Action_close_DialogExecute(Sender: TObject);
+begin
+  Close
+end;
+
+procedure Tfm_select_rprt_type.FormCreate(Sender: TObject);
 begin
   SetReportList(nil);
 end;
 
-procedure TfmSelectReportType.SetReportList(AValue: TStringList);
+procedure Tfm_select_rprt_type.SetReportList(AValue: TStringList);
 var
   i: integer;
 begin
@@ -77,10 +88,11 @@ begin
 
 end;
 
-procedure TfmSelectReportType.SetChosenReport(AValue: string);
+procedure Tfm_select_rprt_type.SetChosenReport(AValue: string);
 begin
   if FChosenReport = AValue then Exit;
   FChosenReport := AValue;
 end;
+
 
 end.
