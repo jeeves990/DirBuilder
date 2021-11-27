@@ -24,7 +24,7 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
     Top = 16
   end
   object BooksDbConn: TMySQL57Connection
-    Connected = True
+    Connected = False
     LoginPrompt = False
     DatabaseName = 'booksdb'
     KeepConnection = False
@@ -34,13 +34,13 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
     Password = 'j33ves99'
     Transaction = BooksDbTx
     UserName = 'root'
-    HostName = '127.0.0.1'
+    HostName = 's-notebook'
     SkipLibraryVersionCheck = False
     Left = 136
     Top = 88
   end
   object BooksDbTx: TSQLTransaction
-    Active = True
+    Active = False
     Database = BooksDbConn
     Left = 48
     Top = 88

@@ -13,6 +13,8 @@ type
 	{ TfmChangeCSVProperties }
 
   TfmChangeCSVProperties = class(TForm)
+				rbtnCRLF : TRadioButton;
+				rbtnLF : TRadioButton;
     rgrpCSVDelimiter: TRadioGroup;
     rbtnComma: TRadioButton;
     rbtnTab: TRadioButton;
@@ -20,14 +22,17 @@ type
     btnAccept: TButton;
     btnCancel: TButton;
 		CSVPropStorage : TXMLPropStorage;
+		rgrpCSVLineending : TRadioGroup;
     procedure btnCancelClick(Sender: TObject);
     procedure btnAcceptClick(Sender: TObject);
   private
     FDelimiterChoice : Integer;
+    FLineendingChoice : Integer;
     FCurrentChoice : Char;
 		procedure SetCurrentChoice(AValue : Char);
   public
     property DelimiterChoice : Integer read FDelimiterChoice write FDelimiterChoice ;
+    property LineendingChoice : Integer read FLineendingChoice write FLineendingChoice;
     property CurrentChoice : Char read FCurrentChoice write SetCurrentChoice ;
   end;
 
@@ -36,6 +41,8 @@ const
   ChoseSemicolon = 2;
   ChoseComma = 0;
   ChoseNoChoice = -999;
+  ChoseLF = 10;
+  ChoseCRLF = 13;
 
 var
   fmChangeCSVProperties: TfmChangeCSVProperties;
@@ -67,6 +74,12 @@ begin
     FDelimiterChoice := ChoseTab
   else if rbtnSemicolon.Checked then
     FDelimiterChoice := ChoseSemicolon;
+
+  idx := rgrpCSVLineending.ItemIndex;
+  if rbtnCRLF.Checked then
+    FLineendingChoice := ChoseCRLF
+  else
+    FLineendingChoice := ChoseLF;
 
   Close;
 end;

@@ -103,6 +103,7 @@
         <Filename Value="csvparser_setup.pp"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="fmCSVParser_setup"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="CSVParser_setup"/>
       </Unit8>

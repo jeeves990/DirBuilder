@@ -181,6 +181,7 @@ begin
   self.Caption := FFileName;
   FMaxLines2Read := 5;
   FSlst := TStringList.Create;
+  pgCtrl.ActivePage := tabshRawFile;
 end;
 
 destructor TfmDisplayCSVFile.Destroy;

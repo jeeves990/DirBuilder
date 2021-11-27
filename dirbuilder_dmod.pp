@@ -33,11 +33,12 @@ type
     procedure DataModuleCreate(Sender: TObject);
   private
     FFileName : TFileName;
+		procedure Close_books_db;
+  function Open_books_db : Boolean;
   public
-    function open_DataSet(const fileName : TFileName; ColNames1stLine : Boolean = False) : Boolean;
+    function open_CSV_dataset(const fileName : TFileName; ColNames1stLine : Boolean = False) : Boolean;
     property FileName : TFileName read FFileName write FFileName;
     procedure setFieldNames;
-		procedure ReadCSVWithMemDataset(const __fileName: TFileName);
   end;
 
 var
@@ -57,7 +58,10 @@ const
   TAB = #09;
   CR = #13;
   LF = #10;
+  LF_STR = 'LF';
   CRLF = CR +LF;
+  CRLF_STR = 'CRLF';
+
   BACKQUOTE = #96;
   SINGLEQUOTE = #39;
   DOUBLEQUOTE = #34;
@@ -105,27 +109,34 @@ end;
 
 { TDirBuilder_dataModule }
 
+function  TDirBuilder_dataModule.Open_books_db : Boolean;
+begin
+  BooksDbConn.Open;
+  Result := BooksDbConn.Connected;
+end;
+
+procedure TDirBuilder_dataModule.Close_books_db;
+begin
+  BooksDbConn.Close(True);  // force close
+end;
+
 procedure TDirBuilder_dataModule.DataModuleCreate(Sender: TObject);
 var
   b : Boolean;
 begin
    CSVDataset.Close;
+   BooksDbConn.Close;
    IniPropStorage.IniFileName := PROPSTORAGE_FILENAME_INI;
 end;
 
-procedure TDirBuilder_dataModule.ReadCSVWithMemDataset(
-			const __fileName: TFileName);begin
-
-end;
-
-function TDirBuilder_dataModule.open_DataSet(const fileName : TFileName;
+function TDirBuilder_dataModule.open_CSV_dataset(const fileName : TFileName;
                     ColNames1stLine : Boolean = False) : Boolean;
 var
   s, fldDef, fldVal : string;
   recCnt, i, __i : Integer;
   b : Boolean;
 begin
-  s := 'TDirBuilder_dataModule.open_DataSet has failed.'
+  s := 'TDirBuilder_dataModule.open_CSV_dataset has failed.'
                        +sLineBreak +'%s';
   try
     b := CSVDataset.DefaultFields;
@@ -156,7 +167,7 @@ begin
 		end;
 
     if not CSVDataset.Active then
-      raise Exception.Create('open_DataSet method: dataset is not open. Cause unknown');
+      raise Exception.Create('open_CSV_dataset method: dataset is not open. Cause unknown');
     //__i := CSVDataset.FieldDefs.Count;
     //recCnt := CSVDataset.RecordCount;
   except on e : Exception do
@@ -191,60 +202,3 @@ end.
 
 
 
-CSVDataset.Close;
-CSVDataset.Clear;
-CSVDataset.FieldDefs.Clear;
-CSVDataset.FileName := fileName;
-CSVDataset.Open;
-
-if ColNames1stLine then
-begin
-  CSVDataset.DisableControls;
-  CSVDataset.First;
-  try
-    for i := 0 to CSVDataset.FieldCount -1 do
-    begin
-      fldDef := CSVDataset.FieldDefs[i].DisplayName;
-      fldVal := CSVDataset.Fields[i].Value;
-      CSVDataset.FieldDefs[i].Name:=fldDef;
-      CSVDataset.FieldDefs[i].DisplayName := CSVDataset.Fields[i].Value;
-      fldDef := CSVDataset.FieldDefs[i].Name;
-	    // TODO: this fails when a differently formatted csv file is read
-    end;
-  finally
-    CSVDataset.EnableControls;
-  end;
-end;
-recCnt := CSVDataset.RecordCount;
-except on e : Exception do
-ShowMessage(Format(s, [e.Message]));
-
-end;              CSVDataset.Close;
-    CSVDataset.Clear;
-    CSVDataset.FieldDefs.Clear;
-    CSVDataset.FileName := fileName;
-    CSVDataset.Open;
-
-    if ColNames1stLine then
-    begin
-      CSVDataset.DisableControls;
-      CSVDataset.First;
-      try
-		    for i := 0 to CSVDataset.FieldCount -1 do
-		    begin
-          fldDef := CSVDataset.FieldDefs[i].DisplayName;
-          fldVal := CSVDataset.Fields[i].Value;
-          CSVDataset.FieldDefs[i].Name:=fldDef;
-		      CSVDataset.FieldDefs[i].DisplayName := CSVDataset.Fields[i].Value;
-          fldDef := CSVDataset.FieldDefs[i].Name;
-  		    // TODO: this fails when a differently formatted csv file is read
-        end;
-		  finally
-        CSVDataset.EnableControls;
-      end;
-		end;
-    recCnt := CSVDataset.RecordCount;
-  except on e : Exception do
-    ShowMessage(Format(s, [e.Message]));
-
-  end;

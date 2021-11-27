@@ -3,7 +3,9 @@
   <TApplication>
     <frmFayesDirBuilder>
       <fmDisplayCSVFile fmDisplayCSVFile_Top="470" fmDisplayCSVFile_Left="979" fmDisplayCSVFile_Width="556" fmDisplayCSVFile_Height="451" fmDisplayCSVFile_BorderStyle="bsSizeable" fmDisplayCSVFile_WindowState="wsNormal" fmDisplayCSVFile_ActiveControl="pgCtrl"/>
+      <fmDisplayCSVFile_1 fmDisplayCSVFile_1_Top="255" fmDisplayCSVFile_1_Left="1234" fmDisplayCSVFile_1_Width="556" fmDisplayCSVFile_1_Height="451" fmDisplayCSVFile_1_BorderStyle="bsSizeable" fmDisplayCSVFile_1_WindowState="wsNormal" fmDisplayCSVFile_1_ActiveControl="pgCtrl"/>
     </frmFayesDirBuilder>
   </TApplication>
   <fmDisplayCSVFile fmDisplayCSVFile_Top="470" fmDisplayCSVFile_Left="979" fmDisplayCSVFile_Width="556" fmDisplayCSVFile_Height="451" fmDisplayCSVFile_BorderStyle="bsSizeable" fmDisplayCSVFile_WindowState="wsNormal" fmDisplayCSVFile_ActiveControl="pgCtrl"/>
+  <fmDisplayCSVFile_1 fmDisplayCSVFile_1_Top="255" fmDisplayCSVFile_1_Left="1234" fmDisplayCSVFile_1_Width="556" fmDisplayCSVFile_1_Height="451" fmDisplayCSVFile_1_BorderStyle="bsSizeable" fmDisplayCSVFile_1_WindowState="wsNormal" fmDisplayCSVFile_1_ActiveControl="pgCtrl"/>
 </CONFIG>

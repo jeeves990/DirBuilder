@@ -15,9 +15,9 @@ object fmDisplayCSVFile: TfmDisplayCSVFile
     Height = 371
     Top = 57
     Width = 556
-    ActivePage = tbCSV_data
+    ActivePage = tabshRawFile
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     object tabshRawFile: TTabSheet
       Caption = 'Raw data from file'
