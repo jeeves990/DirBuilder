@@ -21,17 +21,19 @@ uses
   Menus, StdCtrls, SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd,
   Grids, IniPropStorage, Buttons, DirBuilder_dmod, stringGridHelper,
   frmDisplayCSVFile, StringGridUtil, CSVParser_setup, dmodCSVParser,
-  frmChangeCSVProperties, frmNewBooksDb, unitLoad_grid_from_csv;
+  frmChangeCSVProperties, frmNewBooksDb, unitLoad_grid_from_csv, Types;
 
 type
   EMyDBNotOpenException = class(Exception);
+  //TChgParserProps = (ColDelimiter = 0, RowDelimiter);
 
   { TfrmFayesDirBuilder }
 
   TfrmFayesDirBuilder = class(TForm)
+		ActionChgRowDelimiter : TAction;
+		ActionChgColDelimiter : TAction;
     ActionWriteGridToBooksDb: TAction;
     ActionDeleteCurrentCSVFileFromCheckBox: TAction;
-    ActionIgnoreFirstLine: TAction;
     ActionBooksDb: TAction;
     ActionReadRawFile: TAction;
     ActionSetTitles: TAction;
@@ -42,20 +44,22 @@ type
     ActionResizeColumns: TAction;
     ActionClose: TAction;
     ActionList: TActionList;
-    BitBtn1: TBitBtn;
-    BitBtn2: TBitBtn;
-    btn_resize_table_columns: TBitBtn;
+    btn_mk_dirs: TBitBtn;
+    btn_close: TBitBtn;
     btn_read_raw_file: TBitBtn;
     btn_find_output_directory: TBitBtn;
     btn_read_CSV_file: TBitBtn;
     btn_find_csv_file: TBitBtn;
+		btn_resize_table_columns : TBitBtn;
     cboxOutDir: TComboBox;
+		cb_delimiter : TComboBox;
+		cb_lineending : TComboBox;
     ckbox1stRowIsTitles: TCheckBox;
     cboxCSVFile: TComboBox;
-		cb_lineending : TComboBox;
-		cb_delimiter : TComboBox;
     DirBuilderPropIni: TIniPropStorage;
     edCellContent: TEdit;
+		Label1 : TLabel;
+		Label2 : TLabel;
     lblCellContents: TLabel;
     lblOutDir: TLabel;
     lblCSVFile: TLabel;
@@ -64,6 +68,7 @@ type
     MenuItem10: TMenuItem;
     MenuItem11: TMenuItem;
     MenuItem12: TMenuItem;
+		MenuItem13 : TMenuItem;
     mnuWriteGridToBooksDb: TMenuItem;
     N8: TMenuItem;
     mnuItmDltCurCsvFile: TMenuItem;
@@ -94,15 +99,16 @@ type
     pnlTop: TPanel;
     popupMnu: TPopupMenu;
     cBoxPopup: TPopupMenu;
+		sg_parser_configs : TStringGrid;
+		sg_parser_config_popup : TPopupMenu;
     StatusBar: TStatusBar;
     statBar_first_line: TStatusBar;
     tabshCSVFile: TTabSheet;
     tabshCSVParserProps: TTabSheet;
     ActionReadCSV: TAction;
-    Grid: TStringGrid;
+    File_grid: TStringGrid;
     pnlBottom: TPanel;
     gpBoxCSVParserProperties: TGroupBox;
-    sg_parser_configs: TStringGrid;
     ActionChangeCSVDelimiter: TAction;
     sGridPopup: TPopupMenu;
     N9: TMenuItem;
@@ -114,7 +120,6 @@ type
     procedure ActionDeleteCurrentCSVFileFromCheckBoxExecute(Sender: TObject);
     procedure ActionFindCSVExecute(Sender: TObject);
     procedure ActionFindOutputDirExecute(Sender: TObject);
-    procedure ActionIgnoreFirstLineExecute(Sender: TObject);
     procedure ActionMkDirsExecute(Sender: TObject);
     procedure ActionReadCSVExecute(Sender: TObject);
     procedure ActionReadRawFileExecute(Sender: TObject);
@@ -124,40 +129,58 @@ type
     procedure btnCloseClick(Sender: TObject);
     procedure cboxCSVFileCloseUp(Sender: TObject);
     procedure cboxCSVFileEnter(Sender: TObject);
-		procedure cbox_EditingDone(Sender : TObject);
+    procedure cbox_EditingDone(Sender: TObject);
+		procedure cb_delimiterCloseUp(Sender : TObject);
     procedure ckboxShowLineNumbersChange(Sender: TObject);
     procedure dbgridCSVCellClick(Column: TColumn);
     procedure dbgridCSVTitleClick(Column: TColumn);
+		procedure DirBuilderPropIniRestoringProperties(Sender : TObject);
+		procedure DirBuilderPropIniSaveProperties(Sender : TObject);
     procedure edCSVFileChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure cboxCSVFileChange(Sender: TObject);
-    procedure GridHeaderClick(Sender: TObject; IsColumn: boolean; Index: integer);
-    procedure GridDblClick(Sender: TObject);
-    procedure GridClick(Sender: TObject);
+    procedure File_gridHeaderClick(Sender: TObject; IsColumn: boolean; Index: integer);
+    procedure File_gridDblClick(Sender: TObject);
+    procedure File_gridClick(Sender: TObject);
     procedure ActionChangeCSVDelimiterExecute(Sender: TObject);
-    procedure GridSelection(Sender: TObject; aCol, aRow: integer);
-		procedure sg_parser_configsMouseUp(Sender : TObject; Button : TMouseButton;
-					Shift : TShiftState; X, Y : Integer);
-		procedure sg_parser_configsSelectEditor(Sender : TObject; aCol,
-					aRow : Integer; var Editor : TWinControl);
+    procedure File_gridSelection(Sender: TObject; aCol, aRow: integer);
+    procedure sg_parser_configsMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: integer);
+    procedure sg_parser_configsSelectEditor(Sender: TObject;
+      aCol, aRow: integer; var Editor: TWinControl);
   private
-    checkFlag: boolean;
+    //checkFlag: boolean;
     FDirListColumn: integer;
     FCSVDelimiter: string;
+		//FDlgOp : ShortInt;
     Fdmod: TDirBuilder_dataModule;
     FBooksDbDlg: TfmNewBooksDb;
-    FDelimiter: char;
-    FLineending : String;
+
+    FColDelimiter: AnsiString;
+    FRowDelimiter: AnsiString;
+
     FCurReportType: TCaption;
+    FChgParserProp : Integer;
 
     function countSubDirs(path: string): integer;
     procedure GetCSVParserProps;
     function isGridPopulated: boolean;
     procedure move_grid_first_line;
+
+    procedure Setup_cb_delimiter;
+		procedure Setup_cb_lineending;
+
+    function GetColDelimiter : AnsiString;
+    function GetRowDelimiter : AnsiString;
+
   public
     property CSVDelimiter: string read FCSVDelimiter write FCSVDelimiter;
     property dmod: TDirBuilder_dataModule read Fdmod write Fdmod;
+
+    property ColDelimiter : AnsiString read GetColDelimiter;
+    property RowDelimiter : AnsiString read GetRowDelimiter;
+
   end;
 
 var
@@ -166,6 +189,14 @@ var
 implementation
 
 {$R *.lfm}
+
+const
+  SG_ROW_4_COL_DELIMITER = 0;
+  SG_ROW_4_LINE_DELIMITER = 1;
+  SG_COL_4_VALUES = 1;
+
+  SG_ROW_DELIMITER = 'Row delimiter';
+  SG_COL_DELIMITER = 'Column delimiter';
 
 { TfrmFayesDirBuilder }
 
@@ -178,9 +209,7 @@ procedure TfrmFayesDirBuilder.cboxCSVFileCloseUp(Sender: TObject);
 var
   idx: integer;
   txt: string;
-  pt: TPoint;
 begin
-  pt := Mouse.CursorPos;
   txt := cboxCSVFile.Text;
   for idx := 0 to cboxCSVFile.Items.Count - 1 do
     if txt = cboxCSVFile.Items[idx] then
@@ -188,7 +217,8 @@ begin
   cboxCSVFile.Items.Add(txt);
   if FCurReportType <> cboxCSVFile.Text then
   begin
-    ActionIgnoreFirstLine.Checked := False;
+    //ActionIgnoreFirstLine.Checked := False;
+    ckbox1stRowIsTitles.Checked := False;
     cboxCSVFile.Invalidate;
   end;
 end;
@@ -196,19 +226,6 @@ end;
 procedure TfrmFayesDirBuilder.cboxCSVFileEnter(Sender: TObject);
 begin
   FCurReportType := cboxCSVFile.Text;
-end;
-
-procedure TfrmFayesDirBuilder.cbox_EditingDone(Sender : TObject);
-var
-  sg : TStringGrid;
-begin
-  if not (Sender is TComboBox) then
-    Exit;
-  sg := sg_parser_configs;
-  if TComboBox(Sender) = cb_lineending then
-    sg.Cells[1, 1] := TComboBox(Sender).Text
-  else if TComboBox(Sender) = cb_delimiter then
-    sg.Cells[0, 1] := TComboBox(Sender).Text;
 end;
 
 procedure TfrmFayesDirBuilder.ckboxShowLineNumbersChange(Sender: TObject);
@@ -220,14 +237,12 @@ begin
 end;
 
 procedure TfrmFayesDirBuilder.FormCreate(Sender: TObject);
-var
-  g_path: TFileName;
 begin
   ckboxShowLineNumbersChange(self);
   if DirectoryExists(cboxOutDir.Text) then
     cboxOutDir.Items.Add(cboxOutDir.Text);
   Fdmod := TDirBuilder_dataModule.Create(self);
-  Grid.Clear;
+  File_grid.Clear;
   GetCSVParserProps;
   pgCtrl.ActivePage := tabshCSVFile;
 
@@ -235,6 +250,39 @@ begin
   //ShowMessage(g_path);
   DirBuilderPropIni.Restore;
   FBooksDbDlg := nil;
+  FChgParserProp := ChoseComma;
+  Setup_cb_delimiter;
+  Setup_cb_lineending;
+end;
+
+procedure TfrmFayesDirBuilder.Setup_cb_delimiter;
+var
+  idx : Integer;
+begin
+  cb_delimiter.Items.Clear;
+
+  idx := cb_delimiter.Items.Add(COMMA_STRING);
+  cb_delimiter.Items.Objects[idx] := TObject(COMMA);
+
+  idx := cb_delimiter.Items.Add(TAB_STRING);
+  cb_delimiter.Items.Objects[idx] := TObject(TAB);
+
+  idx := cb_delimiter.Items.Add(SEMICOLON_STRING);
+  cb_delimiter.Items.Objects[idx] := TObject(SEMICOLON);
+end;
+
+procedure TfrmFayesDirBuilder.Setup_cb_lineending;
+var
+  idx : Integer;
+begin
+  cb_lineending.Items.Clear;
+
+  idx := cb_lineending.Items.Add(CRLF_STR);
+  {  TAKE NOTE: THIS WILL TAKE SOME parsing VV  }
+  cb_lineending.Items.Objects[idx] := TObject(CR);
+
+  idx := cb_lineending.Items.Add(LF_STR);
+  cb_lineending.Items.Objects[idx] := TObject(LF);
 end;
 
 procedure TfrmFayesDirBuilder.GetCSVParserProps;
@@ -245,7 +293,7 @@ begin
   //cb.AddItem('Comma', nil);
   //cb.AddItem('Semicolon', nil);
   //cb.AddItem('Tab', nil);
-  //
+
   //sg_parser_configs.Cells[0, 1] := 'LineEnding';
   //cb := TComboBox.Create(sg_parser_configs);
   //sg_parser_configs.Objects[0, 1] := cb;
@@ -285,26 +333,59 @@ const
   MSG_TEXT = 'You are staged to write directories named like the "%s" column.';
 begin
   FDirListColumn := Column.Index;
-  Grid.Columns[FDirListColumn].Width := 50;
-  colTitle := Grid.Columns[FDirListColumn].Title.Caption;
+  File_grid.Columns[FDirListColumn].Width := 50;
+  colTitle := File_grid.Columns[FDirListColumn].Title.Caption;
   ActionMkDirs.Enabled := True;
   msg := Format(MSG_TEXT, [colTitle]);
   StatusBar.Panels[1].Text := msg;
   ShowMessage(msg);
 end;
 
+procedure TfrmFayesDirBuilder.DirBuilderPropIniRestoringProperties(
+			Sender : TObject);
+var
+  props : TIniPropStorage;
+  sg : TStringGrid;
+  sValue : String;
+begin
+  props := DirBuilderPropIni;
+  props.IniSection := 'DirBuilderMain';
+
+  sg := sg_parser_configs;
+  sValue := props.ReadString(SG_ROW_DELIMITER, '');
+  sg.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER] := sValue;
+
+  sValue := props.ReadString(SG_COL_DELIMITER, '');
+  sg.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER] := sValue;
+end;
+
+procedure TfrmFayesDirBuilder.DirBuilderPropIniSaveProperties(Sender : TObject);
+var
+  props : TIniPropStorage;
+  sg : TStringGrid;
+begin
+  props := DirBuilderPropIni;
+  props.IniSection := 'DirBuilderMain';
+
+  sg := sg_parser_configs;
+  props.WriteString(SG_ROW_DELIMITER,
+        sg.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER]);
+  props.WriteString(SG_COL_DELIMITER,
+        sg.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER]);
+end;
+
 procedure TfrmFayesDirBuilder.ActionResizeColumnsExecute(Sender: TObject);
 var
   grHelper: TGridHelper;
-  S: string;
+  //S: string;
 begin
-  if not Grid.Visible then
+  if not File_grid.Visible then
     Exit;
-  Grid.Update;
+  File_grid.Update;
   grHelper := TGridHelper.Create;
   try
     grHelper.maxSize := 250;
-    grHelper.SGrid := Grid;
+    grHelper.SGrid := File_grid;
     grHelper.SetStringGridColumnWidths;
   finally
     grHelper.Free;
@@ -331,8 +412,9 @@ var
   util: TStringGridUtil;
 begin
   util := TStringGridUtil.Create;
+  outCnt := BAD_CHOICE;
   try
-    util.WriteGridToBooksDb(dmod, Grid, outCnt, FDelimiter);
+    util.WriteGridToBooksDb(dmod, File_grid, outCnt);
   finally
     util.Free;
   end;
@@ -374,16 +456,16 @@ begin
   //  ckbox1stRowIsTitles.Checked:=False;
 end;
 
-procedure TfrmFayesDirBuilder.GridHeaderClick(Sender: TObject;
+procedure TfrmFayesDirBuilder.File_gridHeaderClick(Sender: TObject;
   IsColumn: boolean; Index: integer);
 var
-  msg, colTitle: string;
+  msg, colTitle: AnsiString;
 begin
   if not IsColumn then
     Exit;
-
+  colTitle := '';
   FDirListColumn := Index;
-  colTitle := Grid.Cells[Index, 0];
+  colTitle := File_grid.Cells[Index, 0];
   ActionMkDirs.Enabled := True;
   FmtStr(msg, 'You are staged to write directories named like the "%s" column.',
     [colTitle]);
@@ -392,118 +474,149 @@ begin
 end;
 
 
-procedure TfrmFayesDirBuilder.GridDblClick(Sender: TObject);
+procedure TfrmFayesDirBuilder.File_gridDblClick(Sender: TObject);
 begin
-  Clipboard.AsText := Grid.Cells[Grid.Col, Grid.Row];
+  Clipboard.AsText := File_grid.Cells[File_grid.Col, File_grid.Row];
 end;
 
-procedure TfrmFayesDirBuilder.GridClick(Sender: TObject);
+procedure TfrmFayesDirBuilder.File_gridClick(Sender: TObject);
 const
   lblS = 'Cell content (%d)';
 var
   Str: string;
 begin
-  str := Grid.Cells[Grid.Col, Grid.Row];
+  str := File_grid.Cells[File_grid.Col, File_grid.Row];
   edCellContent.Text := str;
   lblCellContents.Caption := Format(lblS, [Length(str)]);
 end;
 
+function TfrmFayesDirBuilder.GetColDelimiter : AnsiString;
+var
+  ndx : Integer;
+begin
+  ndx := cb_delimiter.ItemIndex;
+  FColDelimiter := Char(PtrInt(cb_delimiter.Items.Objects[ndx]));
+  Result := FColDelimiter;
+end;
+
+function TfrmFayesDirBuilder.GetRowDelimiter : AnsiString;
+var
+  ndx : Integer;
+begin
+  ndx := cb_lineending.ItemIndex;
+  FRowDelimiter := Char(PtrInt(cb_lineending.Items.Objects[ndx]));
+  Result := FRowDelimiter;
+end;
 
 procedure TfrmFayesDirBuilder.ActionChangeCSVDelimiterExecute(Sender: TObject);
 (*
  *  procedure TfrmFayesDirBuilder.ActionChangeCSVDelimiterExecute(Sender: TObject);
  *  this may not be used.
  *)
-var
-  dlg: TfmChangeCSVProperties;
-  curDelimiter : Char;
-  curLineending: String;
-  str : String;
+//var
+  //ndx : Integer;
+  //dlg: TfmChangeCSVProperties;
+  //curDelimiter: char;
 begin
-  curDelimiter := FDelimiter;
-  curLineending := FLineending;
-  dlg := TfmChangeCSVProperties.Create(self);
-  try
-    dlg.CurrentChoice := FDelimiter;
-    dlg.ShowModal;
-    case dlg.DelimiterChoice of
-      ChoseNoChoice: Exit;
-      ChoseComma:
-        begin
-          str := COMMA_STRING;
-          FDelimiter := COMMA;
-        end;
-      ChoseTab:
-        begin
-          str := TAB_STRING;
-          FDelimiter := TAB;
-        end;
-      ChoseSemicolon:
-        begin
-          str := SEMICOLON_STRING;
-          FDelimiter := SEMICOLON;
-        end;
-    end;
-    sg_parser_configs.Cells[1, 0] := str;
+  //ndx := cb_delimiter.ItemIndex;
+  FColDelimiter := GetColDelimiter;
 
-    case dlg.LineendingChoice of
-      ChoseNoChoice: Exit;
-      ChoseCRLF :
-        begin
-          FLineending := CRLF;
-          str := CRLF_STR;
-				end;
-			ChoseLF :
-        begin
-          FLineending := LF;
-          str := LF_STR;
-				end;
-		end;
-    sg_parser_configs.Cells[1 ,1] := str;
-    StatusBar.Panels[1].Text := Format('Current delimiter: %s', [FDelimiter]);
-    if curDelimiter <> FDelimiter then
-      ActionReadCSV.Execute;
-  finally
-    dlg.Free;
-  end;
+  //ndx := cb_lineending.ItemIndex;
+  FRowDelimiter := GetRowDelimiter;
+  Exit;
 end;
 
-procedure TfrmFayesDirBuilder.GridSelection(Sender: TObject; aCol, aRow: integer);
+procedure TfrmFayesDirBuilder.File_gridSelection(Sender: TObject; aCol, aRow: integer);
 begin
   Statusbar.Panels[0].Text := Format('Position (%d, %d)', [aRow, aCol]);
 end;
 
-procedure TfrmFayesDirBuilder.sg_parser_configsMouseUp(Sender : TObject;
-			Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
+procedure TfrmFayesDirBuilder.sg_parser_configsMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+var
+  sg: TStringGrid;
+  aCol, aRow: integer;
+  ed: TWinControl;
+const
+  msg = 'TfrmFayesDirBuilder.sg_parser_configsMouseDown mouse out of bounds';
 begin
-  if Button <> mbLeft then
+  sg := Sender as TStringGrid;
+  sg.MouseToCell(X, Y, aCol, aRow);
+  if aCol <> SG_COL_4_VALUES then
     Exit;
 
+  if Button = mbRight then
+  begin
+
+		case aRow of
+      SG_ROW_4_LINE_DELIMITER:
+        begin
+          ed := cb_lineending;
+          FChgParserProp := ChgParser_RowDelim;
+				end;
+			SG_ROW_4_COL_DELIMITER:
+        begin
+          ed := cb_delimiter;
+          FChgParserProp := ChgParser_ColDelim;
+				end;
+			else
+        begin
+          FChgParserProp := -1 ;
+    			raise Exception.Create(msg);
+				end;
+    end;
+    Exit;
+  end;
+
+  if Button <> mbLeft then
+    sg_parser_configsSelectEditor(Sender, aCol, aRow, ed);
 end;
 
-procedure TfrmFayesDirBuilder.sg_parser_configsSelectEditor(
-			Sender : TObject; aCol, aRow : Integer; var Editor : TWinControl);
+
+procedure TfrmFayesDirBuilder.sg_parser_configsSelectEditor(Sender: TObject;
+  aCol, aRow: integer; var Editor: TWinControl);
 var
-  cb : TComboBox;
-  sg : TStringGrid;
+  cb: TComboBox;
+  sg: TStringGrid;
 begin
-  if aCol <> 1 then
+  if aCol <> SG_COL_4_VALUES then
     Exit;
   sg := sg_parser_configs;
-  if aRow = 0 then
+  if aRow = SG_ROW_4_COL_DELIMITER then
   begin
     cb := cb_delimiter;
     cb.BoundsRect := sg.CellRect(aCol, aRow);
     cb.Text := sg.Cells[sg.Col, sg.Row];
   end
-  else if aRow = 1 then
+  else if aRow = SG_ROW_4_LINE_DELIMITER then
   begin
     cb := cb_lineending;
     cb.BoundsRect := sg.CellRect(aCol, aRow);
     cb.Text := sg.Cells[sg.Col, sg.Row];
-	end;
+  end;
   Editor := cb;
-  Editor.Visible := True;
+end;
+
+procedure TfrmFayesDirBuilder.cbox_EditingDone(Sender: TObject);
+var
+  sg: TStringGrid;
+begin
+  if not (Sender is TComboBox) then
+    Exit;
+  sg := sg_parser_configs;
+  if TComboBox(Sender) = cb_lineending then
+    sg.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER] := cb_lineending.Text
+
+  else if TComboBox(Sender) = cb_delimiter then
+    sg.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER] := cb_delimiter.Text;
+end;
+
+procedure TfrmFayesDirBuilder.cb_delimiterCloseUp(Sender : TObject);
+var
+  ndx : Integer;
+begin
+  ndx := cb_delimiter.ItemIndex;
+  FColDelimiter := Chr(PtrInt(cb_delimiter.Items.Objects[ndx]));
 end;
 
 procedure TfrmFayesDirBuilder.ActionFindOutputDirExecute(Sender: TObject);
@@ -529,10 +642,8 @@ begin
 end;
 
 function TfrmFayesDirBuilder.isGridPopulated: boolean;
-var
-  iCol, iRow: integer;
 begin
-  Result := Grid.ColCount > 3;
+  Result := File_grid.ColCount > 3;
 end;
 
 procedure TfrmFayesDirBuilder.move_grid_first_line;
@@ -541,40 +652,22 @@ var
   first_line: string;
 begin
   first_line := EmptyStr;
-  for iCol := 0 to Grid.ColCount - 1 do
-    first_line := Concat(first_line, '[', Grid.Cells[iCol, 0], ']  ');
+  for iCol := 0 to File_grid.ColCount - 1 do
+    first_line := Concat(first_line, '[', File_grid.Cells[iCol, 0], ']  ');
   statBar_first_line.SimpleText := 'Ignored line: ' + first_line;
-  for iRow := 1 to Grid.RowCount - 1 do
-    for iCol := 0 to Grid.ColCount - 1 do
-      Grid.Cells[iCol, iRow - 1] := Grid.Cells[iCol, iRow];
-  Grid.RowCount := Grid.RowCount - 1;
+  for iRow := 1 to File_grid.RowCount - 1 do
+    for iCol := 0 to File_grid.ColCount - 1 do
+      File_grid.Cells[iCol, iRow - 1] := File_grid.Cells[iCol, iRow];
+  File_grid.RowCount := File_grid.RowCount - 1;
 end;
 
-procedure TfrmFayesDirBuilder.ActionIgnoreFirstLineExecute(Sender: TObject);
-const
-  Move_up = True;
-  Move_down = False;
-begin
-  ActionIgnoreFirstLine.Checked := not ActionIgnoreFirstLine.Checked;
-  if ActionIgnoreFirstLine.Checked then
-  begin
-    statBar_first_line.Visible := True;
-    move_grid_first_line;
-  end
-  else
-  begin
-    statBar_first_line.Visible := False;
-    if isGridPopulated then
-      ActionReadCSV.Execute;
-  end;
-end;
 
 procedure TfrmFayesDirBuilder.ActionMkDirsExecute(Sender: TObject);
 var
   s, outPath, outDir: string;
   bookMark: integer;
   beginCnt, endCnt: integer;
-  rowIdx, colIdx: integer;
+  rowIdx: integer;
 begin
   outPath := cboxOutDir.Text;
   if not DirectoryExists(outPath) then
@@ -584,14 +677,14 @@ begin
   end;
   beginCnt := countSubDirs(outPath);
   outPath := IncludeTrailingPathDelimiter(outPath);
-  bookMark := Grid.Row;
-  Grid.BeginUpdate;
+  bookMark := File_grid.Row;
+  File_grid.BeginUpdate;
   try
 
     rowIdx := 1;
-    while rowIdx < Grid.RowCount do
+    while rowIdx < File_grid.RowCount do
     begin
-      s := Grid.Cells[FDirListColumn, rowIdx];  // the directory name
+      s := File_grid.Cells[FDirListColumn, rowIdx];  // the directory name
       s := StringReplace(s, '/', '-', [rfReplaceAll]);
       s := StringReplace(s, '\\', '-', [rfReplaceAll]);
       s := StringReplace(s, ':', ';', [rfReplaceAll]);
@@ -602,8 +695,8 @@ begin
       Inc(rowIdx);
     end;
   finally
-    Grid.EndUpdate();
-    Grid.Row := bookMark;
+    File_grid.EndUpdate();
+    File_grid.Row := bookMark;
   end;
 
   pgCtrl.ActivePage := tabshCSVFile;
@@ -620,7 +713,7 @@ function TfrmFayesDirBuilder.countSubDirs(path: string): integer;
 var
   subDirsSrchRec: TSearchRec;
   cnt: longint;
-  fileName, curDir: string;
+  curDir: string;
   dirName: ansistring;
 begin
   cnt := 0;
@@ -647,7 +740,6 @@ begin
             Inc(cnt);
           end;
 
-          fileName := subDirsSrchRec.Name;
         until
           FindNext(subDirsSrchRec) <> 0;
         FindClose(subDirsSrchRec);
@@ -663,7 +755,7 @@ end;
 procedure TfrmFayesDirBuilder.ActionFindCSVExecute(Sender: TObject);
 var
   dlg: TOpenDialog;
-  dir, fname: string;
+  dir : string;
 begin
   ActionReadCSV.Enabled := False;
   dlg := TOpenDialog.Create(nil);
@@ -697,7 +789,7 @@ end;
 procedure TfrmFayesDirBuilder.ActionReadCSVExecute(Sender: TObject);
 var
   fileName, first_line: string;
-  delimiter: char;
+  //delimiter: char;
   parmRec: TParmRec;
 begin
   fileName := cboxCSVFile.Text;
@@ -706,39 +798,42 @@ begin
     ShowMessage(fileName + ' does not exist. Try again');
     Exit;
   end;
+  File_grid.Clear;
+  Application.ProcessMessages;
 
   try
     try
       begin
-        Grid.BeginUpdate;
-        case FDelimiter of
-          SEMICOLON: delimiter := SEMICOLON;
-          COMMA: delimiter := COMMA;
-          TAB: delimiter := TAB;
-          else
-            delimiter := COMMA;
-        end;
+        File_grid.BeginUpdate;
+        //get the delimiter from cb_delimiter.objects
+        //case FColDelimiter of
+        //  SEMICOLON: delimiter := SEMICOLON;
+        //  COMMA: delimiter := COMMA;
+        //  TAB: delimiter := TAB;
+        //  else
+        //    delimiter := COMMA;
+        //end;
 
-        parmRec.delimiter := delimiter;
-        parmRec.ignoreFirstLine := ActionIgnoreFirstLine.Checked;
+        parmRec.colDelimiter := ColDelimiter[1];
+        parmRec.rowDelimiter := RowDelimiter[1];
+        parmRec.ignoreFirstLine := ckbox1stRowIsTitles.Checked;
         parmRec.addRows := True;
-        parmRec.withHeader := True;
 
-        LoadGridFromCSVFile(Grid, fileName, parmRec, first_line);
+        LoadGridFromCSVFile(File_grid, fileName, parmRec, first_line);
         if first_line > EmptyStr then
         begin
-          ActionIgnoreFirstLine.Checked := True;
+          ckbox1stRowIsTitles.Checked := True;
           statBar_first_line.Visible := True;
           statBar_first_line.SimpleText :=
             Format('Ignored first line: %s', [first_line]);
         end
         else
         begin
-          ActionIgnoreFirstLine.Checked := False;
+          ckbox1stRowIsTitles.Checked := False;
           statBar_first_line.Visible := False;
         end;
 
-        if Grid.RowCount = Grid.FixedRows then
+        if File_grid.RowCount = File_grid.FixedRows then
         begin
           ShowMessage('TfrmFayesDirBuilder.ActionReadCSVExecute: ' +
             sLineBreak + 'StringGrid is not populated?');
@@ -748,7 +843,7 @@ begin
           ActionResizeColumns.Execute;
       end;
     finally
-      Grid.EndUpdate();
+      File_grid.EndUpdate();
     end;
   except
     //on e : Exception do
@@ -761,12 +856,125 @@ end;
 procedure TfrmFayesDirBuilder.ActionReadRawFileExecute(Sender: TObject);
 var
   frm: TfmDisplayCSVFile;
-  txt: TFileName;
 begin
-  txt := cboxCSVFile.Text;
   frm := TfmDisplayCSVFile.Create(self, cboxCSVFile.Text);
+  frm._col_delimiter := ColDelimiter;
+  frm._row_delimiter := RowDelimiter;
+  frm.HasHeaders := ckbox1stRowIsTitles.Checked;
   frm.DisplayFile;
   frm.Show;
 end;
 
 end.
+
+procedure SetColDelimiter(aValue : String);
+procedure SetRowDelimiter(aValue : String);
+
+
+procedure TfrmFayesDirBuilder.SetColDelimiter(aValue : String);
+begin
+  sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER] := aValue;
+end;
+
+procedure TfrmFayesDirBuilder.SetRowDelimiter(aValue : String);
+begin
+  sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER] := aValue;
+end;
+
+function TfrmFayesDirBuilder.GetColDelimiter : String;
+begin
+  Result := sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER];
+end;
+
+function TfrmFayesDirBuilder.GetRowDelimiter : Integer;
+var
+  test_str : String;
+begin
+  test_str := sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER];
+  if test_str = '' then
+    Result := ChoseNoChoice
+  else
+  if test_str = '' then ;
+end;
+
+curDelimiter := FColDelim_value;
+curLineending := FRowDelim_value;
+
+dlg := TfmChangeCSVProperties.Create(self);
+try
+
+	if FChgParserProp = ChgParser_RowDelim then
+  begin
+    dlg.ParmRec.form_op := ChgParser_RowDelim;
+    //dlg.ParmRec.grp_value := GetRowDelimiter;
+	end
+	else if FChgParserProp = ChgParser_ColDelim  then
+  begin
+    dlg.ParmRec.form_op := ChgParser_ColDelim;
+    dlg.ParmRec.grp_value := GetColDelimiter;
+	end;
+
+  dlg.ShowModal;
+  case dlg.ModalResult of
+    ChoseNoChoice: Exit;
+    ChoseComma:
+    begin
+      str := COMMA_STRING;
+      FColDelim_value := COMMA;
+    end;
+    ChoseTab:
+    begin
+      str := TAB_STRING;
+      FColDelim_value := TAB;
+    end;
+    ChoseSemicolon:
+    begin
+      str := SEMICOLON_STRING;
+      FColDelim_value := SEMICOLON;
+    end;
+  end;
+  sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER] := str;
+
+  case dlg.ModalResult of
+    ChoseNoChoice: Exit;
+    ChoseCRLF:
+    begin
+      FRowDelim_value := CRLF;
+      str := CRLF_STR;
+    end;
+    ChoseLF:
+    begin
+      FRowDelim_value := LF;
+      str := LF_STR;
+    end;
+  end;
+
+  sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER] := str;
+  StatusBar.Panels[1].Text :=
+        Format('Current column delimiter: %s', [FColDelim_value]);
+  if curDelimiter <> FColDelim_value then
+    ActionReadCSV.Execute;
+finally
+  dlg.Free;
+end;
+
+procedure TfrmFayesDirBuilder.ActionIgnoreFirstLineExecute(Sender: TObject);
+const
+  Move_up = True;
+  Move_down = False;
+begin
+  ActionIgnoreFirstLine.Checked := not ActionIgnoreFirstLine.Checked;
+  if ActionIgnoreFirstLine.Checked then
+  begin
+    statBar_first_line.Visible := True;
+    move_grid_first_line;
+  end
+  else
+  begin
+    statBar_first_line.Visible := False;
+    if isGridPopulated then
+      ActionReadCSV.Execute;
+  end;
+end;
+
+

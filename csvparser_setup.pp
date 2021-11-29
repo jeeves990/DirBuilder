@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs,
-  csvreadwrite, dmodCSVParser;
+  csvreadwrite;  //dmodCSVParser;
 
 type
 

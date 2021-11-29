@@ -66,7 +66,7 @@ var
   ara : array of String;
   idx, er, _len : Integer;
   n : Double;
-  rslt, _S, fmt : String;
+  rslt, _S : String;
 begin
   sl := TStringList.Create;
   try

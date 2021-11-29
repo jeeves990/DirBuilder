@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
-	ActnList, Menus, frame4Table, DirBuilder_dmod, SQLDB, grids, StdCtrls,
+	ActnList, Menus, frame4Table, DirBuilder_dmod, SQLDB, grids,
+  //StdCtrls,
 	XMLPropStorage, frmAddEdit,
   Mouse;
 
@@ -49,7 +50,7 @@ type
     procedure FormCreate(Sender: TObject);
   private
     FaddEdDlg: TfmAddEdit;
-    FCurrentComponent : TComponent;
+    //FCurrentComponent : TComponent;
     FCurrentTag : Integer;
     FQry : TSQLQuery;
     FDmod : TDirBuilder_dataModule;
@@ -123,7 +124,7 @@ end;
 procedure TfmNewBooksDb.booksDbPopupMnuPopup(Sender: TObject);
 var
   mnu : TPopupMenu;
-  i : Integer;
+  //i : Integer;
 begin
   mnu := booksDbPopupMnu;
   if mnu.Items.Count <> 3 then
@@ -172,7 +173,7 @@ procedure TfmNewBooksDb.FormClose(Sender: TObject;
                                  var CloseAction: TCloseAction);
 var
   i : Integer;
-  pt : TPoint;
+  //pt : TPoint;
 begin
   FQry.Free;
   if Assigned(fmAddEdit) then
@@ -190,12 +191,7 @@ end;
 
 {$DEFINE DEBUG}
 procedure TfmNewBooksDb.FormCreate(Sender: TObject);
-var
-  i : Integer;
-  pt : TPoint;
-  ctrl : TWinControl;
 begin
-  ctrl := Parent;
   FDmod := frmFayesDirBuilder.dmod;
   FQry := TSQLQuery.Create(self);
   FQry.DataBase := FDmod.BooksDbConn;
@@ -232,8 +228,6 @@ begin
 end;
 
 procedure TfmNewBooksDb.ActionAddRowExecute(Sender: TObject);
-var
-  ctrl : TComponent;
 begin
   inherited;
   exit;
@@ -248,8 +242,8 @@ end;
 
 procedure TfmNewBooksDb.ActionAddBookExecute(Sender: TObject);
 var
-  col, row : Integer;
-  grid : TStringGrid;
+  //col, row : Integer;
+  //grid : TStringGrid;
   ctrl : TWinControl;
 begin
   ctrl := ComponentUnderMouse;

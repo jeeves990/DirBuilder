@@ -10,7 +10,7 @@ uses
   Forms, frmDirFromCSV, stringGridHelper, runtimetypeinfocontrols,
 	anchordockpkg, DirBuilder_dmod, frmDisplayCSVFile, frmInputNewValue,
 	AddQuotes2Files_unit, stringgridutil, CSVParser_setup, frmChangeCSVProperties,
-	frmNewBooksDB, frmAddEdit, unitLoad_grid_from_csv;
+	frmNewBooksDB, frmAddEdit, unitLoad_grid_from_csv, frmShowText;
 
 {$R *.res}
 
@@ -19,6 +19,7 @@ begin
   Application.Scaled := True;
   Application.Initialize;
   Application.CreateForm(TfrmFayesDirBuilder, frmFayesDirBuilder);
+			Application.CreateForm(TfmShowText, fmShowText);
   Application.Run;
 end.
 

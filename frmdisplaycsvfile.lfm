@@ -1,61 +1,63 @@
 object fmDisplayCSVFile: TfmDisplayCSVFile
-  Left = 1234
+  Left = 1264
   Height = 451
-  Top = 255
-  Width = 556
+  Top = 206
+  Width = 660
   Caption = 'fmDisplayCSVFile'
-  ClientHeight = 451
-  ClientWidth = 556
+  ClientHeight = 0
+  ClientWidth = 0
   OnClose = FormClose
   OnCreate = FormCreate
   SessionProperties = 'ActiveControl;BorderStyle;Height;Top;Width;WindowState;Left'
   LCLVersion = '2.2.0.1'
   object pgCtrl: TPageControl
     Left = 0
-    Height = 371
-    Top = 57
-    Width = 556
+    Height = 368
+    Top = 60
+    Width = 660
     ActivePage = tabshRawFile
     Align = alClient
     TabIndex = 0
     TabOrder = 0
     object tabshRawFile: TTabSheet
       Caption = 'Raw data from file'
-      ClientHeight = 343
-      ClientWidth = 548
-      object mmo: TMemo
-        Left = 0
-        Height = 314
-        Top = 0
-        Width = 548
-        Align = alTop
-        Anchors = [akTop, akLeft, akRight, akBottom]
-        Lines.Strings = (
-          'mmo'
-        )
-        PopupMenu = CSVDisplayPopup
-        ScrollBars = ssVertical
-        TabOrder = 0
-      end
+      ClientHeight = 340
+      ClientWidth = 652
       object Button1: TButton
-        Left = 344
+        Left = 448
         Height = 25
-        Top = 318
+        Top = 315
         Width = 204
         Action = ActionAddQuotes
         Anchors = [akRight, akBottom]
+        TabOrder = 0
+      end
+      object ed: TATSynEdit
+        Left = 0
+        Height = 340
+        Top = 0
+        Width = 652
+        Align = alClient
+        DoubleBuffered = True
+        Font.Height = -12
+        Font.Name = 'Courier New'
+        ParentFont = False
         TabOrder = 1
+        TabStop = True
+        OnKeyUp = edKeyUp
+        OnMouseMove = edMouseMove
+        OnMouseUp = edMouseUp
       end
     end
     object tbCSV_data: TTabSheet
       Caption = 'CSV data'
-      ClientHeight = 343
-      ClientWidth = 548
+      ClientHeight = 340
+      ClientWidth = 652
       object sGrid: TStringGrid
         Left = 0
         Height = 374
         Top = 0
-        Width = 548
+        Width = 652
         Align = alTop
         FixedCols = 0
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goColMoving, goSmoothScroll, goFixedRowNumbering, goCellEllipsis]
@@ -67,10 +69,10 @@ object fmDisplayCSVFile: TfmDisplayCSVFile
     Left = 0
     Height = 34
     Top = 0
-    Width = 556
+    Width = 660
     Align = alTop
     ClientHeight = 34
-    ClientWidth = 556
+    ClientWidth = 660
     TabOrder = 1
     object Label1: TLabel
       Left = 8
@@ -83,53 +85,170 @@ object fmDisplayCSVFile: TfmDisplayCSVFile
       Left = 76
       Height = 23
       Top = 4
-      Width = 472
+      Width = 521
       Anchors = [akTop, akLeft, akRight]
       TabOrder = 0
       Text = 'edFileName'
+    end
+    object btn_read_raw_file: TBitBtn
+      Left = 610
+      Height = 26
+      Top = 1
+      Width = 46
+      Anchors = [akTop, akRight]
+      AutoSize = True
+      Images = DirBuilder_dataModule.imgList
+      ImageIndex = 9
+      TabOrder = 1
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
     Top = 428
-    Width = 556
-    Panels = <>
+    Width = 660
+    Panels = <    
+      item
+        Alignment = taRightJustify
+        Text = 'Cursor @'
+        Width = 65
+      end    
+      item
+        Alignment = taCenter
+        Width = 125
+      end    
+      item
+        Alignment = taRightJustify
+        Text = 'Mouse @'
+        Width = 75
+      end    
+      item
+        Alignment = taCenter
+        Width = 125
+      end    
+      item
+        Width = 50
+      end>
+    SimplePanel = False
   end
-  object statBarFirst_line: TStatusBar
+  object ToolBar1: TToolBar
     Left = 0
-    Height = 23
+    Height = 26
     Top = 34
-    Width = 556
-    Align = alTop
-    Panels = <>
-    Visible = False
+    Width = 660
+    Caption = 'ToolBar1'
+    Images = DirBuilder_dataModule.imgList
+    TabOrder = 3
+    object tb_reload_file: TToolButton
+      Left = 1
+      Top = 2
+      Action = ActionReloadFile
+    end
+    object tb_read_new_file: TToolButton
+      Left = 32
+      Top = 2
+      Action = ActionReadNewFile
+    end
+    object tb_add_double_quotes: TToolButton
+      Left = 63
+      Top = 2
+      Action = ActionAddQuotes
+    end
+    object tb_examine_line: TToolButton
+      Left = 94
+      Top = 2
+      Action = ActionShowLine4Examination
+    end
+    object tb_read_as_csv: TToolButton
+      Left = 125
+      Top = 2
+      Action = ActionReadCSVData
+    end
+    object tb_close: TToolButton
+      Left = 184
+      Top = 2
+      Action = ActionClose
+    end
+    object ToolButton1: TToolButton
+      Left = 148
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton1'
+      Style = tbsSeparator
+    end
+    object ToolButton2: TToolButton
+      Left = 117
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton2'
+      Style = tbsSeparator
+    end
+    object ToolButton3: TToolButton
+      Left = 24
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton3'
+      Style = tbsSeparator
+    end
+    object ToolButton4: TToolButton
+      Left = 55
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton4'
+      Style = tbsSeparator
+    end
+    object ToolButton5: TToolButton
+      Left = 86
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton5'
+      Style = tbsSeparator
+    end
   end
   object ActList4DspCSV: TActionList
+    Images = DirBuilder_dataModule.imgList
     Left = 283
     Top = 157
     object ActionReadNewFile: TAction
       Caption = 'ActionReadNewFile'
+      Checked = True
+      Hint = 'Read a new file'
+      ImageIndex = 9
       OnExecute = ActionReadNewFileExecute
     end
     object ActionAddQuotes: TAction
       Caption = 'Add double quotes where needed'
+      Hint = 'Add quotes where needed'
+      ImageIndex = 20
       OnExecute = ActionAddQuotesExecute
     end
     object ActionShowLine4Examination: TAction
       Caption = 'Show selected line for examination'
+      Hint = 'Show line for examination'
+      ImageIndex = 16
+      OnExecute = ActionShowLine4ExaminationExecute
     end
     object ActionChangeMaxLines2Read: TAction
       Caption = 'Change max lines to read'
+      ImageIndex = 11
       OnExecute = ActionChangeMaxLines2ReadExecute
     end
     object ActionReloadFile: TAction
       Caption = 'Reload file from disk'
+      Hint = 'Reload file from disc'
+      ImageIndex = 10
       OnExecute = ActionReloadFileExecute
     end
     object ActionReadCSVData: TAction
       Caption = 'Read CSV data'
+      Hint = 'Read as CSV file'
+      ImageIndex = 4
       OnExecute = ActionReadCSVDataExecute
+    end
+    object ActionClose: TAction
+      Caption = 'Close'
+      ImageIndex = 1
+      OnExecute = ActionCloseExecute
     end
   end
   object CSVDisplayPopup: TPopupMenu

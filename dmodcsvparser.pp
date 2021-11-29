@@ -5,7 +5,7 @@ unit dmodCSVParser;
 interface
 
 uses
-  Classes, SysUtils, IniPropStorage;
+  Classes, SysUtils;    //, IniPropStorage;
 
 type
 

@@ -5,8 +5,11 @@ unit stringGridHelper;
 interface
 
 uses
-  Classes, ComCtrls, csvdataset, DB, DBCtrls, DBGrids, ExtCtrls, Grids,
-  StdCtrls, SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd, Math;
+  Classes, ComCtrls,
+  //csvdataset,
+  DB, DBCtrls, DBGrids, ExtCtrls, Grids,
+  //StdCtrls,
+  SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd, Math;
 
 type
 
@@ -87,7 +90,7 @@ procedure TGridHelper.SetStringGridColumnWidths;
 const
   DEFBORDER = 10;
 var
-  temp, n, txtWidth, colWidth, wd: Integer;
+  temp, n, txtWidth : Integer;
   rowCnt, colCnt : Integer;
   araMax: array of Integer;
   msg : String;
@@ -162,7 +165,6 @@ var
   DataSet: TDataSet;
   Bookmark: TBookmark;
   Count, i: integer;
-  capWidth: integer;
   Caption: string;
   araColWidth: array of integer;
   col: TColumn;

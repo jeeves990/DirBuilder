@@ -27,27 +27,33 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="6">
+    <RequiredPackages Count="8">
       <Item1>
-        <PackageName Value="MemDSLaz"/>
+        <PackageName Value="atflatcontrols_package"/>
       </Item1>
       <Item2>
-        <PackageName Value="AnchorDocking"/>
+        <PackageName Value="atsynedit_package"/>
       </Item2>
       <Item3>
-        <PackageName Value="eccontrols"/>
+        <PackageName Value="MemDSLaz"/>
       </Item3>
       <Item4>
-        <PackageName Value="RunTimeTypeInfoControls"/>
+        <PackageName Value="AnchorDocking"/>
       </Item4>
       <Item5>
-        <PackageName Value="FCL"/>
+        <PackageName Value="eccontrols"/>
       </Item5>
       <Item6>
-        <PackageName Value="LCL"/>
+        <PackageName Value="RunTimeTypeInfoControls"/>
       </Item6>
+      <Item7>
+        <PackageName Value="FCL"/>
+      </Item7>
+      <Item8>
+        <PackageName Value="LCL"/>
+      </Item8>
     </RequiredPackages>
-    <Units Count="14">
+    <Units Count="15">
       <Unit0>
         <Filename Value="DirBuilder.pas"/>
         <IsPartOfProject Value="True"/>
@@ -144,6 +150,14 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unitLoad_grid_from_csv"/>
       </Unit13>
+      <Unit14>
+        <Filename Value="frmshowtext.pp"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmShowText"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmShowText"/>
+      </Unit14>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

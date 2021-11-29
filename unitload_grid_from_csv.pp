@@ -5,7 +5,8 @@ unit unitLoad_grid_from_csv;
 interface
 
 uses
-  Classes, SysUtils, Grids, DirBuilder_dmod, csvreadwrite, LazFileUtils;
+  Classes, SysUtils, Grids, Dialogs, DirBuilder_dmod, csvreadwrite,
+	LazFileUtils;
 
 function LoadGridFromCSVFile(Grid : TStringGrid;
                                AFilename : string;
@@ -19,10 +20,10 @@ const
   charSize = sizeof(Char);
   LineEndingChars = [CR, LF];
 
-var
-  FLineEnding : String;
-  FDelimiter : Char;
-  EndOfLine, EndOfFile : Boolean;
+//var
+  //FLineEnding : String;
+  //FDelimiter : Char;
+  //EndOfLine, EndOfFile : Boolean;
 
 
 function GetFirstLine(var fs : TFileStream) : String;
@@ -72,9 +73,13 @@ var
   Parser: TCSVParser;
   RowOffset, fileOffset : integer;
   aStr : String;
+  pass_count : Integer;
+  grid_row_count,
+  parser_cur_row  : Integer;
 begin
   Result := '';
   the_first_line := '';
+  pass_count := 0;
   Grid.BeginUpdate;
   // Reset the grid:
   Grid.Clear;
@@ -83,8 +88,8 @@ begin
   if not(FileExistsUTF8(AFileName)) then Exit;
 
   Parser := TCSVParser.Create;
-  FDelimiter := Parser.Delimiter;
-  FLineEnding := Parser.LineEnding;
+	Parser.Delimiter := parmRec.colDelimiter[1];
+  Parser.LineEnding := parmRec.rowDelimiter;
 
   fs := TFileStream.Create(AFilename, fmOpenRead + fmShareDenyWrite);
   try
@@ -94,7 +99,6 @@ begin
       fileOffset := fs.Position;
       Result := the_first_line;
 		 end;
-		Parser.Delimiter := parmRec.delimiter;
     Parser.SetSource(fs);
 
     // If the grid has fixed rows, those will not receive data, so we need to
@@ -102,11 +106,12 @@ begin
     RowOffset := Grid.FixedRows;
     // However, if we have a header row in our CSV data, we need to
     // discount that
-    if parmRec.withHeader then
+    if parmRec.ignoreFirstLine then
       RowOffset := RowOffset - 1;
 
     while Parser.ParseNextCell do
     begin
+      Inc(pass_count);
       // Stop if we've filled all existing rows. Todo: check for fixed grids etc,
       //     but not relevant for our case
       if parmRec.addRows = False then
@@ -125,7 +130,7 @@ begin
       end;
 
       // If header data found, and a fixed row is available, set the caption
-      if (parmRec.withHeader) and
+      if (parmRec.ignoreFirstLine) and
         (Parser.CurrentRow = 0) and
         (Parser.CurrentRow < Grid.FixedRows-1) then
       begin
@@ -134,11 +139,21 @@ begin
       end;
 
       // Actual data import into grid cell, minding fixed rows and header
-      if Grid.RowCount<Parser.CurrentRow+1 then
-        Grid.RowCount:=Parser.CurrentRow+1;
-      Grid.Cells[Parser.CurrentCol,Parser.CurrentRow+RowOffset]:=Parser.CurrentCellText;
+      grid_row_count := Grid.RowCount;
+      parser_cur_row := Parser.CurrentRow;
+      if Grid.RowCount < Parser.CurrentRow +2 then
+        Grid.RowCount := Parser.CurrentRow +2;
+      grid_row_count := Grid.RowCount;
+      parser_cur_row := Parser.CurrentRow;
+      try
+      Grid.Cells[Parser.CurrentCol, Parser.CurrentRow +RowOffset]
+            := Parser.CurrentCellText;
       aStr := Grid.Cells[Parser.CurrentCol,Parser.CurrentRow+RowOffset];
-    end;
+
+			except on Ex : Exception do
+        ShowMessage('LoadGridFromCSVFile exception: ' +Ex.Message);
+			end;
+		end;
 
     // Now we know the widest row in the import, we can snip the grid's
     // columns if necessary.

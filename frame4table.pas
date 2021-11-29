@@ -81,9 +81,9 @@ begin
 end;
 
 procedure TframeTable.ActionAddRowExecute(Sender: TObject);
-var
-  ctrl : TComponent;
-  pt : TPoint;
+//var
+//  ctrl : TComponent;
+//  pt : TPoint;
 begin
   //ctrl := ComponentUnderMouse(Parent);
   //ShowMessage(ctrl.Name);
@@ -103,6 +103,7 @@ end;
 
 constructor TframeTable.Create;
 begin
+  inherited;
   btnAdd.Hint:='Add a new item to the table';
   btnEdit.Hint:='Edit the current book';
   btnRefresh.Hint:='Refresh the table';

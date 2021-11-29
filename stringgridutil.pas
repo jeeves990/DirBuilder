@@ -13,7 +13,6 @@ uses
 type
   TMyListOfStringLists = specialize TFPGObjectList<TStringList>;
   TStringGridUtil = class
-
   private
     //procedure Write_to_books_controller(cols_list : TStringList;
     //                             val_list : TMyListOfStringLists;
@@ -24,7 +23,7 @@ type
     function addUnderscore_to_titles(str : String) : String;
   public
     function WriteGridToBooksDb(parm_dmod : TDirBuilder_dataModule;
-					grid : TStringGrid; var pRowCnt : Integer; const delim : Char) : Boolean;
+					grid : TStringGrid; var pRowCnt : Integer) : Boolean;
 	end;
 
 
@@ -35,7 +34,7 @@ uses
   Dialogs, SQLDB, frmDirFromCSV, unitLoad_grid_from_csv;
 
 const
-  MAX_COLUMNS_LENGTH = 4000;
+  MAX_COLUMNS_LENGTH = 4000;  // max parm length for stored procedure
 
 var
   dmod_unit : TDirBuilder_dataModule;
@@ -53,8 +52,8 @@ function TStringGridUtil.addUnderscore_to_titles(str : String) : String;
 {   when "unruly" characters are embedded in field names,
     replace them with underscores (_)
 }
-var
-  loc : Integer;
+//var
+//  loc : Integer;
 begin
   str := StringReplace(str, SPACE, UNDERSCORE, [rfReplaceAll]);
   str := StringReplace(str, FWDSLASH, UNDERSCORE, [rfReplaceAll]);
@@ -86,10 +85,9 @@ end;
 
 function TStringGridUtil.WriteGridToBooksDb(parm_dmod : TDirBuilder_dataModule;
                             grid : TStringGrid;
-                            var pRowCnt : Integer;
-                            const delim : Char) : Boolean;
+                            var pRowCnt : Integer) : Boolean;
 var
-  colCnt, rowCnt : Integer;
+  //colCnt, rowCnt : Integer;
   str : String;
   val_list_o_lists : TMyListOfStringLists;
 
@@ -98,8 +96,8 @@ var
     procedure getColumnNames(keys_list : TStringList);
     var
       idx : Integer;
-      keys : array of String;
-      sCols : String;
+      //keys : array of String;
+      //sCols : String;
     begin
       if not Assigned(keys_list) then
         keys_list := TStringList.Create;
@@ -119,19 +117,21 @@ var
 
 
 var
-  sValues_list, sKeys_list : TStringList;
-  sColumns : String;
-  fl : TextFile;
-  B_RESULT : Boolean;
-  i : Integer;
+  //sValues_list,
+  sKeys_list : TStringList;
+  //fl : TextFile;
+  //B_RESULT : Boolean;
+  //i : Integer;
 begin
+
+  (******** TODO: do we need to set pRowCnt *********)
+
+
+  Result := False;
   if not (parm_dmod is TDirBuilder_dataModule) then
     raise Exception.Create('WriteGridToBooksDb: called with wrong datamodule');
   dmod_unit := parm_dmod;
-  Result := False;
-  B_RESULT := False;
 
-  sValues_list := nil;
   sKeys_list := TStringList.Create;
   getColumnNames(sKeys_list);   // fill sKeys_list with column names
         {  the values in the later lists will be in the same
@@ -155,7 +155,7 @@ begin
     //except on E : Exception do
     //  ShowMessage('WriteGridToBooksDb: ' +E.Message);
     //end;
-
+    Result := True;
 	finally
     val_list_o_lists.Free;
     sKeys_list.Free;;

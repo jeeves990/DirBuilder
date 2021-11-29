@@ -1,0 +1,149 @@
+object fmShowText: TfmShowText
+  Left = 1089
+  Height = 213
+  Top = 346
+  Width = 476
+  BorderStyle = bsDialog
+  Caption = 'Show Text'
+  ClientHeight = 213
+  ClientWidth = 476
+  OnClose = FormClose
+  OnCreate = FormCreate
+  SessionProperties = 'Height;Left;Width;Top'
+  LCLVersion = '2.2.0.1'
+  object pnlTop: TPanel
+    Left = 0
+    Height = 56
+    Top = 157
+    Width = 476
+    Align = alBottom
+    ClientHeight = 56
+    ClientWidth = 476
+    TabOrder = 0
+    object mmoAnnun: TMemo
+      Left = 8
+      Height = 42
+      Top = 5
+      Width = 458
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      Color = clInactiveCaption
+      TabOrder = 0
+    end
+  end
+  object ed: TATSynEdit
+    Left = 0
+    Height = 131
+    Top = 26
+    Width = 476
+    Align = alClient
+    DoubleBuffered = True
+    Font.Height = -12
+    Font.Name = 'Courier New'
+    ParentFont = False
+    TabOrder = 1
+    TabStop = True
+    OptShowCurLine = True
+    OptGutterVisible = False
+    OptRulerVisible = False
+  end
+  object toolBar: TToolBar
+    Left = 0
+    Height = 26
+    Top = 0
+    Width = 476
+    Caption = 'toolBar'
+    ShowCaptions = True
+    TabOrder = 2
+    object tb_show_tabs: TToolButton
+      Left = 1
+      Top = 2
+      Action = ActionShowTabs
+    end
+    object ToolButton2: TToolButton
+      Left = 63
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton2'
+      Style = tbsSeparator
+    end
+    object tb_gutter_visible: TToolButton
+      Left = 71
+      Top = 2
+      Action = ActionGutterVisible
+    end
+    object ToolButton4: TToolButton
+      Left = 148
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton4'
+      Style = tbsSeparator
+    end
+    object tb_ruler_visible: TToolButton
+      Left = 156
+      Top = 2
+      Action = ActionRulerVisible
+    end
+    object ToolButton6: TToolButton
+      Left = 227
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton6'
+      Style = tbsSeparator
+    end
+    object tb_reload_text: TToolButton
+      Left = 235
+      Top = 2
+      Action = ActionReloadText
+    end
+    object ToolButton3: TToolButton
+      Left = 302
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton3'
+      Style = tbsSeparator
+    end
+  end
+  object IniPropStorage: TIniPropStorage
+    StoredValues = <>
+    IniFileName = 'DirBuilder.ini'
+    IniSection = 'ShowTextDialog'
+    Left = 192
+    Top = 96
+  end
+  object _popupMenu: TPopupMenu
+    Left = 296
+    Top = 72
+    object mnuItm_show_tabs: TMenuItem
+      Caption = 'Show tabs'
+      OnClick = mnuItm_show_tabsClick
+    end
+    object mnuItm_gutter_visible: TMenuItem
+      Caption = 'Gutter visible'
+      OnClick = mnuItm_gutter_visibleClick
+    end
+    object mnuItm_ruler_visible: TMenuItem
+      Caption = 'Ruler visible'
+    end
+  end
+  object Actions: TActionList
+    Images = DirBuilder_dataModule.imgList
+    Left = 88
+    Top = 72
+    object ActionShowTabs: TAction
+      Caption = 'Show tabs'
+      OnExecute = ActionShowTabsExecute
+    end
+    object ActionGutterVisible: TAction
+      Caption = 'Gutter visible'
+      OnExecute = ActionGutterVisibleExecute
+    end
+    object ActionRulerVisible: TAction
+      Caption = 'Ruler visible'
+      OnExecute = ActionRulerVisibleExecute
+    end
+    object ActionReloadText: TAction
+      Caption = 'Reload text'
+      OnExecute = ActionReloadTextExecute
+    end
+  end
+end
