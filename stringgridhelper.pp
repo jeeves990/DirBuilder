@@ -6,9 +6,7 @@ interface
 
 uses
   Classes, ComCtrls,
-  //csvdataset,
   DB, DBCtrls, DBGrids, ExtCtrls, Grids,
-  //StdCtrls,
   SysUtils, Forms, Controls, Graphics, Dialogs, Clipbrd, Math;
 
 type
@@ -18,6 +16,7 @@ type
   TGridHelper = class
     FDBGrid: TDbGrid;
     FSGrid : TStringGrid;
+    str : String;
   private
     _maxSize : Integer;
 		function GetCellWidth(Grid : TStringGrid; const aCol, aRow : Integer;
@@ -35,6 +34,8 @@ type
 
 
 implementation
+
+uses DirBuilder_dmod;
 
 constructor TGridHelper.Create;
 begin
@@ -61,11 +62,9 @@ begin
     begin
       for n := 0 to Columns.Count - 1 do
       begin
-        //if columns[n].visible then begin
         temp := Canvas.TextWidth(trim(Columns[n].Field.DisplayText)) + DEFBORDER;
         if temp > lmax[n] then lmax[n] := temp;
-        //end; { if }
-      end; {for}
+      end; { for }
       FDBGrid.DataSource.DataSet.Next;
     end; { while }
     FDBGrid.DataSource.DataSet.First;
@@ -77,7 +76,7 @@ begin
         Columns[n].Width := lmax[n];
       end;
   end; { With }
-end; {SetGridColumnWidths  }
+end;
 
 function TGridHelper.GetCellWidth(Grid : TStringGrid;
                             const aCol, aRow : Integer;
@@ -87,8 +86,6 @@ begin
 end;
 
 procedure TGridHelper.SetStringGridColumnWidths;
-const
-  DEFBORDER = 10;
 var
   temp, n, txtWidth : Integer;
   rowCnt, colCnt : Integer;
@@ -109,7 +106,7 @@ begin
     FsGrid.Canvas.Font := FSGrid.Font;
     for n := FSGrid.FixedCols to FsGrid.ColCount - 1 do
     begin
-      txtWidth := FsGrid.Canvas.TextWidth(FSGrid.Cells[n, 0]) + DEFBORDER;
+      txtWidth := FsGrid.Canvas.TextWidth(FSGrid.Cells[n, 0]) + DEF_CELL_BORDER;
       //if txtWidth > 200 then
       //  ShowMessage(Format('column: %s has width: %d', [FSGrid.cells[n, 0], txtWidth]));
       araMax[n] := txtWidth;
@@ -122,7 +119,7 @@ begin
     begin
       for colCnt := FSGrid.FixedCols to FSGrid.ColCount - 1 do
       begin
-        temp := FsGrid.Canvas.TextWidth(trim(FSGrid.Cells[colCnt, rowCnt])) + DEFBORDER;
+        temp := FsGrid.Canvas.TextWidth(trim(FSGrid.Cells[colCnt, rowCnt])) + DEF_CELL_BORDER;
         if temp > araMax[colCnt] then
           araMax[colCnt] := temp;
       end; {for}

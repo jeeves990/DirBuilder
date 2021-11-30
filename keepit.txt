@@ -1,0 +1,185 @@
+
+
+
+
+procedure cbox_EditingDone(Sender: TObject);
+procedure TfrmFayesDirBuilder.cbox_EditingDone(Sender: TObject);
+var
+  sg: TStringGrid;
+begin
+  if not (Sender is TComboBox) then
+    Exit;
+  sg := sg_parser_configs;
+  if TComboBox(Sender) = cb_lineending then
+    sg.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER] := cb_lineending.Text
+
+  else if TComboBox(Sender) = cb_delimiter then
+    sg.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER] := cb_delimiter.Text;
+end;
+
+
+
+procedure sg_parser_configsMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: integer);
+procedure TfrmFayesDirBuilder.sg_parser_configsMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+var
+  sg: TStringGrid;
+  aCol, aRow: integer;
+  ed: TWinControl;
+const
+  msg = 'TfrmFayesDirBuilder.sg_parser_configsMouseDown mouse out of bounds';
+begin
+  sg := Sender as TStringGrid;
+  sg.MouseToCell(X, Y, aCol, aRow);
+  if aCol <> SG_COL_4_VALUES then
+    Exit;
+
+  if Button = mbRight then
+  begin
+
+    case aRow of
+      SG_ROW_4_LINE_DELIMITER:
+      begin
+        ed := cb_lineending;
+        FChgParserProp := ChgParser_RowDelim;
+      end;
+      SG_ROW_4_COL_DELIMITER:
+      begin
+        ed := cb_delimiter;
+        FChgParserProp := ChgParser_ColDelim;
+      end;
+      else
+      begin
+        FChgParserProp := -1;
+        raise Exception.Create(msg);
+      end;
+    end;
+    Exit;
+  end;
+
+  if Button <> mbLeft then
+    sg_parser_configsSelectEditor(Sender, aCol, aRow, ed);
+end;
+
+
+procedure sg_parser_configsSelectEditor(Sender: TObject;
+  aCol, aRow: integer; var Editor: TWinControl);
+
+procedure TfrmFayesDirBuilder.sg_parser_configsSelectEditor(Sender: TObject;
+  aCol, aRow: integer; var Editor: TWinControl);
+var
+  cb: TComboBox;
+  sg: TStringGrid;
+begin
+  if aCol <> SG_COL_4_VALUES then
+    Exit;
+  sg := sg_parser_configs;
+  if aRow = SG_ROW_4_COL_DELIMITER then
+  begin
+    cb := cb_delimiter;
+    cb.BoundsRect := sg.CellRect(aCol, aRow);
+    cb.Text := sg.Cells[sg.Col, sg.Row];
+  end
+  else if aRow = SG_ROW_4_LINE_DELIMITER then
+  begin
+    cb := cb_lineending;
+    cb.BoundsRect := sg.CellRect(aCol, aRow);
+    cb.Text := sg.Cells[sg.Col, sg.Row];
+  end;
+  Editor := cb;
+end;
+
+
+procedure SetColDelimiter(aValue: string);
+procedure SetRowDelimiter(aValue: string);
+procedure TfrmFayesDirBuilder.SetColDelimiter(aValue: string);
+begin
+sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER] := aValue;
+end;
+procedure TfrmFayesDirBuilder.SetRowDelimiter(aValue: string);
+begin
+sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER] := aValue;
+end;
+function TfrmFayesDirBuilder.GetColDelimiter: string;
+begin
+Result := sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER];
+end;
+function TfrmFayesDirBuilder.GetRowDelimiter: integer;
+var
+test_str: string;
+begin
+test_str := sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER];
+if test_str = '' then
+Result := ChoseNoChoice
+else
+if test_str = '' then;
+end;
+curDelimiter := FColDelim_value;
+curLineending := FRowDelim_value;
+dlg := TfmChangeCSVProperties.Create(self);
+try
+if FChgParserProp = ChgParser_RowDelim then
+begin
+dlg.ParmRec.form_op := ChgParser_RowDelim;
+//dlg.ParmRec.grp_value := GetRowDelimiter;  end
+else if FChgParserProp = ChgParser_ColDelim then
+begin
+dlg.ParmRec.form_op := ChgParser_ColDelim;
+dlg.ParmRec.grp_value := GetColDelimiter;
+end;
+dlg.ShowModal;
+case dlg.ModalResult of
+ChoseNoChoice: Exit;
+ChoseComma: begin
+str := COMMA_STRING;
+FColDelim_value := COMMA;
+end;
+ChoseTab: begin
+str := TAB_STRING;
+FColDelim_value := TAB;
+end;
+ChoseSemicolon: begin
+str := SEMICOLON_STRING;
+FColDelim_value := SEMICOLON;
+end;
+end;
+sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER] := str;
+case dlg.ModalResult of
+ChoseNoChoice: Exit;
+ChoseCRLF: begin
+FRowDelim_value := CRLF;
+str := CRLF_STR;
+end;
+ChoseLF: begin
+FRowDelim_value := LF;
+str := LF_STR;
+end;
+end;
+sg_parser_configs.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER] := str;
+StatusBar.Panels[1].Text :=
+Format('Current column delimiter: %s', [FColDelim_value]);
+if curDelimiter <> FColDelim_value then
+ActionRead_withParser.Execute;
+finally
+dlg.Free;
+end;
+procedure TfrmFayesDirBuilder.ActionIgnoreFirstLineExecute(Sender: TObject);
+const
+Move_up = True;
+Move_down = False;
+begin
+ActionIgnoreFirstLine.Checked := not ActionIgnoreFirstLine.Checked;
+if ActionIgnoreFirstLine.Checked then
+begin
+statBar_first_line.Visible := True;
+move_grid_first_line;
+end
+else
+begin
+statBar_first_line.Visible := False;
+if isGridPopulated then
+ActionRead_withParser.Execute;
+end;
+end;
+

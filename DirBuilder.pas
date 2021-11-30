@@ -3,14 +3,26 @@ program DirBuilder;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+ {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
-  {$ENDIF}{$ENDIF}
+   {$ENDIF} {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, frmDirFromCSV, stringGridHelper, runtimetypeinfocontrols,
-	anchordockpkg, DirBuilder_dmod, frmDisplayCSVFile, frmInputNewValue,
-	AddQuotes2Files_unit, stringgridutil, CSVParser_setup, frmChangeCSVProperties,
-	frmNewBooksDB, frmAddEdit, unitLoad_grid_from_csv, frmShowText;
+  Forms,
+  frmDirFromCSV,
+  stringGridHelper,
+  runtimetypeinfocontrols,
+  anchordockpkg,
+  DirBuilder_dmod,
+  frmDisplayCSVFile,
+  frmInputNewValue,
+  AddQuotes2Files_unit,
+  stringgridutil,
+  CSVParser_setup,
+  frmChangeCSVProperties,
+  frmNewBooksDB,
+  frmAddEdit,
+  unitLoad_grid_from_csv,
+  frmShowText;
 
 {$R *.res}
 
@@ -19,7 +31,6 @@ begin
   Application.Scaled := True;
   Application.Initialize;
   Application.CreateForm(TfrmFayesDirBuilder, frmFayesDirBuilder);
-			Application.CreateForm(TfmShowText, fmShowText);
+  Application.CreateForm(TfmShowText, fmShowText);
   Application.Run;
 end.
-

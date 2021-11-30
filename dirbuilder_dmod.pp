@@ -7,8 +7,6 @@ interface
 uses
   Classes, SysUtils, csvdataset, DB, mysql57conn, SQLDB, Dialogs,
   Controls, LMessages,
-  //Windows,
-//, XMLPropStorage;
   IniPropStorage;
 
 const
@@ -22,47 +20,6 @@ const
 
   ChgParser_RowDelim = LM_USER + 201;
   ChgParser_ColDelim = LM_USER + 202;
-
-type
-  TParmRec = record
-    colDelimiter: ansistring;
-    rowDelimiter: ansistring;
-    //withHeader : Boolean;      // withHeader and ignoreFirstLine are redundant
-    addRows: boolean;
-    ignoreFirstLine: boolean;
-  end;
-
-type  { TDirBuilder_dataModule }
-
-  TDirBuilder_dataModule = class(TDataModule)
-    CSVDataset: TCSVDataset;
-    CSVDsDtaSrc: TDataSource;
-    BooksDbConn: TMySQL57Connection;
-    BooksDbTx: TSQLTransaction;
-    imgList: TImageList;
-    IniPropStorage: TIniPropStorage;
-    qryInsertBooks: TSQLQuery;
-    qryWork: TSQLQuery;
-    procedure DataModuleCreate(Sender: TObject);
-  private
-    FFileName: TFileName;
-    procedure Close_books_db;
-    function Open_books_db: boolean;
-  public
-    function open_CSV_dataset(const fileName: TFileName;
-      ColNames1stLine: boolean = False): boolean;
-    property FileName: TFileName read FFileName write FFileName;
-    procedure setFieldNames;
-  end;
-
-type
-  TStringCallbackMethod = procedure(str : AnsiString) of object;
-
-var
-  DirBuilder_dataModule: TDirBuilder_dataModule;
-  Prop_storage_ini: string;
-  Report_type_list: TStringList;
-
 
 const
   SQL4BOOKS = 'SELECT * FROM BOOKS';
@@ -91,6 +48,50 @@ const
   SPACE = #32;
   PROPSTORAGE_FILENAME_INI = 'DirBuilder.ini';
   BAD_CHOICE = -(MaxInt - 1);
+
+  DEF_CELL_BORDER = 10;
+
+type
+  TParmRec = record
+    colDelimiter: ansistring;
+    rowDelimiter: ansistring;
+    addRows: boolean;
+    ignoreFirstLine: boolean;
+  end;
+
+type  { TDirBuilder_dataModule }
+
+  TDirBuilder_dataModule = class(TDataModule)
+    CSVDataset: TCSVDataset;
+    CSVDsDtaSrc: TDataSource;
+    BooksDbConn: TMySQL57Connection;
+    BooksDbTx: TSQLTransaction;
+    imgList: TImageList;
+    IniPropStorage: TIniPropStorage;
+    qryInsertBooks: TSQLQuery;
+    qryWork: TSQLQuery;
+    procedure DataModuleCreate(Sender: TObject);
+  private
+    FFileName: TFileName;
+    FColName_list : TStringList;
+    procedure Close_books_db;
+    function Open_books_db: boolean;
+  public
+    function open_CSV_dataset(const fileName: TFileName;
+      ColNames1stLine: boolean = False): boolean;
+    property FileName: TFileName read FFileName write FFileName;
+    procedure setFieldNames;
+    function Get_col_names(const db_name, table_name: string): TStringList;
+  end;
+
+type
+  TStringCallbackMethod = procedure(str: ansistring) of object;
+
+var
+  DirBuilder_dataModule: TDirBuilder_dataModule;
+  Prop_storage_ini: string;
+  Report_type_list: TStringList;
+
 
 procedure Write_SQL_Qry_to_CSV(qry: TSQLQuery; const fileName: TFileName);
 
@@ -126,10 +127,52 @@ end;
 {$R *.lfm}
 
 { TDirBuilder_dataModule }
+const
+  SQL_4_COL_NAMES = 'SELECT COLUMN_NAME  FROM INFORMATION_SCHEMA.COLUMNS '
+    + 'WHERE TABLE_SCHEMA = "%s" AND TABLE_NAME = "%s" ORDER BY column_name';
+
+function TDirBuilder_dataModule.Get_col_names(
+  const db_name, table_name: string): TStringList;
+(*   TDirBuilder_dataModule.get_col_names
+ *    caller is responsible for freeing return'd list.
+ *)
+var
+  sql, value: string;
+  qry: TSQLQuery;
+begin
+  Result := nil;
+  sql := Format(SQL_4_COL_NAMES, [db_name, table_name]);
+  if not Assigned(FColName_list) then
+    FColName_list := TStringList.Create;
+  FColName_list.Clear;
+  FColName_list.Sorted := True;
+  if not Open_books_db then
+    raise Exception.Create(
+      'TDirBuilder_dataModule.get_col_names: failed opening connection');
+  qry := TSQLQuery.Create(self);
+  qry.SQL.Text := sql;
+  try
+    qry.DataBase := BooksDbConn;
+    qry.Open;
+    while not qry.EOF do
+    begin
+      value := LowerCase(qry.Fields[0].AsString);
+      if FColName_list.IndexOf(value) < 0 then
+          FColName_list.Add(qry.Fields[0].AsString);
+      qry.Next;
+		end;
+    Result := FColName_list;
+  finally
+    qry.Free;
+    Close_books_db;
+  end;
+end;
 
 function TDirBuilder_dataModule.Open_books_db: boolean;
 begin
-  BooksDbConn.Open;
+  Result := False;
+  if not BooksDbConn.Connected then
+    BooksDbConn.Open;
   Result := BooksDbConn.Connected;
 end;
 
@@ -149,10 +192,9 @@ function TDirBuilder_dataModule.open_CSV_dataset(const fileName: TFileName;
   ColNames1stLine: boolean = False): boolean;
 var
   s, fldDef: string;
-  i : integer;
+  i: integer;
 begin
-  s := 'TDirBuilder_dataModule.open_CSV_dataset has failed.'
-    + sLineBreak + '%s';
+  s := 'TDirBuilder_dataModule.open_CSV_dataset has failed.' + sLineBreak + '%s';
   try
     //b := CSVDataset.DefaultFields;
     CSVDataset.Close;

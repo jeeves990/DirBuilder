@@ -53,7 +53,7 @@
         <PackageName Value="LCL"/>
       </Item8>
     </RequiredPackages>
-    <Units Count="15">
+    <Units Count="16">
       <Unit0>
         <Filename Value="DirBuilder.pas"/>
         <IsPartOfProject Value="True"/>
@@ -158,6 +158,10 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmShowText"/>
       </Unit14>
+      <Unit15>
+        <Filename Value="keepit.txt"/>
+        <IsPartOfProject Value="True"/>
+      </Unit15>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
