@@ -109,6 +109,9 @@ type
     sg_parser_config_popup: TPopupMenu;
     StatusBar: TStatusBar;
     statBar_first_line: TStatusBar;
+		CSV_col_grid : TStringGrid;
+		db_col_grid : TStringGrid;
+		tb_columns_test : TTabSheet;
     tab_CSVFile: TTabSheet;
     ActionRead_withParser: TAction;
     File_grid: TStringGrid;
@@ -165,6 +168,9 @@ type
     procedure GetCSVParserProps;
     function isGridPopulated: boolean;
     procedure move_grid_first_line;
+		procedure Pop_CSV_columns(lst : TColumnList);
+		procedure Pop_DB_columns(lst : TColumnList);
+		procedure Pop_test_sgrid(lst : TColumnList; sg : TStringGrid);
 		procedure reset_dbGrid;
 		procedure resize_dbGrid_columns;
 		procedure resize_file_grid_columns;
@@ -469,9 +475,12 @@ var
   util: TStringGridUtil;
 begin
   util := TStringGridUtil.Create;
+  util.DbColsCallback := TColumnListCallbackMethod(@Pop_DB_columns);
+  util.CsvColsCallback := TColumnListCallbackMethod(@Pop_CSV_columns);
+
   outCnt := BAD_CHOICE;
   try
-    util.WriteGridToBooksDb(dmod, File_grid, outCnt);
+    util.WriteGridToBooksDb(dmod, File_grid);
   finally
     util.Free;
   end;
@@ -672,6 +681,41 @@ procedure TfrmFayesDirBuilder.move_grid_first_line;
       end;
   end;
 
+  function is_stringGrid_empty(sg: TStringGrid): boolean;
+    var
+      row, col: integer;
+      str : String;
+    begin
+      try
+        Result := False;
+        if not Assigned(sg.Rows[0]) then
+          Exit;
+        if sg.rows[0] <> nil then
+          Result := True;
+
+
+        //str := sg.Rows[0][0];
+        row := sg.RowCount;
+        for row := 0 to sg.RowCount - 1 do
+          for col := 0 to sg.ColCount - 1 do
+            if sg.Cells[col, row] > '' then
+            begin
+              Result := True;
+              Exit;
+            end;
+      except
+        on Ex: EGridException do
+        begin
+          ShowMessage(Ex.Message);
+          Result := True;
+          Exit;
+        end;
+        on Ex: Exception do
+          ShowMessage(Ex.Message);
+      end;
+
+    end;
+
 var
   i, ndx: integer;
   aRow: TStrings;
@@ -682,6 +726,9 @@ begin
   if (pgCtrl.ActivePage = tab_csv_dataset)
     and ((PtInRect(DBG.BoundsRect, pt) or FFromCheckBox)) then
     reset_dbGrid;
+
+  if is_stringGrid_empty(File_grid) then
+    Exit;
 
   pt := File_grid.ScreenToClient(Mouse.CursorPos);
   if (pgCtrl.ActivePage = tab_CSVFile)
@@ -914,6 +961,33 @@ begin
   frm.HasHeaders := cb_1stRowIsTitles.Checked;
   frm.DisplayFile;
   frm.Show;
+end;
+
+procedure TfrmFayesDirBuilder.Pop_test_sgrid(lst : TColumnList; sg : TStringGrid);
+var
+  i, sg_row : Integer;
+  rec : TColumnRec;
+begin
+  sg_row := 1;
+  for i := 0 to lst.Count -1 do
+  begin
+    rec := TColumnRec(lst[i]);
+    sg_row := sg.RowCount;
+    sg.RowCount := sg.RowCount +1;
+    sg.Cells[0, sg_row] := rec.colName;
+    sg.Cells[1, sg_row] := rec.colName4cmp;
+    sg.Cells[2, sg_row] := IntToStr(rec.relativePos);
+	end;
+end ;
+
+procedure TfrmFayesDirBuilder.Pop_CSV_columns(lst : TColumnList);
+begin
+  Pop_test_sgrid(lst, CSV_col_grid);
+end;
+
+procedure TfrmFayesDirBuilder.Pop_DB_columns(lst : TColumnList);
+begin
+  Pop_test_sgrid(lst, db_col_grid);
 end;
 
 end.

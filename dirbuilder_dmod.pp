@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, csvdataset, DB, mysql57conn, SQLDB, Dialogs,
-  Controls, LMessages,
+  Controls, LMessages, Grids, fgl,
   IniPropStorage;
 
 const
@@ -51,6 +51,28 @@ const
 
   DEF_CELL_BORDER = 10;
 
+  LOWERCASE_ALPHA = ['a'..'z'];
+  UPPERCASE_ALPHA = ['A'..'Z'];
+  ALPHA_CHARS = LOWERCASE_ALPHA +UPPERCASE_ALPHA;
+
+type
+  { TColumnRec }
+
+  TColumnRec = class
+    colName: string;       // name from list of CSV or DB column names
+    colName4cmp: string;   // cleanUpString for comparison
+    relativePos: integer;  // position of colName4cmp in 'other' list
+  end;
+
+  (*  there will be two (2) lists: on for column names from the CSV; the other
+     *  for column names from the database 'books' table. The two lists will be
+     *  compare on colName4cmp strings and relativePos will be the position of
+     *  one list in the other list.
+     *)
+
+  TColumnList = specialize TFPGList<TColumnRec>;
+
+
 type
   TParmRec = record
     colDelimiter: ansistring;
@@ -86,6 +108,7 @@ type  { TDirBuilder_dataModule }
 
 type
   TStringCallbackMethod = procedure(str: ansistring) of object;
+  TColumnListCallbackMethod = procedure(lst : TColumnList) of object;
 
 var
   DirBuilder_dataModule: TDirBuilder_dataModule;
@@ -94,6 +117,7 @@ var
 
 
 procedure Write_SQL_Qry_to_CSV(qry: TSQLQuery; const fileName: TFileName);
+//function is_stringGrid_empty(sg : TStringGrid) : Boolean;
 
 implementation
 
@@ -131,8 +155,8 @@ const
   SQL_4_COL_NAMES = 'SELECT COLUMN_NAME  FROM INFORMATION_SCHEMA.COLUMNS '
     + 'WHERE TABLE_SCHEMA = "%s" AND TABLE_NAME = "%s" ORDER BY column_name';
 
-function TDirBuilder_dataModule.Get_col_names(
-  const db_name, table_name: string): TStringList;
+function TDirBuilder_dataModule.Get_col_names(const db_name, table_name: string)
+                                                          : TStringList;
 (*   TDirBuilder_dataModule.get_col_names
  *    caller is responsible for freeing return'd list.
  *)

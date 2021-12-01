@@ -1,4 +1,5 @@
 unit StringGridUtil;
+
 { Use csvreadwrite to import csv data into stringgrid. Offers more robust
   support for CSV file variations than TStringGrid.LoadFromCSVFile }
 
@@ -7,27 +8,29 @@ interface
 
 uses
   Classes, SysUtils, Grids, // csvreadwrite, LazFileUtils,
-  fgl,
+  fgl, Contnrs,
   DirBuilder_dmod;
 
 type
   EStringGrid_Improper = TExceptionClass;
   EColNamesNotSame = TExceptionClass;
 
-  TMyListOfStringLists = specialize TFPGObjectList<TStringList>;
+  { TStringGridUtil }
+
   TStringGridUtil = class
   private
-    //procedure Write_to_books_controller(cols_list : TStringList;
-    //                             val_list : TMyListOfStringLists;
-    //                             const PDmod : TDirBuilder_dataModule);
-    //procedure buildValuesStrings(valueList : TMyListOfStringLists);
-    function isQuoted(Str : String) : Boolean;
-    function stripDoubleQuotes(str : String) : String;
-    function addUnderscore_to_titles(str : String) : String;
+    function cleanUpString(str: string): string;
+    procedure cleanUpColumnList(var lst: TColumnList);
+    function isQuoted(Str: string): boolean;
+    function stripDoubleQuotes(str: string): string;
+    function addUnderscore_to_titles(str: string): string;
   public
-    function WriteGridToBooksDb(parm_dmod : TDirBuilder_dataModule;
-					grid : TStringGrid; var pRowCnt : Integer) : Boolean;
-	end;
+    function WriteGridToBooksDb(parm_dmod: TDirBuilder_dataModule;
+              grid: TStringGrid)                                            : boolean;
+  var
+    DbColsCallback : TColumnListCallbackMethod;
+    CsvColsCallback : TColumnListCallbackMethod;
+  end;
 
 
 
@@ -40,7 +43,7 @@ const
   MAX_COLUMNS_LENGTH = 4000;  // max parm length for stored procedure
 
 var
-  dmod : TDirBuilder_dataModule;
+  dmod: TDirBuilder_dataModule;
 
 (******************************************************************************)
 
@@ -51,12 +54,12 @@ var
 //                        const PDmod : TDirBuilder_dataModule);
 
 
-function TStringGridUtil.addUnderscore_to_titles(str : String) : String;
+function TStringGridUtil.addUnderscore_to_titles(str: string): string;
 {   when "unruly" characters are embedded in field names,
     replace them with underscores (_)
 }
-//var
-//  loc : Integer;
+  //var
+  //  loc : Integer;
 begin
   str := StringReplace(str, SPACE, UNDERSCORE, [rfReplaceAll]);
   str := StringReplace(str, FWDSLASH, UNDERSCORE, [rfReplaceAll]);
@@ -64,7 +67,7 @@ begin
 end;
 
 
-function TStringGridUtil.isQuoted(Str : String) : Boolean;
+function TStringGridUtil.isQuoted(Str: string): boolean;
 begin
   Result := False;
   if Length(str) = 0 then
@@ -76,7 +79,7 @@ begin
     Result := True;
 end;
 
-function TStringGridUtil.stripDoubleQuotes(str : String) : String;
+function TStringGridUtil.stripDoubleQuotes(str: string): string;
 {   when a field has embedded DOUBLEQUOTE's,
     strip them out    }
 begin
@@ -86,136 +89,185 @@ begin
   Result := str;
 end;
 
-function TStringGridUtil.WriteGridToBooksDb(parm_dmod : TDirBuilder_dataModule;
-                            grid : TStringGrid;
-                            var pRowCnt : Integer) : Boolean;
+function TStringGridUtil.cleanUpString(str: string): string;
+(*
+ *    cleanUpString: remove non ALPHA_CHAR and
+ *    return LowerCase string.
+ *)
 var
-  str : String;
-  val_list_o_lists : TMyListOfStringLists;
+  i: integer;
+begin
+  Result := '';
+  for i := 1 to Length(str) do
+  begin
+    if not (str[i] in ALPHA_CHARS) then
+      Continue;
+    Result := Result + LowerCase(str[i]);
+  end;
+end;
+
+procedure TStringGridUtil.cleanUpColumnList(var lst: TColumnList);
+(*
+ * may not be used
+ *)
+var
+  i: integer;
+  rec: TColumnRec;
+begin
+  for i := 0 to lst.Count - 1 do
+  begin
+    rec := TColumnRec(lst[i]);
+    rec.colName4cmp := cleanUpString(rec.colName);
+  end;
+end;
+
+function TStringGridUtil.WriteGridToBooksDb(parm_dmod: TDirBuilder_dataModule;
+  grid: TStringGrid): boolean;
+var
+  str: string;
+  csv_col_names_list, db_col_names_list: TColumnList;
 const
   fcn_name = 'TStringGridUtil.WriteGridToBooksDb';
 
-
-    function getColumnNames(var col_names : TStringList): Boolean;
-    var
-      idx : Integer;
+  function add_slst_2_col_list(slst: TStringList): TColumnList;
+  var
+    i: integer;
+    rec: TColumnRec;
+  begin
+    Result := TColumnList.Create;
+    for i := 0 to slst.Count - 1 do
     begin
-      Result := False;
-      if not Assigned(col_names) then
-        col_names := TStringList.Create;
-      col_names.Clear;
+      rec := TColumnRec.Create;
+      rec.colName := slst[i];
+      rec.colName4cmp := cleanUpString(rec.colName);
+      rec.relativePos := BAD_CHOICE;
+      Result.Add(rec);
+    end;
+  end;
 
-		  for idx := 0 to grid.ColCount -1 do
-		  begin
-        str := grid.Cells[idx, 0];
-        if str > '' then
-          Result := True;
-        str := stripDoubleQuotes(grid.Cells[idx, 0]);
-        str := addUnderscore_to_titles(str);
-		    col_names.Add(str);
-			end;
-		end;
+  function getColumnNames(var col_names: TColumnList): boolean;
+  var
+    idx: integer;
+    rec: TColumnRec;
+  begin
+    Result := False;
+    if not Assigned(col_names) then
+      col_names := TColumnList.Create;
+    col_names.Clear;
+
+    for idx := 0 to grid.ColCount - 1 do
+    begin
+      str := grid.Cells[idx, 0];
+      if str > '' then
+        Result := True;
+
+      rec := TColumnRec.Create;
+      rec.colName := stripDoubleQuotes(grid.Cells[idx, 0]);
+      rec.colName4cmp := cleanUpString(rec.colName);
+      rec.relativePos := BAD_CHOICE;
+      col_names.Add(rec);
+    end;
+  end;
 
 
-    function set_lower_case(var sLst : TStringList) : Integer;
-    // returns list length
+  function cmp_col_names_get_rel_pos(csv_names, db_names: TColumnList): boolean;
+    (*
+     *  cmp_col_names_get_rel_pos:
+     *)
+    function get_relative_position(csv_rec : TColumnRec) : Integer;
     var
       i : Integer;
-      sorted : Boolean;
+      str : String;
     begin
-      sorted := sLst.Sorted;
-      sLst.Sorted := False;
-      Result := sLst.Count;
-      for i := 0 to sLst.Count -1 do
-        sLst[i] := LowerCase(sLst[i]);
-      slst.Sorted := sorted;
+      Result := BAD_CHOICE;
+      i := 0;
+      while i < db_names.Count do
+        begin
+          str := TColumnRec(db_names[i]).colName4cmp;
+          if csv_rec.colName4cmp = TColumnRec(db_names[i]).colName4cmp then
+            begin
+              csv_rec.relativePos := i;
+              Result := i;
+              Exit;
+						end;
+          Inc(i);
+				end;
 		end;
 
 
-    function compare_csv_2_db_col_names(csv_names, db_names : TStringlist) : Boolean;
+    procedure set_db_rec_relativePos(const csv_ndx : Integer; var csv_rec : TColumnRec);
     var
-      i, j : Integer;
-      csv_str, db_str : String;
-
-
-      function strings_like(str1, str2 : string) : Boolean;
-      begin
-        str1 := addUnderscore_to_titles(str1);
-        str2 := addUnderscore_to_titles(str1);
-			end;
-
-
+      i : Integer;
+      db_rec : TColumnRec;
     begin
-      for i := 0 to csv_names.Count -1 do
-      begin
-        csv_str := LowerCase(csv_names[i]);
-        db_str := LowerCase(db_names[i]);
-        csv_str := soundex(csv_str);
-        db_str := soundex(db_str);
-
-        if csv_names[i] = db_names[i] then
-          Result := False;
-			end;
+      i := csv_rec.relativePos;
+      db_rec := TColumnRec(db_col_names_list[i]);
+      db_rec.relativePos := csv_ndx;
 		end;
 
+
+  var
+    i, j, rtrn: integer;
+    db_rowCount, csv_rowCount : Integer;
+    csv_str, db_str: string;
+    csv_rec, db_rec: TColumnRec;
+  begin
+
+    db_rowCount := db_names.Count;
+    csv_rowCount := csv_names.Count;
+    {  What if one is longer than the other.  }
+    for i := 0 to csv_names.Count - 1 do
+    begin
+      csv_rec := TColumnRec(csv_names[i]);
+      rtrn := get_relative_position(csv_rec);
+      if rtrn >= 0 then
+       begin
+        csv_rec.relativePos := rtrn;
+        set_db_rec_relativePos(i, csv_rec);
+			 end;
+		end;
+
+    if db_rowCount > csv_rowCount then
+      ShowMessage('Database has more columns than CSV');
+  end;
 
 var
-  csv_col_names_list,
-  db_col_names_list : TStringList;
+  work_list: TStringList;
+  rec : TColumnRec;
 begin
 
   (******** TODO: do we need to set pRowCnt *********)
 
-
   Result := False;
+  work_list := nil;
   if not (parm_dmod is TDirBuilder_dataModule) then
     raise Exception.Create('WriteGridToBooksDb: called with wrong datamodule');
   dmod := parm_dmod;
-
-  {  TODO: query the booksdb schema for the columns names and
-     compare those to the column names from getColumnNames   }
-  csv_col_names_list := nil;
-  if not getColumnNames(csv_col_names_list) then   // fill db_col_names_list with column names
-    raise EStringGrid_Improper.Create(fcn_name
-        + ' First row does not have column names.');
-        {  the values in the later lists will be in the same
-         logical order as the column name in keys_list    }
-
-  db_col_names_list := dmod.Get_col_names(dmod.BooksDbConn.DatabaseName, 'books');
-
-  set_lower_case(csv_col_names_list);
-  csv_col_names_list.Sort;
-  set_lower_case(db_col_names_list);
-  db_col_names_list.Sort;
-
-  if not compare_csv_2_db_col_names(csv_col_names_list, db_col_names_list) then
-    raise EColNamesNotSame.Create(fcn_name
-      + ' Failed comparison between csv and database column names');
-
-  {  get the contents of the string grid  }
-  val_list_o_lists := TMyListOfStringLists.Create;
   try
-    {   builds a TStringList of column values for each row.
-        -and- adds the StringList's built to col_list      }
-    //buildValuesStrings(val_list_o_lists);
+    {  DONE: query the booksdb schema for the columns names and
+       compare those to the column names from getColumnNames   }
+    csv_col_names_list := nil;
+    if not getColumnNames(csv_col_names_list) then
+      // fill db_col_names_list with column names
+      raise EStringGrid_Improper.Create(fcn_name +
+        ' First row does not have column names.');
+          {  the values in the later lists will be in the same
+           logical order as the column name in keys_list    }
 
-    {   val_list_o_lists now has a string list of
-        column values for every row in the grid. }
-    //try
-    //  AssignFile(fl, 'myLogFile.txt');
-    //  Rewrite(fl);
-    //  for i := 0 to val_list_o_lists.Count -1 do
-    //    WriteLn(fl, val_list_o_lists[i]);
-    //  Close(fl);
-    //except on E : Exception do
-    //  ShowMessage('WriteGridToBooksDb: ' +E.Message);
-    //end;
+    work_list := dmod.Get_col_names(dmod.BooksDbConn.DatabaseName, 'books');
+    db_col_names_list := add_slst_2_col_list(work_list);
+
+    if not cmp_col_names_get_rel_pos(csv_col_names_list, db_col_names_list) then
+      raise EColNamesNotSame.Create(fcn_name +
+        ' Failed comparison between csv and database column names');
+    DbColsCallback(db_col_names_list);
+    CsvColsCallback(csv_col_names_list);
     Result := True;
-	finally
-    val_list_o_lists.Free;
-    if Assigned(db_col_names_list) then
-      db_col_names_list.Free;;
-	end;
+  finally
+    FreeAndNil(csv_col_names_list);
+    FreeAndNil(db_col_names_list);
+    FreeAndNil(work_list);
+  end;
 end;  // function WriteGridToBooksDb(parm_dmod : TDirBuilder_dataModule;
 
 end.
