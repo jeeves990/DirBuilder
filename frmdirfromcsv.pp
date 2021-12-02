@@ -29,7 +29,7 @@ type
   { TfrmFayesDirBuilder }
 
   TfrmFayesDirBuilder = class(TForm)
-				ActionClose_CSV_dataset : TAction;
+    ActionClose_CSV_dataset: TAction;
     ActionGetFilename_2_clipboard: TAction;
     ActionRead_withDataset: TAction;
     ActionChgRowDelimiter: TAction;
@@ -68,9 +68,7 @@ type
     lblCSVFile: TLabel;
     mainMnu: TMainMenu;
     MenuItem1: TMenuItem;
-    MenuItem17: TMenuItem;
-		MenuItem18 : TMenuItem;
-		mnuItm_close_dataset : TMenuItem;
+    mnuItm_close_dataset: TMenuItem;
     N11: TMenuItem;
     N10: TMenuItem;
     mnuItm_Open_w_parser: TMenuItem;
@@ -79,7 +77,6 @@ type
     MenuItem12: TMenuItem;
     MenuItem13: TMenuItem;
     mnuWriteGridToBooksDb: TMenuItem;
-    N8: TMenuItem;
     mnuItmDltCurCsvFile: TMenuItem;
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
@@ -109,9 +106,9 @@ type
     sg_parser_config_popup: TPopupMenu;
     StatusBar: TStatusBar;
     statBar_first_line: TStatusBar;
-		CSV_col_grid : TStringGrid;
-		db_col_grid : TStringGrid;
-		tb_columns_test : TTabSheet;
+    CSV_col_grid: TStringGrid;
+    db_col_grid: TStringGrid;
+    tb_columns_test: TTabSheet;
     tab_CSVFile: TTabSheet;
     ActionRead_withParser: TAction;
     File_grid: TStringGrid;
@@ -123,7 +120,7 @@ type
     tab_csv_dataset: TTabSheet;
     procedure ActionBooksDbExecute(Sender: TObject);
     procedure ActionCloseExecute(Sender: TObject);
-		procedure ActionClose_CSV_datasetExecute(Sender : TObject);
+    procedure ActionClose_CSV_datasetExecute(Sender: TObject);
     procedure ActionGetFilename_2_clipboardExecute(Sender: TObject);
     procedure ActionRemoveCurrentFilename_fromListExecute(Sender: TObject);
     procedure ActionFindCSVExecute(Sender: TObject);
@@ -150,6 +147,7 @@ type
     procedure File_gridClick(Sender: TObject);
     procedure ActionChangeCSVDelimiterExecute(Sender: TObject);
     procedure File_gridSelection(Sender: TObject; aCol, aRow: integer);
+    procedure mnuItm_cleanUp_quotesClick(Sender: TObject);
   private
     FDirListColumn: integer;
     FCSVDelimiter: string;
@@ -162,18 +160,18 @@ type
     FCurReportType: TCaption;
     FChgParserProp: integer;
 
-    FFromCheckBox : Boolean;
+    FFromCheckBox: boolean;
 
     function countSubDirs(path: string): integer;
     procedure GetCSVParserProps;
     function isGridPopulated: boolean;
     procedure move_grid_first_line;
-		procedure Pop_CSV_columns(lst : TColumnList);
-		procedure Pop_DB_columns(lst : TColumnList);
-		procedure Pop_test_sgrid(lst : TColumnList; sg : TStringGrid);
-		procedure reset_dbGrid;
-		procedure resize_dbGrid_columns;
-		procedure resize_file_grid_columns;
+    procedure Pop_CSV_columns(lst: TColumnList);
+    procedure Pop_DB_columns(lst: TColumnList);
+    procedure Pop_test_sgrid(lst: TColumnList; sg: TStringGrid);
+    procedure reset_dbGrid;
+    procedure resize_dbGrid_columns;
+    procedure resize_file_grid_columns;
 
     procedure Setup_cb_delimiter;
     procedure Setup_cb_lineending;
@@ -391,10 +389,9 @@ end;
 
 procedure TfrmFayesDirBuilder.resize_dbGrid_columns;
 var
-  row, col,
-    wd : Integer;  { wd is work variable for current column width }
-  ds : TCSVDataset;
-  colWidthAra : Array of Integer;
+  row, col, wd: integer;  { wd is work variable for current column width }
+  ds: TCSVDataset;
+  colWidthAra: array of integer;
 const
   max_col_width = 177;
 begin
@@ -402,7 +399,7 @@ begin
   DBG.BeginUpdate;
   SetLength(colWidthAra, ds.Fields.Count);
   {  initialize array  }
-  for col := 0 to Length(colWidthAra) -1 do
+  for col := 0 to Length(colWidthAra) - 1 do
     colWidthAra[col] := 0;
 
   {  iterate over rows and columns to find max width of columns contents.  }
@@ -410,25 +407,25 @@ begin
     ds.First;
     while not ds.EOF do
     begin
-      for col := 0 to ds.Fields.Count -1 do
+      for col := 0 to ds.Fields.Count - 1 do
       begin
         wd := DBG.Canvas.TextExtent(ds.Fields[col].DisplayText).cx;
         if wd > colWidthAra[col] then
           colWidthAra[col] := wd;
-			end;
-			ds.Next;
-		end;
-    for col := 0 to ds.Fields.Count -1 do
+      end;
+      ds.Next;
+    end;
+    for col := 0 to ds.Fields.Count - 1 do
     begin
       if colWidthAra[col] > max_col_width then
         colWidthAra[col] := max_col_width;
 
-      DBG.Columns.Items[col].Width := colWidthAra[col] +DEF_CELL_BORDER;
+      DBG.Columns.Items[col].Width := colWidthAra[col] + DEF_CELL_BORDER;
     end;
-	finally
+  finally
     DBG.EndUpdate(True);
     SetLength(colWidthAra, 0);
-	end;
+  end;
 end;
 
 procedure TfrmFayesDirBuilder.resize_file_grid_columns;
@@ -455,14 +452,14 @@ procedure TfrmFayesDirBuilder.ActionResizeColumnsExecute(Sender: TObject);
  *    Looks like this will only be used for gridPopup.
  *)
 var
-  pt : TPoint;
+  pt: TPoint;
 begin
   pt := File_grid.ScreenToClient(Mouse.CursorPos);
   if (pgCtrl.ActivePage = tab_CSVFile) and (PtInRect(File_grid.BoundsRect, pt)) then
   begin
     resize_file_grid_columns;
     Exit;
-	end;
+  end;
 
   pt := DBG.ScreenToClient(Mouse.CursorPos);
   if (pgCtrl.ActivePage = tab_csv_dataset) and (PtInRect(DBG.BoundsRect, pt)) then
@@ -480,7 +477,7 @@ begin
 
   outCnt := BAD_CHOICE;
   try
-    util.WriteGridToBooksDb(dmod, File_grid);
+    util.Prep_from_grid(dmod, File_grid);
   finally
     util.Free;
   end;
@@ -491,7 +488,7 @@ begin
   Close;
 end;
 
-procedure TfrmFayesDirBuilder.ActionClose_CSV_datasetExecute(Sender : TObject);
+procedure TfrmFayesDirBuilder.ActionClose_CSV_datasetExecute(Sender: TObject);
 begin
   if dmod.CSVDataset.Active then
     dmod.CSVDataset.Close;
@@ -603,6 +600,11 @@ begin
   Statusbar.Panels[0].Text := Format('Position (%d, %d)', [aRow, aCol]);
 end;
 
+procedure TfrmFayesDirBuilder.mnuItm_cleanUp_quotesClick(Sender: TObject);
+begin
+  Clean_up_quotes(File_grid);
+end;
+
 procedure TfrmFayesDirBuilder.cb_delimiterCloseUp(Sender: TObject);
 var
   ndx: integer;
@@ -650,9 +652,9 @@ begin
     pgCtrl.ActivePage := tab_csv_dataset;
     resize_dbGrid_columns;
     dmod.CSVDataset.First;
-	finally
+  finally
     DBG.EndUpdate(True);
-	end;
+  end;
 end;
 
 function TfrmFayesDirBuilder.isGridPopulated: boolean;
@@ -682,57 +684,57 @@ procedure TfrmFayesDirBuilder.move_grid_first_line;
   end;
 
   function is_stringGrid_empty(sg: TStringGrid): boolean;
-    var
-      row, col: integer;
-      str : String;
-    begin
-      try
-        Result := False;
-        if not Assigned(sg.Rows[0]) then
-          Exit;
-        if sg.rows[0] <> nil then
-          Result := True;
+  var
+    row, col: integer;
+    str: string;
+  begin
+    try
+      Result := False;
+      if not Assigned(sg.Rows[0]) then
+        Exit;
+      if sg.rows[0] <> nil then
+        Result := True;
 
 
-        //str := sg.Rows[0][0];
-        row := sg.RowCount;
-        for row := 0 to sg.RowCount - 1 do
-          for col := 0 to sg.ColCount - 1 do
-            if sg.Cells[col, row] > '' then
-            begin
-              Result := True;
-              Exit;
-            end;
-      except
-        on Ex: EGridException do
-        begin
-          ShowMessage(Ex.Message);
-          Result := True;
-          Exit;
-        end;
-        on Ex: Exception do
-          ShowMessage(Ex.Message);
+      //str := sg.Rows[0][0];
+      row := sg.RowCount;
+      for row := 0 to sg.RowCount - 1 do
+        for col := 0 to sg.ColCount - 1 do
+          if sg.Cells[col, row] > '' then
+          begin
+            Result := True;
+            Exit;
+          end;
+    except
+      on Ex: EGridException do
+      begin
+        ShowMessage(Ex.Message);
+        Result := True;
+        Exit;
       end;
-
+      on Ex: Exception do
+        ShowMessage(Ex.Message);
     end;
+
+  end;
 
 var
   i, ndx: integer;
   aRow: TStrings;
-  pt : TPoint;
+  pt: TPoint;
 begin
 
   pt := DBG.ScreenToClient(Mouse.CursorPos);
-  if (pgCtrl.ActivePage = tab_csv_dataset)
-    and ((PtInRect(DBG.BoundsRect, pt) or FFromCheckBox)) then
+  if (pgCtrl.ActivePage = tab_csv_dataset) and
+    ((PtInRect(DBG.BoundsRect, pt) or FFromCheckBox)) then
     reset_dbGrid;
 
   if is_stringGrid_empty(File_grid) then
     Exit;
 
   pt := File_grid.ScreenToClient(Mouse.CursorPos);
-  if (pgCtrl.ActivePage = tab_CSVFile)
-      and ((PtInRect(File_grid.BoundsRect, pt) or FFromCheckBox)) then
+  if (pgCtrl.ActivePage = tab_CSVFile) and
+    ((PtInRect(File_grid.BoundsRect, pt) or FFromCheckBox)) then
   begin
     if cb_1stRowIsTitles.Checked then
     begin
@@ -859,7 +861,7 @@ procedure TfrmFayesDirBuilder.ActionFindCSVExecute(Sender: TObject);
 var
   dlg: TOpenDialog;
   dir: string;
-  i : Integer;
+  i: integer;
 begin
   ActionRead_withParser.Enabled := False;
   ActionRead_withDataset.Enabled := False;
@@ -876,7 +878,7 @@ begin
       Exit;
 
     cb_CSVFile.Text := dlg.FileName;
-    for i := 0 to cb_CSVFile.Items.Count -1 do
+    for i := 0 to cb_CSVFile.Items.Count - 1 do
       if Lowercase(cb_CSVFile.Items[i]) = LowerCase(dlg.FileName) then
         Exit;
     {  the file name is fresh.  }
@@ -892,7 +894,6 @@ end;
 procedure TfrmFayesDirBuilder.ActionRead_withParserExecute(Sender: TObject);
 var
   fileName, first_line: string;
-  //delimiter: char;
   parmRec: TParmRec;
 begin
   fileName := cb_CSVFile.Text;
@@ -940,14 +941,11 @@ begin
           resize_file_grid_columns;
       end;
       pgCtrl.ActivePage := tab_CSVFile;
+      Clean_up_quotes(File_grid);
     finally
       File_grid.EndUpdate();
     end;
   except
-    //on e : Exception do
-    //  ShowMessage(Format('CSV did not open. %s', [e.Message]));
-    //on e : EMyDBNotOpenException do
-    //  ShowMessage(Format('CSV did not open. %s', [e.Message]));
   end;
 end;
 
@@ -963,29 +961,30 @@ begin
   frm.Show;
 end;
 
-procedure TfrmFayesDirBuilder.Pop_test_sgrid(lst : TColumnList; sg : TStringGrid);
+procedure TfrmFayesDirBuilder.Pop_test_sgrid(lst: TColumnList; sg: TStringGrid);
 var
-  i, sg_row : Integer;
-  rec : TColumnRec;
+  i, sg_row: integer;
+  rec: TColumnRec;
 begin
   sg_row := 1;
-  for i := 0 to lst.Count -1 do
+  for i := 0 to lst.Count - 1 do
   begin
     rec := TColumnRec(lst[i]);
     sg_row := sg.RowCount;
-    sg.RowCount := sg.RowCount +1;
+    sg.RowCount := sg.RowCount + 1;
     sg.Cells[0, sg_row] := rec.colName;
     sg.Cells[1, sg_row] := rec.colName4cmp;
     sg.Cells[2, sg_row] := IntToStr(rec.relativePos);
-	end;
-end ;
+    sg.Cells[3, sg_row] := IntToStr(rec.csv_pos);
+  end;
+end;
 
-procedure TfrmFayesDirBuilder.Pop_CSV_columns(lst : TColumnList);
+procedure TfrmFayesDirBuilder.Pop_CSV_columns(lst: TColumnList);
 begin
   Pop_test_sgrid(lst, CSV_col_grid);
 end;
 
-procedure TfrmFayesDirBuilder.Pop_DB_columns(lst : TColumnList);
+procedure TfrmFayesDirBuilder.Pop_DB_columns(lst: TColumnList);
 begin
   Pop_test_sgrid(lst, db_col_grid);
 end;

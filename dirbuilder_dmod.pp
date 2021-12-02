@@ -35,6 +35,8 @@ const
   LF_STR = 'LF';
   CRLF = CR + LF;
   CRLF_STR = 'CRLF';
+  OPEN_PAREN = '(';
+  CLOSE_PAREN = ')';
 
   BACKQUOTE = #96;
   SINGLEQUOTE = #39;
@@ -62,6 +64,7 @@ type
     colName: string;       // name from list of CSV or DB column names
     colName4cmp: string;   // cleanUpString for comparison
     relativePos: integer;  // position of colName4cmp in 'other' list
+    csv_pos : Integer;     // column position in csv grid
   end;
 
   (*  there will be two (2) lists: on for column names from the CSV; the other
@@ -117,6 +120,9 @@ var
 
 
 procedure Write_SQL_Qry_to_CSV(qry: TSQLQuery; const fileName: TFileName);
+function Get_index_by_cmp_value(lst : TColumnList; value : String) : Integer;
+function Get_cmp_value_by_gridPos(lst : TColumnList; value : Integer) : String;
+
 //function is_stringGrid_empty(sg : TStringGrid) : Boolean;
 
 implementation
@@ -148,11 +154,42 @@ begin
   end;
 end;
 
+function Get_index_by_cmp_value(lst : TColumnList; value : String) : Integer;
+var
+  i : Integer;
+  rec : TColumnRec;
+begin
+  value := LowerCase(value);
+  for i := 0 to lst.Count -1 do
+  begin
+    if Lowercase(lst[i].colName4cmp) = value then
+    begin
+      Result := i;
+      Break;
+		end;
+	end;
+end;
+
+function Get_cmp_value_by_gridPos(lst : TColumnList; value : Integer) : String;
+var
+  i : Integer;
+  rec : TColumnRec;
+begin
+  for i := 0 to lst.Count -1 do
+  begin
+    if lst[i].csv_pos = value then
+    begin
+      Result := lst[i].colName4cmp;
+      Break;
+		end;
+	end;
+end;
+
 {$R *.lfm}
 
 { TDirBuilder_dataModule }
 const
-  SQL_4_COL_NAMES = 'SELECT COLUMN_NAME  FROM INFORMATION_SCHEMA.COLUMNS '
+  SQL_4_COL_NAMES = 'SELECT COLUMN_NAME, DATA_TYPE  FROM INFORMATION_SCHEMA.COLUMNS '
     + 'WHERE TABLE_SCHEMA = "%s" AND TABLE_NAME = "%s" ORDER BY column_name';
 
 function TDirBuilder_dataModule.Get_col_names(const db_name, table_name: string)
