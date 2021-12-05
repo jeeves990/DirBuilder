@@ -1,14 +1,20 @@
 (*
-    TODO's:
-    DirBuilder project.
-    1. read CSV files including files from Amazon and from InventoryLab.
-    2. use those files to create an inventory database for tracking items
-       that, in particular, are listed on more than one internet site.
-    WARNING: Amazon reports are tab delimited so change the delimiter on
-      the "CSV parser props" tab to TAB and then click the "Read CSV file"
-      button, again.
-    TODO: write the database from the stringgrid.
-*)
+ *   DirBuilder project.
+ *  TODO's:
+ *   1. read CSV files including files from Amazon and from InventoryLab.
+ *   2. use those files to create an inventory database for tracking items
+ *      that, in particular, are listed on more than one internet site.
+ *   WARNING: Amazon reports are tab delimited so change the delimiter on
+ *     the "CSV parser props" tab to TAB and then click the "Read CSV file"
+ *     button, again.
+ *   TODO: write the database from the stringgrid.
+ *
+ *    TODO: for using this app for batch processing
+ *    1. parameters:
+ *        a. first line is titles
+ *        b. column delimiter
+ *        c. row delimiter
+ *)
 
 unit frmDirFromCSV;
 
@@ -29,6 +35,7 @@ type
   { TfrmFayesDirBuilder }
 
   TfrmFayesDirBuilder = class(TForm)
+    ActionDoAuto: TAction;
     ActionClose_CSV_dataset: TAction;
     ActionGetFilename_2_clipboard: TAction;
     ActionRead_withDataset: TAction;
@@ -45,6 +52,7 @@ type
     ActionResizeColumns: TAction;
     ActionClose: TAction;
     ActionList: TActionList;
+    btn_doAuto: TBitBtn;
     btn_mk_dirs: TBitBtn;
     btn_close: TBitBtn;
     btn_read_CSV_wDataset: TBitBtn;
@@ -121,6 +129,7 @@ type
     procedure ActionBooksDbExecute(Sender: TObject);
     procedure ActionCloseExecute(Sender: TObject);
     procedure ActionClose_CSV_datasetExecute(Sender: TObject);
+    procedure ActionDoAutoExecute(Sender: TObject);
     procedure ActionGetFilename_2_clipboardExecute(Sender: TObject);
     procedure ActionRemoveCurrentFilename_fromListExecute(Sender: TObject);
     procedure ActionFindCSVExecute(Sender: TObject);
@@ -188,10 +197,18 @@ type
     property ColDelimiter: ansistring read GetColDelimiter;
     property RowDelimiter: ansistring read GetRowDelimiter;
 
+    procedure DbColsFeedBack(lst: TColumnList);
+    procedure CsvColsFeedBack(lst: TColumnList);
+
   end;
 
 var
   frmFayesDirBuilder: TfrmFayesDirBuilder;
+
+type
+  TShellSortItem = integer;
+
+procedure ShellSort(var a: array of TShellSortItem);
 
 implementation
 
@@ -206,6 +223,32 @@ const
 
   SG_ROW_DELIMITER = 'Row delimiter';
   SG_COL_DELIMITER = 'Column delimiter';
+
+
+procedure ShellSort(var a: array of TShellSortItem);
+var
+  i, j, h, n, v: integer;
+begin
+  n := length(a);
+  h := 1;
+  repeat
+    h := 3 * h + 1
+  until h > n;
+  repeat
+    h := h div 3;
+    for i := h + 1 to n do
+    begin
+      v := a[i];
+      j := i;
+      while (j > h) and (a[j - h] > v) do
+      begin
+        a[j] := a[j - h];
+        j := j - h;
+      end;
+      a[j] := v;
+    end
+  until h = 1;
+end;
 
 { TfrmFayesDirBuilder }
 
@@ -226,6 +269,7 @@ var
   idx: integer;
   txt: string;
   boo: boolean;
+  fl: TextFile;
 begin
   Test_file_exists;
   txt := cb_CSVFile.Text;
@@ -328,6 +372,44 @@ begin
   b := FileExists(cb_CSVFile.Text);
   ActionRead_withParser.Enabled := b;
   ActionRead_withDataset.Enabled := b;
+end;
+
+procedure TfrmFayesDirBuilder.DbColsFeedBack(lst: TColumnList);
+var
+  i: integer;
+  rec: TColumnRec;
+  grid: TStringGrid;
+begin
+  grid := db_col_grid;
+  grid.Clean(0, 1, grid.ColCount - 1, grid.RowCount - 1, []);
+  for i := 0 to lst.Count do
+  begin
+    rec := lst[i];
+    grid.Cells[0, i] := rec.colName;
+    grid.Cells[1, i] := rec.colName4cmp;
+    grid.Cells[2, i] := IntToStr(rec.relativePos);
+  end;
+  Application.ProcessMessages;
+end;
+
+procedure TfrmFayesDirBuilder.CsvColsFeedBack(lst: TColumnList);
+var
+  i: integer;
+  rec: TColumnRec;
+  grid: TStringGrid;
+begin
+  grid := CSV_col_grid;
+  grid.Clean(0, 1, grid.ColCount - 1, grid.RowCount - 1, []);
+  for i := 0 to lst.Count do
+  begin
+    rec := lst[i];
+    grid.Cells[0, i] := rec.colName;
+    grid.Cells[1, i] := rec.colName4cmp;
+    grid.Cells[2, i] := IntToStr(rec.relativePos);
+    grid.Cells[3, i] := IntToStr(rec.csv_pos);
+    grid.Cells[4, i] := rec.data_type;
+  end;
+  Application.ProcessMessages;
 end;
 
 procedure TfrmFayesDirBuilder.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -477,10 +559,16 @@ begin
 
   outCnt := BAD_CHOICE;
   try
-    util.Prep_from_grid(dmod, File_grid);
+    try
+      util.Prep_from_grid(dmod, File_grid);
+  except
+    on Ex : Exception do
+      ShowMessage('ActionWriteGridToBooksDbExecute: ' + Ex.message);
+  end;
   finally
     util.Free;
   end;
+
 end;
 
 procedure TfrmFayesDirBuilder.ActionCloseExecute(Sender: TObject);
@@ -492,6 +580,12 @@ procedure TfrmFayesDirBuilder.ActionClose_CSV_datasetExecute(Sender: TObject);
 begin
   if dmod.CSVDataset.Active then
     dmod.CSVDataset.Close;
+end;
+
+procedure TfrmFayesDirBuilder.ActionDoAutoExecute(Sender: TObject);
+begin
+  ActionRead_withParser.Execute;
+  ActionWriteGridToBooksDb.Execute;
 end;
 
 procedure TfrmFayesDirBuilder.ActionGetFilename_2_clipboardExecute(Sender: TObject);
@@ -976,6 +1070,7 @@ begin
     sg.Cells[1, sg_row] := rec.colName4cmp;
     sg.Cells[2, sg_row] := IntToStr(rec.relativePos);
     sg.Cells[3, sg_row] := IntToStr(rec.csv_pos);
+    sg.Cells[4, sg_row] := rec.data_type;
   end;
 end;
 

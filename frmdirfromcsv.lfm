@@ -2,14 +2,14 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
   Left = 899
   Height = 503
   Top = 137
-  Width = 700
+  Width = 837
   HorzScrollBar.Smooth = True
   HorzScrollBar.Tracking = True
   VertScrollBar.Smooth = True
   VertScrollBar.Tracking = True
   Caption = 'Fayes''s directory builder'
-  ClientHeight = 483
-  ClientWidth = 700
+  ClientHeight = 0
+  ClientWidth = 0
   Constraints.MinHeight = 365
   Constraints.MinWidth = 700
   Icon.Data = {
@@ -325,13 +325,13 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
   LCLVersion = '2.2.0.1'
   object pnlTop: TPanel
     Left = 0
-    Height = 125
+    Height = 124
     Top = 0
-    Width = 700
+    Width = 837
     Align = alTop
     AutoSize = True
-    ClientHeight = 125
-    ClientWidth = 700
+    ClientHeight = 124
+    ClientWidth = 837
     TabOrder = 0
     object lblOutDir: TLabel
       Left = 1
@@ -351,7 +351,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       Left = 106
       Height = 23
       Top = 2
-      Width = 414
+      Width = 551
       Anchors = [akTop, akLeft, akRight]
       ItemHeight = 15
       TabOrder = 0
@@ -363,14 +363,16 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       Top = 68
       Width = 103
       Caption = 'First line is titles'
+      Checked = True
       OnClick = cb_1stRowIsTitlesClick
+      State = cbChecked
       TabOrder = 1
     end
     object cb_CSVFile: TComboBox
       Left = 55
       Height = 23
       Top = 35
-      Width = 502
+      Width = 639
       Anchors = [akTop, akLeft, akRight]
       ItemHeight = 15
       OnCloseUp = cb_CSVFileCloseUp
@@ -380,9 +382,9 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       TabOrder = 2
     end
     object btn_read_raw_file: TBitBtn
-      Left = 567
-      Height = 26
-      Top = 98
+      Left = 704
+      Height = 23
+      Top = 97
       Width = 124
       Action = ActionReadRawFile
       Anchors = [akTop, akRight]
@@ -391,7 +393,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       TabOrder = 3
     end
     object btn_find_output_directory: TBitBtn
-      Left = 533
+      Left = 670
       Height = 26
       Top = 1
       Width = 158
@@ -403,7 +405,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       TabOrder = 4
     end
     object btn_read_CSV_wParser: TBitBtn
-      Left = 536
+      Left = 673
       Height = 26
       Top = 66
       Width = 152
@@ -414,7 +416,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       TabOrder = 5
     end
     object btn_find_csv_file: TBitBtn
-      Left = 567
+      Left = 704
       Height = 26
       Top = 33
       Width = 124
@@ -451,7 +453,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     object cb_lineending: TComboBox
       Left = 304
       Height = 23
-      Top = 99
+      Top = 97
       Width = 100
       ItemHeight = 15
       ItemIndex = 0
@@ -482,7 +484,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       TabOrder = 9
     end
     object btn_read_CSV_wDataset: TBitBtn
-      Left = 385
+      Left = 522
       Height = 26
       Top = 65
       Width = 148
@@ -493,25 +495,34 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       ShowHint = True
       TabOrder = 10
     end
+    object btn_doAuto: TBitBtn
+      Cursor = crHandPoint
+      Left = 432
+      Height = 24
+      Top = 96
+      Width = 101
+      Action = ActionDoAuto
+      TabOrder = 11
+    end
   end
   object pgCtrl: TPageControl
     Left = 0
-    Height = 301
-    Top = 125
-    Width = 700
-    ActivePage = tab_CSVFile
+    Height = 302
+    Top = 124
+    Width = 837
+    ActivePage = tb_columns_test
     Align = alClient
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 1
     object tab_CSVFile: TTabSheet
       Caption = 'The CSV file'
-      ClientHeight = 273
-      ClientWidth = 692
+      ClientHeight = 274
+      ClientWidth = 829
       object File_grid: TStringGrid
         Left = 0
-        Height = 219
+        Height = 220
         Top = 54
-        Width = 692
+        Width = 829
         Align = alClient
         AlternateColor = 16774388
         Color = 15390207
@@ -531,10 +542,10 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
         Left = 0
         Height = 31
         Top = 0
-        Width = 692
+        Width = 829
         Align = alTop
         ClientHeight = 31
-        ClientWidth = 692
+        ClientWidth = 829
         TabOrder = 1
         object lblCellContents: TLabel
           Left = 7
@@ -547,7 +558,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
           Left = 128
           Height = 23
           Top = 3
-          Width = 560
+          Width = 697
           Anchors = [akTop, akLeft, akRight]
           TabOrder = 0
           Text = 'edCellContent'
@@ -557,7 +568,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
         Left = 0
         Height = 23
         Top = 31
-        Width = 692
+        Width = 829
         Align = alTop
         Panels = <>
         Visible = False
@@ -565,13 +576,13 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     end
     object tab_csv_dataset: TTabSheet
       Caption = 'From csv dataset'
-      ClientHeight = 273
-      ClientWidth = 692
+      ClientHeight = 274
+      ClientWidth = 829
       object DBG: TDBGrid
         Left = 0
-        Height = 273
+        Height = 274
         Top = 0
-        Width = 692
+        Width = 829
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -582,19 +593,19 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     end
     object tb_columns_test: TTabSheet
       Caption = 'Columns testing'
-      ClientHeight = 273
-      ClientWidth = 692
+      ClientHeight = 274
+      ClientWidth = 829
       object CSV_col_grid: TStringGrid
         Left = 12
-        Height = 260
+        Height = 261
         Top = 8
-        Width = 340
+        Width = 411
         Anchors = [akTop, akLeft, akBottom]
-        ColCount = 4
         Columns = <        
           item
+            Title.MultiLine = True
             Title.Caption = 'CSV columns'
-            Width = 100
+            Width = 85
           end        
           item
             Title.Caption = 'Column cmp'
@@ -607,13 +618,18 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
           item
             Title.Caption = 'Grid Pos'
             Width = 64
+          end        
+          item
+            Title.Caption = 'Data type'
+            Width = 64
           end>
         FixedCols = 0
         RowCount = 1
         TabOrder = 0
         ColWidths = (
-          100
           85
+          85
+          64
           64
           64
         )
@@ -625,16 +641,15 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
         )
       end
       object db_col_grid: TStringGrid
-        Left = 400
-        Height = 260
+        Left = 469
+        Height = 261
         Top = 8
-        Width = 274
+        Width = 355
         Anchors = [akTop, akLeft, akBottom]
-        ColCount = 4
         Columns = <        
           item
             Title.Caption = 'DB columns'
-            Width = 100
+            Width = 85
           end        
           item
             Title.Caption = 'Column cmp'
@@ -645,17 +660,22 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
             Width = 64
           end        
           item
-            Title.Caption = 'Grid pos'
+            Title.Caption = 'csv pos'
             Visible = False
+          end        
+          item
+            Title.Caption = 'Data type'
+            Width = 64
           end>
         FixedCols = 0
         RowCount = 1
         TabOrder = 1
         ColWidths = (
-          100
+          85
           85
           64
           0
+          64
         )
         Cells = (
           1
@@ -670,7 +690,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     Left = 0
     Height = 23
     Top = 460
-    Width = 700
+    Width = 837
     Panels = <    
       item
         Alignment = taCenter
@@ -685,13 +705,13 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     Left = 0
     Height = 34
     Top = 426
-    Width = 700
+    Width = 837
     Align = alBottom
     ClientHeight = 34
-    ClientWidth = 700
+    ClientWidth = 837
     TabOrder = 3
     object btn_mk_dirs: TBitBtn
-      Left = 357
+      Left = 494
       Height = 30
       Top = 0
       Width = 121
@@ -702,7 +722,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       TabOrder = 0
     end
     object btn_close: TBitBtn
-      Left = 613
+      Left = 750
       Height = 30
       Top = 0
       Width = 75
@@ -811,6 +831,11 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       ImageIndex = 32
       OnExecute = ActionClose_CSV_datasetExecute
     end
+    object ActionDoAuto: TAction
+      Caption = 'ActionDoAuto'
+      ImageIndex = 33
+      OnExecute = ActionDoAutoExecute
+    end
   end
   object mainMnu: TMainMenu
     Images = DirBuilder_dataModule.imgList
@@ -912,7 +937,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
   end
   object gridPopup: TPopupMenu
     Images = DirBuilder_dataModule.imgList
-    Left = 184
+    Left = 167
     Top = 224
     object mnuWriteGridToBooksDb: TMenuItem
       Action = ActionWriteGridToBooksDb
