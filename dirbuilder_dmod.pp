@@ -139,6 +139,7 @@ type  { TDirBuilder_dataModule }
 type
   TStringCallbackMethod = procedure(str: ansistring) of object;
   TColumnListCallbackMethod = procedure(lst: TColumnList) of object;
+  TBooleanCallbackMethod = procedure(b : Boolean) of object;
 
 var
   DirBuilder_dataModule: TDirBuilder_dataModule;

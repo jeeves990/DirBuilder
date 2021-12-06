@@ -8,8 +8,8 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
   VertScrollBar.Smooth = True
   VertScrollBar.Tracking = True
   Caption = 'Fayes''s directory builder'
-  ClientHeight = 0
-  ClientWidth = 0
+  ClientHeight = 483
+  ClientWidth = 837
   Constraints.MinHeight = 365
   Constraints.MinWidth = 700
   Icon.Data = {
@@ -318,6 +318,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     0000
   }
   Menu = mainMnu
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   PopupMenu = popupMnu

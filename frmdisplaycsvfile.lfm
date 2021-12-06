@@ -1,11 +1,12 @@
 object fmDisplayCSVFile: TfmDisplayCSVFile
-  Left = 1264
+  Left = 1184
   Height = 451
-  Top = 206
+  Top = 272
   Width = 660
+  BorderStyle = bsDialog
   Caption = 'fmDisplayCSVFile'
-  ClientHeight = 0
-  ClientWidth = 0
+  ClientHeight = 451
+  ClientWidth = 660
   OnClose = FormClose
   OnCreate = FormCreate
   SessionProperties = 'ActiveControl;BorderStyle;Height;Top;Width;WindowState;Left'
@@ -131,12 +132,11 @@ object fmDisplayCSVFile: TfmDisplayCSVFile
       end>
     SimplePanel = False
   end
-  object ToolBar1: TToolBar
+  object ToolBar: TToolBar
     Left = 0
     Height = 26
     Top = 34
     Width = 660
-    Caption = 'ToolBar1'
     Images = DirBuilder_dataModule.imgList
     TabOrder = 3
     object tb_reload_file: TToolButton
@@ -165,7 +165,7 @@ object fmDisplayCSVFile: TfmDisplayCSVFile
       Action = ActionReadCSVData
     end
     object tb_close: TToolButton
-      Left = 184
+      Left = 156
       Top = 2
       Action = ActionClose
     end

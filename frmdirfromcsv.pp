@@ -149,6 +149,7 @@ type
     procedure dbgridCSVTitleClick(Column: TColumn);
     procedure DirBuilderPropIniRestoringProperties(Sender: TObject);
     procedure DirBuilderPropIniSaveProperties(Sender: TObject);
+		procedure FormActivate(Sender : TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure File_gridHeaderClick(Sender: TObject; IsColumn: boolean; Index: integer);
@@ -170,14 +171,19 @@ type
     FChgParserProp: integer;
 
     FFromCheckBox: boolean;
+    FDisplay_filenames : TfmDisplayCSVFile;
+    FDisplay_filenames_isAlive : Boolean;
+    FAuto_directory : TFileName;
 
     function countSubDirs(path: string): integer;
-    procedure GetCSVParserProps;
+		procedure Handle_automatically;
     function isGridPopulated: boolean;
+		procedure Is_display_filenames_alive(b : Boolean);
     procedure move_grid_first_line;
     procedure Pop_CSV_columns(lst: TColumnList);
     procedure Pop_DB_columns(lst: TColumnList);
     procedure Pop_test_sgrid(lst: TColumnList; sg: TStringGrid);
+		function Read_directory(const aDir : String) : TStringList;
     procedure reset_dbGrid;
     procedure resize_dbGrid_columns;
     procedure resize_file_grid_columns;
@@ -212,7 +218,7 @@ procedure ShellSort(var a: array of TShellSortItem);
 
 implementation
 
-uses csvdataset;
+uses csvdataset, frmShowText;
 
 {$R *.lfm}
 
@@ -290,22 +296,98 @@ begin
   FCurReportType := cb_CSVFile.Text;
 end;
 
-procedure TfrmFayesDirBuilder.FormCreate(Sender: TObject);
+function TfrmFayesDirBuilder.Read_directory(const aDir: String) : TStringList;
+var
+  Info : TSearchRec;
+  DN : String;
+  ext : String;
 begin
-  if DirectoryExists(cb_OutDir.Text) then
-    cb_OutDir.Items.Add(cb_OutDir.Text);
+  Result := TStringList.Create;
+  DN := IncludeTrailingPathDelimiter(aDir);
+
+  if FindFirst(DN + AllFilesMask, faAnyFile, Info) = 0 then
+  try
+    Repeat
+      ext := ExtractFileExt(Info.Name);
+      if ext <> '.csv' then
+        Continue;
+
+      Result.Add(Info.Name);
+    Until FindNext(Info)<>0;
+  finally
+    FindClose(info);
+  end;
+end;
+
+procedure TfrmFayesDirBuilder.Is_display_filenames_alive(b: Boolean);
+begin
+  FDisplay_filenames_isAlive := b;
+end;
+
+procedure TfrmFayesDirBuilder.Handle_automatically;
+var
+  i : Integer;
+  csv_fileName : TFileName;
+  file_list : TStringList;
+  Paths: array of UnicodeString;
+begin
+  FAuto_directory := paramstr(1);
+  FDisplay_filenames := TfmDisplayCSVFile.Create(self);
+  FDisplay_filenames.AmIAlive := @Is_display_filenames_alive;
+  // handle a single file
+  //if FileExists(FAuto_directory) then;
+  if DirectoryExists(FAuto_directory) then
+  begin
+    file_list := Read_directory(FAuto_directory);
+    FDisplay_filenames.LineList := file_list;
+    FDisplay_filenames.Show;
+    FDisplay_filenames.BringToFront;
+    Application.ProcessMessages;
+	end;
+
+  repeat
+  	begin
+      csv_fileName := FDisplay_filenames.Get_A_Line.Line;
+      SetLength(Paths, 0);
+      SetLength(Paths, 2);
+      Paths[0] := IncludeTrailingPathDelimiter(FAuto_directory);
+      Paths[1] := csv_fileName;
+      csv_fileName := ConcatPaths(Paths);
+      cb_CSVFile.Text := csv_fileName;
+      ActionDoAuto.Execute;
+  	end;
+  until not FDisplay_filenames_isAlive;
+end;
+
+procedure TfrmFayesDirBuilder.FormCreate(Sender: TObject);
+var
+  parm_count : Integer;
+  str : string;
+begin
   Fdmod := TDirBuilder_dataModule.Create(self);
   File_grid.Clear;
-  GetCSVParserProps;
-  pgCtrl.ActivePage := tab_CSVFile;
-
-  //g_path := ExtractFilePath(Application.ExeName);
-  //ShowMessage(g_path);
-  DirBuilderPropIni.Restore;
   FBooksDbDlg := nil;
   FChgParserProp := ChoseComma;
   Setup_cb_delimiter;
   Setup_cb_lineending;
+  parm_count := ParamCount;
+  str := ParamStr(0);
+
+  if ParamCount > 0 then
+  begin
+    try
+      Handle_automatically;
+		except on Ex : Exception do
+      ShowMessage('Automatic operation has failed: ' +Ex.Message);
+		end;
+		Application.Terminate;
+	end;
+	if DirectoryExists(cb_OutDir.Text) then
+    cb_OutDir.Items.Add(cb_OutDir.Text);
+
+  pgCtrl.ActivePage := tab_CSVFile;
+
+  DirBuilderPropIni.Restore;
   Test_file_exists;
 end;
 
@@ -337,32 +419,6 @@ begin
 
   idx := cb_lineending.Items.Add(LF_STR);
   cb_lineending.Items.Objects[idx] := TObject(LF);
-end;
-
-procedure TfrmFayesDirBuilder.GetCSVParserProps;
-begin
-  //sg_parser_configs.Cells[0, 0] := 'Delimiter';
-  //cb := TComboBox.Create(sg_parser_configs);
-  //sg_parser_configs.Objects[0, 0] := cb;
-  //cb.AddItem('Comma', nil);
-  //cb.AddItem('Semicolon', nil);
-  //cb.AddItem('Tab', nil);
-
-  //sg_parser_configs.Cells[0, 1] := 'LineEnding';
-  //cb := TComboBox.Create(sg_parser_configs);
-  //sg_parser_configs.Objects[0, 1] := cb;
-  //cb.AddItem('CRLF', nil);
-  //cb.AddItem('LF', nil);
-
-  //sg_parser_configs.ColWidths[0] := 100;
-  //sg_parser_configs.ColWidths[1] := 100;
-  //Parser_setup := TfmCSVParser_setup.Create(self);
-  //try
-  //  sg_parser_configs.Cells[1, 0] := Parser_setup.Delimiter;
-  //  sg_parser_configs.Cells[1, 1] := Parser_setup.Lineending;
-  //finally
-  //  Parser_setup.Free;
-  //end;
 end;
 
 procedure TfrmFayesDirBuilder.Test_file_exists;
@@ -461,12 +517,12 @@ var
 begin
   props := DirBuilderPropIni;
   props.IniSection := 'DirBuilderMain';
+end;
 
-  //sg := sg_parser_configs;
-  //props.WriteString(SG_ROW_DELIMITER,
-  //sg.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER]);
-  //props.WriteString(SG_COL_DELIMITER,
-  //sg.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER]);
+procedure TfrmFayesDirBuilder.FormActivate(Sender : TObject);
+begin
+  //if ParamCount > 0 then
+  //  self.Visible := False;
 end;
 
 procedure TfrmFayesDirBuilder.resize_dbGrid_columns;
@@ -560,7 +616,7 @@ begin
   outCnt := BAD_CHOICE;
   try
     try
-      util.Prep_from_grid(dmod, File_grid);
+      util.Prep_from_grid_to_write_to_db(dmod, File_grid);
   except
     on Ex : Exception do
       ShowMessage('ActionWriteGridToBooksDbExecute: ' + Ex.message);
@@ -1010,6 +1066,7 @@ begin
         parmRec.addRows := True;
 
         LoadGridFromCSVFile(File_grid, fileName, parmRec, first_line);
+        Application.ProcessMessages;
         if first_line > EmptyStr then
         begin
           cb_1stRowIsTitles.Checked := True;

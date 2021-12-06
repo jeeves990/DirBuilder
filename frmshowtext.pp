@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  Buttons, IniPropStorage, Menus, ComCtrls, ActnList, DirBuilder_dmod, ATSynEdit;
+  Buttons, IniPropStorage, Menus, ComCtrls, ActnList, DirBuilder_dmod,
+  ATSynEdit, ATStrings;
 
 type
 
@@ -47,15 +48,21 @@ type
     FMsg: ansistring;
     FLines, keep_text: ansistring;
     FMnu: TPopupMenu;
+    FLineNumber : Integer;
+
+    function Get_A_Line : TATStringItem;
+		function GetLine : TStringList;
     procedure MarkUpTabs;
     procedure Reload;
     procedure SetLines(AValue: ansistring);
+    procedure SetLines(aLst : TStringList);
     procedure SetMsg(AValue: ansistring);
   public
     property Msg: ansistring read FMsg write SetMsg;
     property Lines: ansistring read FLines write SetLines;
+    property LineList : TStringList read GetLine write SetLines;
     procedure GetTextFeedback(str : AnsiString);
-    {TODO: fix a feedback mechanism for refreshing ed.text'}
+    property ALine : TATStringItem read Get_A_Line;
   end;
   //FNodeWalker.StatusBarCallback := TStringCallbackMethod(StatusBarFeedback);
 
@@ -106,6 +113,7 @@ begin
   IniPropStorage.Restore;
   FMnu := ed.PopupText;
   ed.PopupMenu := _popupMenu;
+  FLineNumber := 0;
   //_popupMenu.Items.Insert(0, mnuItm_show_tabs);
 end;
 
@@ -137,12 +145,33 @@ begin
   ed.Text := s;
 end;
 
+function TfmShowText.GetLine : TStringList;
+begin
+
+end;
+
 procedure TfmShowText.mnuItm_show_tabsClick(Sender: TObject);
 begin
   if mnuItm_show_tabs.Checked then
     Reload
   else
     MarkUpTabs;
+end;
+
+function TfmShowText.Get_A_Line : TATStringItem;
+var
+  ptr : PATStringItem;
+begin
+  if FLineNumber  = ed.Strings.Count then
+    begin
+      self.Close;
+      //Result := TATStringItem(nil);
+      Exit;
+		end;
+  ptr := ed.Strings.GetItemPtr(FLineNumber);
+  Result := ptr^;
+  Inc(FLineNumber);
+
 end;
 
 procedure TfmShowText.SetMsg(AValue: ansistring);
@@ -163,6 +192,13 @@ begin
   FLines := AValue;
   ed.Text := FLines;
   keep_text := FLines;
+end;
+
+procedure TfmShowText.SetLines(aLst : TStringList);
+begin
+  ed.Strings.LineBlockInsert(0, aLst);
+  FLineNumber := 0;
+  toolBar.Visible := False;
 end;
 
 end.

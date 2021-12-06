@@ -12,12 +12,10 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ActnList,
   Menus, Grids, ComCtrls, ExtCtrls,
   XMLPropStorage, Buttons,
-  //Character,
   frmInputNewValue,
-  //stringgridutil,
-  AddQuotes2Files_unit, //dmodCSVParser,
+  AddQuotes2Files_unit,
   DirBuilder_dmod, frmShowText, ATSynEdit, ATStrings, ATSynEdit_Carets,
-  ATStrings_Undo, ATStringProc;
+  ATStrings_Undo, ATStringProc, ATSynEdit_LineParts;
 
 type
 
@@ -54,7 +52,7 @@ type
     N3: TMenuItem;
     MenuItem6: TMenuItem;
     CSVPropStorage: TXMLPropStorage;
-    ToolBar1: TToolBar;
+    ToolBar: TToolBar;
     tb_reload_file: TToolButton;
     tb_read_new_file: TToolButton;
     tb_add_double_quotes: TToolButton;
@@ -88,10 +86,18 @@ type
     FParent: TComponent;
     FHasHeaders: boolean;
     FColDelimiter: ansistring;
+    FAutoLineNumber : Integer;
+	  FHighLightColor : TColor;
+
     function FixRow(str: string): string;
+		function GetALine : TATStringItem;
     function GetCaretPos: TPoint;
     procedure SetFileName(AValue: TFileName);
+		procedure SetLines(AValue : TStringList);
     procedure SetRowDelimiter(AValue: ansistring);
+    procedure HighLightLine(Sender: TObject; var AParts: TATLineParts;
+        ALineIndex, ACharIndex, ALineLen: integer;
+        var AColorAfterEol: TColor);
   public
     property filename: TFileName read FFileName write SetFileName;
     constructor Create(aOwner: TComponent; theFileName: TFileName = ''); reintroduce;
@@ -101,8 +107,11 @@ type
     property _col_delimiter: ansistring read FColDelimiter write FColDelimiter;
     property _row_delimiter: ansistring read FRowDelimiter write SetRowDelimiter;
     property HasHeaders: boolean read FHasHeaders write FHasHeaders;
+    property LineList : TStringList write SetLines;
+    property Get_A_Line : TATStringItem read GetALine;
   var
     GetTextFeedBack : TStringCallbackMethod;
+    AmIAlive : TBooleanCallbackMethod;
   end;
 
 var
@@ -201,6 +210,8 @@ end;
 
 procedure TfmDisplayCSVFile.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
+  if FAutoLineNumber >= ed.Strings.Count -1 then
+    CloseAction := caFree;
   CSVPropStorage.Save;
 end;
 
@@ -252,6 +263,24 @@ begin
   edFileName.Text := FFilename;
 end;
 
+procedure TfmDisplayCSVFile.SetLines(AValue : TStringList);
+  function MakeMethod( Data, Code: Pointer ): TMethod;
+  begin
+    Result.Data := Data;
+    Result.Code := Code;
+  end;
+begin
+  FAutoLineNumber := 0;
+  AmIAlive(True);
+  ed.Strings.LineBlockInsert(0, AValue);
+  ToolBar.Visible := False;
+  pgCtrl.ShowTabs := False;
+  self.BorderIcons := [];
+  btn_read_raw_file.Visible := False;
+
+  //ed.TATSynEditCalcHiliteEvent(MakeMethod(nil, @HighLightLine))
+end;
+
 procedure TfmDisplayCSVFile.SetRowDelimiter(AValue: ansistring);
 begin
   if FRowDelimiter = AValue then Exit;
@@ -296,6 +325,33 @@ begin
       c := '[TAB]';
     Result := Result + c;
   end;
+end;
+
+function TfmDisplayCSVFile.GetALine : TATStringItem;
+  var
+    ptr : PATStringItem;
+    parts : TATLineParts;
+    LineNdx, CharNdx, LineLen : integer;
+  begin
+    if FAutoLineNumber  = ed.Strings.Count -1 then
+      begin
+        AmIAlive(False);
+        Close;
+  		end;
+    ptr := ed.Strings.GetItemPtr(FAutoLineNumber);
+    Result := ptr^;
+    FHighLightColor := clMoneyGreen;
+    //HighLightLine(self, parts, LineNdx, CharNdx, LineLen, FHighLightColor);
+    edFileName.Text := Result.Line;
+    edFileName.Invalidate;
+    Inc(FAutoLineNumber);
+end;
+
+procedure TfmDisplayCSVFile.HighLightLine(Sender : TObject;
+			var AParts : TATLineParts; ALineIndex, ACharIndex, ALineLen : integer;
+			var AColorAfterEol : TColor);
+begin
+
 end;
 
 procedure TfmDisplayCSVFile.DisplayFile;

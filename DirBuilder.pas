@@ -31,6 +31,6 @@ begin
   Application.Scaled := True;
   Application.Initialize;
   Application.CreateForm(TfrmFayesDirBuilder, frmFayesDirBuilder);
-  Application.CreateForm(TfmShowText, fmShowText);
+  //Application.CreateForm(TfmShowText, fmShowText);
   Application.Run;
 end.

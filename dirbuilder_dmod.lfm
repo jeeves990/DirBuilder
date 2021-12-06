@@ -125,7 +125,7 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
   object BooksDbConn: TMySQL57Connection
     Connected = False
     LoginPrompt = False
-    DatabaseName = 'booksdb'
+    DatabaseName = 'books_db'
     KeepConnection = False
     Params.Strings = (
       ''
