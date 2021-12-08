@@ -123,7 +123,7 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
     Top = 16
   end
   object BooksDbConn: TMySQL57Connection
-    Connected = False
+    Connected = True
     LoginPrompt = False
     DatabaseName = 'books_db'
     KeepConnection = False
@@ -141,125 +141,34 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
     Top = 88
   end
   object BooksDbTx: TSQLTransaction
-    Active = False
+    Active = True
     Database = BooksDbConn
     Left = 48
     Top = 88
   end
   object qryInsertBooks: TSQLQuery
-    FieldDefs = <>
+    FieldDefs = <    
+      item
+        Name = 'qryInsertBooksSQLDB1'
+        DataType = ftUnknown
+      end>
     Database = BooksDbConn
     Transaction = BooksDbTx
     SQL.Strings = (
-      'INSERT INTO ''booksdb''.''books'''
-      '(''id'','
-      '''msku'','
-      '''title'','
-      '''asin'','
-      '''list_price'','
-      '''cost_unit'','
-      '''supplier'','
-      '''date_listed'','
-      '''rank'','
-      '''condition'','
-      '''notes'','
-      '''qty'','
-      '''min_price'','
-      '''max_price'','
-      '''fnsku'','
-      '''destination'','
-      '''exp_date'')'
-      'VALUES( :id, :msku, :title,'
-      ':asin ,:list_price ,:cost_unit ,:supplier ,:date_listed ,:rank ,:condition ,:notes ,:qty ,:min_price ,'
-      ':max_price ,:fnsku ,:destination ,:exp_date );'
+      'Insert into books :COLS_CLAUSE VALUES :VAL_STR'
     )
     InsertSQL.Strings = (
       'INSERT INTO books (:columns) VALUES (:values)'
     )
     Params = <    
       item
-        DataType = ftUnknown
-        Name = 'id'
+        DataType = ftString
+        Name = 'COLS_CLAUSE'
         ParamType = ptInput
       end    
       item
-        DataType = ftUnknown
-        Name = 'msku'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'title'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'asin'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'list_price'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'cost_unit'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'supplier'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'date_listed'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'rank'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'condition'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'notes'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'qty'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'min_price'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'max_price'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'fnsku'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'destination'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'exp_date'
+        DataType = ftString
+        Name = 'VAL_STR'
         ParamType = ptInput
       end>
     Macros = <>

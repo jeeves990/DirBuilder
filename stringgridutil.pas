@@ -9,7 +9,7 @@ interface
 uses
   Classes, SysUtils, Grids, // csvreadwrite, LazFileUtils,
   fgl, LazLogger,
-  DirBuilder_dmod;
+  DirBuilder_dmod, SQLDB, DB;
 
 type
   EStringGrid_Improper = TExceptionClass;
@@ -21,12 +21,13 @@ type
   private
     function isQuoted(Str: string): boolean;
     function Make_query_columns: string;
+    procedure Create_write_2_db_params;
     function stripDoubleQuotes(str: string): string;
     function addUnderscore_to_titles(str: string): string;
-    procedure Build_query_values_string(col_values_list : TStringList);
-    function Build_value_strings(csv_col_list : TColumnList; grid : TStringGrid
-					) : TStringList;
-		procedure Write_2_db(value_string : string);
+    procedure Build_output_values_clauses_list;
+    function String_together_values_clauses(csv_col_list: TColumnList;
+      grid: TStringGrid): TStringList;
+    procedure Write_2_db(qry: TSQLQuery; value_string: string);
   private
     { FQry_columns and FCol_val_cmp are both built from FDb_col_list.
         FQry_columns is a comma separated list of rec.colName's.
@@ -37,11 +38,12 @@ type
           values from the string grid to be used as values lists in the
           ouput query's value clause.}
     FQry_columns: string;   // the columns list in the output query
-    FCol_val_cmp : String;  //
+    FCol_val_cmp: string;
+    FBooksInputQry: TSQLQuery;
 
   public
-    FOut_col_list: TStringList; // strings are for the query values clause
-    FDb_col_list : TColumnList;
+    FOut_values_clauses_list: TStringList; // strings are for the query values clause
+    FDb_col_list: TColumnList;
 
     constructor Create; reintroduce;
     destructor Destroy; reintroduce;
@@ -59,10 +61,13 @@ procedure Clean_up_quotes(grid: TStringGrid);
 implementation
 
 uses
-  Dialogs, SQLDB, frmDirFromCSV, unitLoad_grid_from_csv, StrUtils;
+  Dialogs, frmDirFromCSV, unitLoad_grid_from_csv, StrUtils;
 
 const
   MAX_COLUMNS_LENGTH = 4000;  // max parm length for stored procedure
+  //VAL_CLAUSE_DELIMITER = COMMA;
+  VAL_CLAUSE_DELIMITER = '&&&';
+  KEY_WORD = 'asin';
 
 var
   dmod: TDirBuilder_dataModule;
@@ -133,7 +138,7 @@ function TStringGridUtil.Prep_from_grid_to_write_to_db(parm_dmod: TDirBuilder_da
   grid: TStringGrid): boolean;
 var
   str: string;
-  csv_col_list : TColumnList;
+  csv_col_list: TColumnList;
 const
   fcn_name = 'TStringGridUtil.WriteGridToBooksDb';
 
@@ -224,7 +229,7 @@ const
 var
   work_list: TColumnList;
   rec: TColumnRec;
-  out_string_list : TStringList;
+  out_string_list: TStringList;
 begin
 
   Result := False;
@@ -244,7 +249,7 @@ begin
            logical order as the column name in keys_list    }
 
     dmod.Get_list_from_books_table(dmod.BooksDbConn.DatabaseName,
-                       'books', FDb_col_list);
+      'books', FDb_col_list);
 
     // we have both lists (FDb_col_list and csv_col_list) now fix relative positions
     FDb_col_list.Fix_Relative_Positions(csv_col_list);
@@ -256,11 +261,12 @@ begin
     CsvColsCallback(csv_col_list);
 
     FQry_columns := Make_query_columns;
-       WRITE A STORED PROCEDURE TO TAKE THE COLUMN AND VALUE STRINGS
-       TO INSERT THEM ONE AT THE TIME SO THE ASIN CAN BE CHECKED ON EACH
-       ITERATION
-    FOut_col_list := Build_value_strings(csv_col_list, grid);
-    Build_query_values_string(FOut_col_list);   // complete the process
+    //WRITE A STORED PROCEDURE TO TAKE THE COLUMN AND VALUE STRINGS
+    //TO INSERT THEM ONE AT THE TIME SO THE ASIN CAN BE CHECKED ON EACH
+    //ITERATION        2021-12-06
+    // gave up on that.   2021-12-08
+    FOut_values_clauses_list := String_together_values_clauses(csv_col_list, grid);
+    Build_output_values_clauses_list; //FOut_values_clauses_list; complete the process
 
   finally
     FreeAndNil(csv_col_list);
@@ -269,7 +275,7 @@ begin
   end;
 end;  // function WriteGridToBooksDb(parm_dmod : TDirBuilder_dataModule;
 
-function TStringGridUtil.Make_query_columns : string;
+function TStringGridUtil.Make_query_columns: string;
 (*
  *    TStringGridUtil.Make_query_columns
  *    Result is the string to be used in the SQL for the columns list.
@@ -278,7 +284,7 @@ function TStringGridUtil.Make_query_columns : string;
 var
   i, ndx: integer;
   rec: TColumnRec;
-  dta_type : string;
+  dta_type: string;
 begin
   Result := '';
   FCol_val_cmp := '';
@@ -292,96 +298,107 @@ begin
       //Get_index_by_cmp_value(FDb_col_list, rec.colName4cmp);
       // this needs to come from fdb_col_list
       Result := Result + FDb_col_list[ndx].colName + COMMA;
-      FCol_val_cmp := FCol_val_cmp +FDb_col_list[ndx].colName4cmp + COMMA;
+      FCol_val_cmp := FCol_val_cmp + FDb_col_list[ndx].colName4cmp + COMMA;
     end;
   end;
   if Result[Length(Result)] = COMMA then
-    Result := OPENPAREN + Result[1..Length(Result) - 1] +CLOSEPAREN;
+    Result := OPENPAREN + Result[1..Length(Result) - 1] + CLOSEPAREN;
   if FCol_val_cmp[Length(FCol_val_cmp)] = COMMA then
-    FCol_val_cmp := FCol_val_cmp[1..Length(FCol_val_cmp) -1];
+    FCol_val_cmp := FCol_val_cmp[1..Length(FCol_val_cmp) - 1];
 end;
 
-function TStringGridUtil.Build_value_strings(csv_col_list : TColumnList;
+function TStringGridUtil.String_together_values_clauses(csv_col_list: TColumnList;
   grid: TStringGrid): TStringList;
-    const
-      mysql_date_fmt = '%4.4d-%2.2d-%2.2d';
+const
+  mysql_date_fmt = '%4.4d-%2.2d-%2.2d';
 
 
-     function   fix_date(replace_str: String) : String;
+  function fix_date(replace_str: string): string;
       (*
        * this is where replace_str has to be formatted, if necessary.
-       * 	'0000-00-00 00:00:00'
+       *   '0000-00-00 00:00:00'
        *)
-      const
-        DEFAULT_DATE = '2000-01-01';
-      var
-          space_pos : integer;
-          work_str, S : string;
-          slash_pos, day, month, year : Integer;
+  const
+    DEFAULT_DATE = '2000-01-01';
+  var
+    space_pos: integer;
+    work_str, S: string;
+    slash_pos, day, month, year: integer;
 
-      begin
-        space_pos := Pos(SPACE, replace_str);
-        work_str := Copy(replace_str, 1, space_pos);
-        slash_pos := Pos(FWDSLASH, work_str);
-        if slash_pos > 0 then
-          begin
-            s := Copy(work_str, 1, slash_pos -1);
-            if Length(s) < 1 then
-              Exit;
-            month := StrToInt(s);
-
-            work_str := Copy(work_str, slash_pos +1);
-            slash_pos := Pos(FWDSLASH, work_str);
-
-            s := Copy(work_str, 1, slash_pos -1);
-            day := StrToInt(s);
-
-            work_str := Copy(work_str, slash_pos +1);
-            s := Trim(Copy(work_str, 1));
-            year := StrToInt(s);
-            Result := Format(mysql_date_fmt, [year, month, day]);
-					end
-        else
-          Result := DEFAULT_DATE;
-			end;
-
-
-    function fix_decimal(replace_str : string) : string;
-      var
-        i : Integer;
-      begin
-        Result := replace_str;
-        if replace_str = '' then
-          Result := '0.00';
-			end;
-
-
-  procedure out_array_stringReplace(var ara : TStringArray;
-                      cmp_ara : TStringArray;
-                      cmp_str, replace_str : String);
-    var
-      i : Integer;
+  begin
+    space_pos := Pos(SPACE, replace_str);
+    work_str := Copy(replace_str, 1, space_pos);
+    slash_pos := Pos(FWDSLASH, work_str);
+    if slash_pos > 0 then
     begin
-      for i := 0 to Length(cmp_ara) -1 do
-        if cmp_ara[i] = cmp_str then
-          begin
-            ara[i] := replace_str;
-            Exit;
-					end;
-		end;
+      s := Copy(work_str, 1, slash_pos - 1);
+      if Length(s) < 1 then
+        Exit;
+      month := StrToInt(s);
 
+      work_str := Copy(work_str, slash_pos + 1);
+      slash_pos := Pos(FWDSLASH, work_str);
+
+      s := Copy(work_str, 1, slash_pos - 1);
+      day := StrToInt(s);
+
+      work_str := Copy(work_str, slash_pos + 1);
+      s := Trim(Copy(work_str, 1));
+      year := StrToInt(s);
+      Result := Format(mysql_date_fmt, [year, month, day]);
+    end
+    else
+      Result := DEFAULT_DATE;
+  end;
+
+
+  function fix_decimal(replace_str: string): string;
+  var
+    i: integer;
+  begin
+    Result := replace_str;
+    if replace_str = '' then
+      Result := '0.00';
+  end;
+
+
+  function fix_carriage_returns(replace_str: string): string;
+  var
+    i, iPos: integer;
+  begin
+    Result := replace_str;
+    iPos := Pos(CR, Result);
+    while iPos > 0 do
+    begin
+      Result[iPos] := SPACE;
+      iPos := Pos(CR, Result);
+    end;
+  end;
+
+  procedure out_array_stringReplace(var ara: TStringArray;
+    cmp_ara: TStringArray; cmp_str, replace_str: string);
+  var
+    i: integer;
+  begin
+    for i := 0 to Length(cmp_ara) - 1 do
+      if cmp_ara[i] = cmp_str then
+      begin
+        ara[i] := replace_str;
+        Exit;
+      end;
+  end;
 
 var
   row, col, i: integer;
   value_str, cmp_str: string;
-  dta_type : string;
-  out_col_str: string;
-  out_col_array, cmp_ara : TStringArray;
+  dta_type: string;
+  out_col_values_str: string;
+  out_col_array, cmp_ara: TStringArray;
   replace_str: string;
 begin
   row := 1;
-  if not Assigned(FOut_col_list) then
-    FOut_col_list := TStringList.Create;
+  if not Assigned(FOut_values_clauses_list) then
+    FOut_values_clauses_list := TStringList.Create;
   SetLength(out_col_array, 0);
   SetLength(cmp_ara, 0);
   try
@@ -393,14 +410,13 @@ begin
     while row < grid.RowCount do
     begin
       col := 0;
-      // if grid.Cells[0, row] is EmptyStr the row is defective
       if grid.Cells[0, row] = '' then
-        begin
-          Inc(row);
-          Continue;
-				end;
+      begin
+        Inc(row);
+        Continue;
+      end;
 
-      out_col_str := '';
+      out_col_values_str := '';
       out_col_array := SplitString(FCol_val_cmp, COMMA);
       cmp_ara := SplitString(FCol_val_cmp, COMMA);
       while col < grid.ColCount do
@@ -408,6 +424,9 @@ begin
         cmp_str := Get_cmp_value_by_gridPos(csv_col_list, col, dta_type);
         replace_str := grid.Cells[col, row];
 
+        if LowerCase(RightStr(dta_type, 4)) = 'char' then
+          replace_str := fix_carriage_returns(replace_str)
+        else
         if LowerCase(LeftStr(dta_type, 4)) = 'date' then
           replace_str := Fix_date(replace_str)
         else
@@ -417,124 +436,184 @@ begin
         replace_str := AnsiQuotedStr(replace_str, '"');
 
         out_array_stringReplace(out_col_array, cmp_ara, cmp_str, replace_str);
-        //out_col_str := StringReplace(out_col_str, cmp_str, replace_str, []);
+        //out_col_values_str := StringReplace(out_col_values_str, cmp_str, replace_str, []);
 
         Inc(col);
       end;
-      out_col_str := '';
-      for i := 0 to Length(out_col_array) -1 do
-        out_col_str := out_col_str +out_col_array[i] +COMMA;
+      out_col_values_str := '';
+      // gather column values into values clause
+      for i := 0 to Length(out_col_array) - 1 do
+        out_col_values_str := out_col_values_str + out_col_array[i] + COMMA;
 
-      if out_col_str[Length(out_col_str)] = COMMA then
-        out_col_str := out_col_str[1..Length(out_col_str) -1];
-      out_col_str := OPEN_PAREN + out_col_str + CLOSE_PAREN;
-      FOut_col_list.Add(out_col_str);
+      // strip off the trailing COMMA
+      if out_col_values_str[Length(out_col_values_str)] = COMMA then
+        out_col_values_str := out_col_values_str[1..Length(out_col_values_str) - 1];
+
+      // enclose the values string/list in parens
+      out_col_values_str := OPEN_PAREN + out_col_values_str + CLOSE_PAREN;
+
+      // add that values clause to the list
+      FOut_values_clauses_list.Add(out_col_values_str);
       Inc(row);
     end;
-    Result := FOut_col_list;
+    Result := FOut_values_clauses_list;
 
-	finally
+  finally
     SetLength(out_col_array, 0);
     SetLength(cmp_ara, 0);
-	end;
+  end;
 end;
 
-procedure TStringGridUtil.Build_query_values_string(col_values_list : TStringList);
+procedure TStringGridUtil.Build_output_values_clauses_list;
 (*
- *    Build_query_values_string: the objective is to take the strings from then
+ *      ******* this was written for use with a stored procedure  ********
+ *      ******* that has not been written. 2021-12-08             ********
+ *    Build_output_values_clauses_list: the objective is to take the strings from then
  *    col_values_list param and place them in a comma separated string for
  *    the insert query to the books table.
  *    Then, calls Write_to_db to complete the process.
  *)
 var
-  value_str, vals_str : String;
-  len_str : Integer;
+  value_str, vals_str: string;
+  len_str, len_delimiter: integer;
 begin
-  value_str := '' ;
+  value_str := '';
   vals_str := '';
-
+  len_delimiter := Length(VAL_CLAUSE_DELIMITER);
   try
     while True do
     begin
       while Length(vals_str) < MAX_COLUMNS_LENGTH do
       begin
-        value_str := col_values_list[0] + COMMA;
-        vals_str := vals_str +value_str;
+        value_str := FOut_values_clauses_list[0] + VAL_CLAUSE_DELIMITER;
+        vals_str := vals_str + value_str;
         len_str := Length(vals_str);
 
-        col_values_list.Delete(0);
-        if col_values_list.Count = 0 then
+        FOut_values_clauses_list.Delete(0);
+
+        // this might/probably will leave some rows in vals_str
+        if FOut_values_clauses_list.Count = 0 then
           Break;
 
-			end;  (***** end of while Length(vals_str) < 4000 *****)
+      end;  (***** end of while Length(vals_str) < 4000 *****)
 
+      // clean up the values clause for this iteration
       len_str := Length(vals_str);
-      if vals_str[Length(vals_str)] = COMMA then
-        vals_str := vals_str[1..Length(vals_str) -1];
+      // if vals_str ends in the delimiter (it should)
+      if RightStr(vals_str, len_delimiter) = VAL_CLAUSE_DELIMITER then
+        // take off the delimiter
+        vals_str := LeftStr(vals_str, Length(vals_str) - len_delimiter);
 
-      Write_2_db(vals_str);
-
-      if col_values_list.Count = 0 then
-        Break;
+      //Write_2_db(vals_str);
 
       vals_str := '';
-    end;
-    if Length(vals_str) > 0 then
-      Write_2_db(vals_str);
-    if col_values_list.Count = 0 then
-    col_values_list.Free;
+      if FOut_values_clauses_list.Count = 0 then
+        Break;
 
-	except
+    end;
+    //if Length(vals_str) > 0 then
+    //  Write_2_db(vals_str);
+    if FOut_values_clauses_list.Count = 0 then
+      FOut_values_clauses_list.Free;
+
+  except
     Exit;
-	end;
+  end;
 end;
 
-procedure TStringGridUtil.Write_2_db(value_string : string);
-const
-  sql = 'INSERT INTO books %s VALUES %s';
+procedure TStringGridUtil.Create_write_2_db_params;
+
+
+  function get_dta_type(dtype: string): TFieldType;
+  begin
+    if LowerCase(RightStr(dtype, 4)) = 'char' then
+      Result := ftString
+    else
+    if LowerCase(LeftStr(dtype, 4)) = 'date' then
+      Result := ftDate
+    else
+    if LowerCase(dtype) = 'decimal' then
+      Result := ftCurrency
+    else
+    if LowerCase(dtype) = 'integer' then
+      Result := ftInteger
+    else
+      Result := ftUnknown;
+
+  end;
+
 var
+  i: integer;
+  param: TParam;
   qry : TSQLQuery;
-  sql_str : String;
 begin
+  qry := FBooksInputQry;
+  qry.Params.Clear;
+
+  for i := 0 to FDb_col_list.Count - 1 do
+  begin
+    param := TParam.Create(qry.Params);
+
+    param.DataType := get_dta_type(FDb_col_list[i].data_type);
+    param.Name := fdb_col_list[i].colName;
+    param.ParamType := ptInput;
+    qry.Params.AddParam(param);
+  end;
+
+end;
+
+procedure TStringGridUtil.Write_2_db(qry: TSQLQuery; value_string: string);
+const
+  sql_str = 'INSERT INTO books_ex %s VALUES %s';
+  // VAL_CLAUSE_DELIMITER
+  // FQry_columns
+var
+  str: string;
+
+begin
+
   qry := TSQLQuery.Create(nil);
   qry.DataBase := dmod.BooksDbConn;
-
   try
+    qry.SQL.Text := Format(sql_str, [FQry_columns, value_string]);
     dmod.BooksDbTx.StartTransaction;
-    sql_str := Format(sql, [FQry_columns, value_string]);
-    qry.SQL.Text := Format(sql, [FQry_columns, value_string]);
+
     try
       qry.ExecSQL;
       dmod.BooksDbTx.Commit;
-    except on Ex : Exception do
+    except
+      on Ex: Exception do
       begin
-        ShowMessage('TStringGridUtil.Write_2_db exception: ' +Ex.Message);
+        ShowMessage('TStringGridUtil.Write_2_db exception: ' + Ex.Message);
         dmod.BooksDbTx.Rollback;
         raise;
-			end;
-		end;
-	finally
+      end;
+    end;
+  finally
     qry.Free;
-	end;
+  end;
 end;
 
 constructor TStringGridUtil.Create;
 begin
   inherited Create;
-  FOut_col_list := TStringList.Create;
+  FOut_values_clauses_list := TStringList.Create;
   FDb_col_list := TColumnList.Create(True);
+  FBooksInputQry:= TSQLQuery.Create(nil);
+
 end;
 
 destructor TStringGridUtil.Destroy;
 begin
+  FreeAndNil(FBooksInputQry);
   inherited Destroy;
 end;
 
 procedure TStringGridUtil.BeforeDestruction;
 var
-  iCnt : Integer;
+  iCnt: integer;
 begin
-  FreeAndNil(FOut_col_list);
+  FreeAndNil(FOut_values_clauses_list);
   FreeAndNil(FDb_col_list);
   inherited BeforeDestruction;
 end;
