@@ -81,6 +81,7 @@ type
      *)
 
   TColumnList = specialize TFPGObjectList<TColumnRec>;
+  TColumnValuesList = specialize TFPGObjectList<TStringList>;
 
   { TColumnListHelper }
 

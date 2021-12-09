@@ -147,30 +147,123 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
     Top = 88
   end
   object qryInsertBooks: TSQLQuery
+    IndexName = 'DEFAULT_ORDER'
+    MaxIndexesCount = 4
     FieldDefs = <    
       item
-        Name = 'qryInsertBooksSQLDB1'
-        DataType = ftUnknown
+        Name = 'msku'
+        DataType = ftString
+        Precision = -1
+        Size = 45
+      end    
+      item
+        Name = 'title'
+        DataType = ftString
+        Precision = -1
+        Size = 500
+      end    
+      item
+        Name = 'fnsku'
+        DataType = ftString
+        Precision = -1
+        Size = 45
+      end    
+      item
+        Name = 'asin'
+        DataType = ftString
+        Precision = -1
+        Size = 45
+      end    
+      item
+        Name = 'list_price'
+        DataType = ftBCD
+        Precision = -1
+        Size = 4
+      end    
+      item
+        Name = 'cost_unit'
+        DataType = ftBCD
+        Precision = -1
+        Size = 4
+      end    
+      item
+        Name = 'supplier'
+        DataType = ftString
+        Precision = -1
+        Size = 45
+      end    
+      item
+        Name = '_date_'
+        DataType = ftDate
+        Precision = -1
+      end    
+      item
+        Name = '_rank_'
+        DataType = ftInteger
+        Precision = -1
+      end    
+      item
+        Name = '_condition_'
+        DataType = ftString
+        Precision = -1
+        Size = 100
+      end    
+      item
+        Name = 'notes'
+        DataType = ftString
+        Precision = -1
+        Size = 750
+      end    
+      item
+        Name = 'destination'
+        DataType = ftString
+        Precision = -1
+        Size = 100
+      end    
+      item
+        Name = 'qty'
+        DataType = ftBCD
+        Precision = -1
+        Size = 4
+      end    
+      item
+        Name = 'exp_date'
+        DataType = ftDate
+        Precision = -1
+      end    
+      item
+        Name = 'min_price'
+        DataType = ftBCD
+        Precision = -1
+        Size = 4
+      end    
+      item
+        Name = 'max_price'
+        DataType = ftBCD
+        Precision = -1
+        Size = 4
       end>
+    Active = True
     Database = BooksDbConn
     Transaction = BooksDbTx
     SQL.Strings = (
-      'Insert into books :COLS_CLAUSE VALUES :VAL_STR'
+      'SELECT * FROM inventory_lab_data LIMIT 1;'
     )
     InsertSQL.Strings = (
-      'INSERT INTO books (:columns) VALUES (:values)'
+      'INSERT INTO inventory_lab_data'
+      '(msku, title, fnsku, asin,'
+      'list_price, cost_unit, supplier, _date_,'
+      '_rank_, _condition_, notes, destination,'
+      'qty, exp_date, min_price, max_price)'
+      'VALUES'
+      '(:msku, :title, :fnsku, :asin,'
+      ':list_price, :cost_unit, :supplier, :_date_,'
+      ':_rank_, :_condition_, :notes, :destination,'
+      ':qty, :exp_date, :min_price, :max_price)'
+      ''
     )
-    Params = <    
-      item
-        DataType = ftString
-        Name = 'COLS_CLAUSE'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftString
-        Name = 'VAL_STR'
-        ParamType = ptInput
-      end>
+    Params = <>
+    ParamCheck = False
     Macros = <>
     Left = 328
     Top = 88

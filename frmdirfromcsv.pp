@@ -616,7 +616,7 @@ begin
   outCnt := BAD_CHOICE;
   try
     try
-      util.Prep_from_grid_to_write_to_db(dmod, File_grid);
+      util.Db_insert_controller(dmod, File_grid);
   except
     on Ex : Exception do
       ShowMessage('ActionWriteGridToBooksDbExecute: ' + Ex.message);
