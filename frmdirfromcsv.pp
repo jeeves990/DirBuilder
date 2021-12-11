@@ -53,27 +53,27 @@ type
     ActionClose: TAction;
     ActionList: TActionList;
     btn_doAuto: TBitBtn;
+		btn_find_output_directory : TBitBtn;
     btn_mk_dirs: TBitBtn;
     btn_close: TBitBtn;
-    btn_read_CSV_wDataset: TBitBtn;
+		btn_read_CSV_wDataset : TBitBtn;
+		btn_read_CSV_wParser : TBitBtn;
     btn_read_raw_file: TBitBtn;
-    btn_find_output_directory: TBitBtn;
-    btn_read_CSV_wParser: TBitBtn;
     btn_find_csv_file: TBitBtn;
     btn_resize_table_columns: TBitBtn;
-    cb_OutDir: TComboBox;
-    cb_delimiter: TComboBox;
-    cb_lineending: TComboBox;
-    cb_1stRowIsTitles: TCheckBox;
+		cb_1stRowIsTitles : TCheckBox;
+		cb_delimiter : TComboBox;
     cb_CSVFile: TComboBox;
+		cb_lineending : TComboBox;
+		cb_OutDir : TComboBox;
     DBG: TDBGrid;
     DirBuilderPropIni: TIniPropStorage;
     edCellContent: TEdit;
-    Label1: TLabel;
-    Label2: TLabel;
+		Label1 : TLabel;
+		Label2 : TLabel;
     lblCellContents: TLabel;
-    lblOutDir: TLabel;
     lblCSVFile: TLabel;
+		lblOutDir : TLabel;
     mainMnu: TMainMenu;
     MenuItem1: TMenuItem;
     mnuItm_close_dataset: TMenuItem;
@@ -106,9 +106,11 @@ type
     Operations: TMenuItem;
     N1: TMenuItem;
     MenuItemFile: TMenuItem;
+		pnl_read_w_dataset : TPanel;
     pnlCellContent: TPanel;
     pgCtrl: TPageControl;
     pnlTop: TPanel;
+		pnl_output_directory : TPanel;
     popupMnu: TPopupMenu;
     cb_Popup: TPopupMenu;
     sg_parser_config_popup: TPopupMenu;
@@ -389,6 +391,7 @@ begin
   parm_count := ParamCount;
   str := ParamStr(0);
   FHandle_automatically := False;
+  edCellContent.Clear;
 
   if ParamCount > 0 then
   begin
@@ -523,13 +526,6 @@ var
 begin
   props := DirBuilderPropIni;
   props.IniSection := 'DirBuilderMain';
-
-  //sg := sg_parser_configs;
-  //sValue := props.ReadString(SG_ROW_DELIMITER, '');
-  //sg.Cells[SG_COL_4_VALUES, SG_ROW_4_LINE_DELIMITER] := sValue;
-
-  //sValue := props.ReadString(SG_COL_DELIMITER, '');
-  //sg.Cells[SG_COL_4_VALUES, SG_ROW_4_COL_DELIMITER] := sValue;
 end;
 
 procedure TfrmFayesDirBuilder.DirBuilderPropIniSaveProperties(Sender: TObject);
@@ -943,6 +939,9 @@ begin
 end;
 
 procedure TfrmFayesDirBuilder.ActionMkDirsExecute(Sender: TObject);
+(*
+ *  TfrmFayesDirBuilder.ActionMkDirsExecute
+ *)
 var
   s, outPath, outDir: string;
   bookMark: integer;
@@ -1083,6 +1082,7 @@ begin
     Exit;
   end;
 
+  edCellContent.Clear;
   File_grid.Clear;
   Application.ProcessMessages;
 

@@ -1,14 +1,14 @@
 object frmFayesDirBuilder: TfrmFayesDirBuilder
-  Left = 899
-  Height = 503
-  Top = 137
+  Left = 747
+  Height = 637
+  Top = 243
   Width = 837
   HorzScrollBar.Smooth = True
   HorzScrollBar.Tracking = True
   VertScrollBar.Smooth = True
   VertScrollBar.Tracking = True
   Caption = 'Fayes''s directory builder'
-  ClientHeight = 483
+  ClientHeight = 617
   ClientWidth = 837
   Constraints.MinHeight = 365
   Constraints.MinWidth = 700
@@ -326,53 +326,25 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
   LCLVersion = '2.2.0.1'
   object pnlTop: TPanel
     Left = 0
-    Height = 124
-    Top = 0
+    Height = 55
+    Top = 28
     Width = 837
     Align = alTop
     AutoSize = True
-    ClientHeight = 124
+    ClientHeight = 55
     ClientWidth = 837
     TabOrder = 0
-    object lblOutDir: TLabel
-      Left = 1
-      Height = 15
-      Top = 3
-      Width = 88
-      Caption = 'Output directory'
-    end
     object lblCSVFile: TLabel
       Left = 1
       Height = 15
-      Top = 38
+      Top = 15
       Width = 40
       Caption = 'CSV file'
-    end
-    object cb_OutDir: TComboBox
-      Left = 106
-      Height = 23
-      Top = 2
-      Width = 551
-      Anchors = [akTop, akLeft, akRight]
-      ItemHeight = 15
-      TabOrder = 0
-      Text = 'd:\__tmp4test__'
-    end
-    object cb_1stRowIsTitles: TCheckBox
-      Left = 9
-      Height = 19
-      Top = 68
-      Width = 103
-      Caption = 'First line is titles'
-      Checked = True
-      OnClick = cb_1stRowIsTitlesClick
-      State = cbChecked
-      TabOrder = 1
     end
     object cb_CSVFile: TComboBox
       Left = 55
       Height = 23
-      Top = 35
+      Top = 12
       Width = 639
       Anchors = [akTop, akLeft, akRight]
       ItemHeight = 15
@@ -380,149 +352,70 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       OnEnter = cb_CSVFileEnter
       PopupMenu = cb_Popup
       Style = csDropDownList
-      TabOrder = 2
+      TabOrder = 0
     end
     object btn_read_raw_file: TBitBtn
       Left = 704
       Height = 23
-      Top = 97
+      Top = 29
       Width = 124
       Action = ActionReadRawFile
       Anchors = [akTop, akRight]
       Images = DirBuilder_dataModule.imgList
       ImageIndex = 9
-      TabOrder = 3
-    end
-    object btn_find_output_directory: TBitBtn
-      Left = 670
-      Height = 26
-      Top = 1
-      Width = 158
-      Action = ActionFindOutputDir
-      Anchors = [akTop, akRight]
-      AutoSize = True
-      Images = DirBuilder_dataModule.imgList
-      ImageIndex = 23
-      TabOrder = 4
-    end
-    object btn_read_CSV_wParser: TBitBtn
-      Left = 673
-      Height = 26
-      Top = 66
-      Width = 152
-      Action = ActionRead_withParser
-      Anchors = [akTop, akRight]
-      Images = DirBuilder_dataModule.imgList
-      ImageIndex = 10
-      TabOrder = 5
+      TabOrder = 1
     end
     object btn_find_csv_file: TBitBtn
       Left = 704
       Height = 26
-      Top = 33
+      Top = 1
       Width = 124
       Action = ActionFindCSV
       Anchors = [akTop, akRight]
       Images = DirBuilder_dataModule.imgList
       ImageIndex = 24
-      TabOrder = 6
-    end
-    object cb_delimiter: TComboBox
-      Left = 304
-      Height = 23
-      Top = 67
-      Width = 100
-      ItemHeight = 15
-      ItemIndex = 0
-      Items.Strings = (
-        'Comma'
-        'Semicolon'
-        'Tab'
-      )
-      OnCloseUp = cb_delimiterCloseUp
-      Style = csDropDownList
-      TabOrder = 7
-      Text = 'Comma'
-    end
-    object Label1: TLabel
-      Left = 192
-      Height = 15
-      Top = 70
-      Width = 96
-      Caption = 'Column delimiter:'
-    end
-    object cb_lineending: TComboBox
-      Left = 304
-      Height = 23
-      Top = 97
-      Width = 100
-      ItemHeight = 15
-      ItemIndex = 0
-      Items.Strings = (
-        'CRLF'
-        'LF'
-      )
-      Style = csDropDownList
-      TabOrder = 8
-      Text = 'CRLF'
-    end
-    object Label2: TLabel
-      Left = 208
-      Height = 15
-      Top = 104
-      Width = 76
-      Caption = 'Row delimiter:'
+      TabOrder = 2
     end
     object btn_resize_table_columns: TBitBtn
       Left = 24
       Height = 26
-      Top = 97
+      Top = 28
       Width = 156
       Action = ActionResizeColumns
       AutoSize = True
       Images = DirBuilder_dataModule.imgList
       ImageIndex = 16
-      TabOrder = 9
-    end
-    object btn_read_CSV_wDataset: TBitBtn
-      Left = 522
-      Height = 26
-      Top = 65
-      Width = 148
-      Action = ActionRead_withDataset
-      Anchors = [akTop, akRight]
-      ImageIndex = 28
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 10
+      TabOrder = 3
+      Visible = False
     end
     object btn_doAuto: TBitBtn
       Cursor = crHandPoint
       Left = 432
       Height = 24
-      Top = 96
+      Top = 27
       Width = 101
       Action = ActionDoAuto
-      TabOrder = 11
+      TabOrder = 4
+      Visible = False
     end
   end
   object pgCtrl: TPageControl
     Left = 0
-    Height = 302
-    Top = 124
+    Height = 477
+    Top = 83
     Width = 837
-    ActivePage = tb_columns_test
+    ActivePage = tab_CSVFile
     Align = alClient
-    TabIndex = 2
+    TabIndex = 0
     TabOrder = 1
     object tab_CSVFile: TTabSheet
       Caption = 'The CSV file'
-      ClientHeight = 274
+      ClientHeight = 449
       ClientWidth = 829
       object File_grid: TStringGrid
         Left = 0
-        Height = 220
-        Top = 54
+        Height = 365
+        Top = 84
         Width = 829
         Align = alClient
         AlternateColor = 16774388
@@ -541,34 +434,103 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       end
       object pnlCellContent: TPanel
         Left = 0
-        Height = 31
+        Height = 61
         Top = 0
         Width = 829
         Align = alTop
-        ClientHeight = 31
+        ClientHeight = 61
         ClientWidth = 829
         TabOrder = 1
         object lblCellContents: TLabel
           Left = 7
           Height = 15
-          Top = 9
+          Top = 39
           Width = 67
           Caption = 'Cell content:'
         end
         object edCellContent: TEdit
           Left = 128
           Height = 23
-          Top = 3
+          Top = 33
           Width = 697
           Anchors = [akTop, akLeft, akRight]
+          ReadOnly = True
           TabOrder = 0
           Text = 'edCellContent'
+        end
+        object cb_1stRowIsTitles: TCheckBox
+          Left = 9
+          Height = 19
+          Top = 6
+          Width = 103
+          Caption = 'First line is titles'
+          Checked = True
+          OnClick = cb_1stRowIsTitlesClick
+          State = cbChecked
+          TabOrder = 1
+        end
+        object Label1: TLabel
+          Left = 144
+          Height = 15
+          Top = 8
+          Width = 96
+          Caption = 'Column delimiter:'
+        end
+        object cb_delimiter: TComboBox
+          Left = 256
+          Height = 23
+          Top = 4
+          Width = 100
+          ItemHeight = 15
+          ItemIndex = 0
+          Items.Strings = (
+            'Comma'
+            'Semicolon'
+            'Tab'
+          )
+          OnCloseUp = cb_delimiterCloseUp
+          Style = csDropDownList
+          TabOrder = 2
+          Text = 'Comma'
+        end
+        object btn_read_CSV_wParser: TBitBtn
+          Left = 673
+          Height = 26
+          Top = 2
+          Width = 152
+          Action = ActionRead_withParser
+          Anchors = [akTop, akRight]
+          Images = DirBuilder_dataModule.imgList
+          ImageIndex = 10
+          TabOrder = 3
+        end
+        object Label2: TLabel
+          Left = 394
+          Height = 15
+          Top = 11
+          Width = 76
+          Caption = 'Row delimiter:'
+        end
+        object cb_lineending: TComboBox
+          Left = 490
+          Height = 23
+          Top = 4
+          Width = 100
+          ItemHeight = 15
+          ItemIndex = 0
+          Items.Strings = (
+            'CRLF'
+            'LF'
+          )
+          Style = csDropDownList
+          TabOrder = 4
+          Text = 'CRLF'
         end
       end
       object statBar_first_line: TStatusBar
         Left = 0
         Height = 23
-        Top = 31
+        Top = 61
         Width = 829
         Align = alTop
         Panels = <>
@@ -577,12 +539,12 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
     end
     object tab_csv_dataset: TTabSheet
       Caption = 'From csv dataset'
-      ClientHeight = 274
+      ClientHeight = 449
       ClientWidth = 829
       object DBG: TDBGrid
         Left = 0
-        Height = 274
-        Top = 0
+        Height = 420
+        Top = 29
         Width = 829
         Align = alClient
         Color = clWindow
@@ -591,14 +553,36 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
         PopupMenu = gridPopup
         TabOrder = 0
       end
+      object pnl_read_w_dataset: TPanel
+        Left = 0
+        Height = 29
+        Top = 0
+        Width = 829
+        Align = alTop
+        ClientHeight = 29
+        ClientWidth = 829
+        TabOrder = 1
+        object btn_read_CSV_wDataset: TBitBtn
+          Left = 18
+          Height = 26
+          Top = 1
+          Width = 148
+          Action = ActionRead_withDataset
+          Anchors = [akTop, akRight]
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+        end
+      end
     end
     object tb_columns_test: TTabSheet
       Caption = 'Columns testing'
-      ClientHeight = 274
+      ClientHeight = 449
       ClientWidth = 829
+      TabVisible = False
       object CSV_col_grid: TStringGrid
         Left = 12
-        Height = 261
+        Height = 436
         Top = 8
         Width = 411
         Anchors = [akTop, akLeft, akBottom]
@@ -643,7 +627,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       end
       object db_col_grid: TStringGrid
         Left = 469
-        Height = 261
+        Height = 436
         Top = 8
         Width = 355
         Anchors = [akTop, akLeft, akBottom]
@@ -690,7 +674,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
   object StatusBar: TStatusBar
     Left = 0
     Height = 23
-    Top = 460
+    Top = 594
     Width = 837
     Panels = <    
       item
@@ -705,7 +689,7 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
   object pnlBottom: TPanel
     Left = 0
     Height = 34
-    Top = 426
+    Top = 560
     Width = 837
     Align = alBottom
     ClientHeight = 34
@@ -731,6 +715,45 @@ object frmFayesDirBuilder: TfrmFayesDirBuilder
       Anchors = [akRight, akBottom]
       Images = DirBuilder_dataModule.imgList
       ImageIndex = 1
+      TabOrder = 1
+    end
+  end
+  object pnl_output_directory: TPanel
+    Left = 0
+    Height = 28
+    Top = 0
+    Width = 837
+    Align = alTop
+    ClientHeight = 28
+    ClientWidth = 837
+    TabOrder = 4
+    object lblOutDir: TLabel
+      Left = 1
+      Height = 15
+      Top = 6
+      Width = 88
+      Caption = 'Output directory'
+    end
+    object cb_OutDir: TComboBox
+      Left = 106
+      Height = 23
+      Top = 2
+      Width = 562
+      Anchors = [akTop, akLeft, akRight]
+      ItemHeight = 15
+      TabOrder = 0
+      Text = 'd:\__tmp4test__'
+    end
+    object btn_find_output_directory: TBitBtn
+      Left = 679
+      Height = 26
+      Top = -1
+      Width = 158
+      Action = ActionFindOutputDir
+      Anchors = [akTop, akRight]
+      AutoSize = True
+      Images = DirBuilder_dataModule.imgList
+      ImageIndex = 24
       TabOrder = 1
     end
   end

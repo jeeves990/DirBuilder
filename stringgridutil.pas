@@ -23,7 +23,6 @@ type
 		function Get_DB_dta_type(dtype : string) : TFieldType;
 		function Get_InvLab_insert_sql : String;
 		procedure pop_parms(var qry : TSQLQuery; vals_list, cmp_list : TStrings);
-		//procedure pop_parms(var qry : TSQLQuery; cols_list, cmp_list : TStrings);
     function String_together_values_clauses(dummy : Integer) : TStringList;
 		function String_together_values_into_list : TColumnValuesList;
 
