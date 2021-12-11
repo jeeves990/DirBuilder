@@ -339,6 +339,7 @@ function TfmDisplayCSVFile.GetALine : TATStringItem;
         Close;
   		end;
     ptr := ed.Strings.GetItemPtr(FAutoLineNumber);
+    ed.LineTop := FAutoLineNumber;
     Result := ptr^;
     FHighLightColor := clMoneyGreen;
     //HighLightLine(self, parts, LineNdx, CharNdx, LineLen, FHighLightColor);

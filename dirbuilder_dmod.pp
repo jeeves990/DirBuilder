@@ -61,6 +61,8 @@ const
   UPPERCASE_ALPHA = ['A'..'Z'];
   ALPHA_CHARS = LOWERCASE_ALPHA + UPPERCASE_ALPHA;
 
+  DEFAULT_DATE = '1900-01-01';
+
 type
   { TColumnRec }
 

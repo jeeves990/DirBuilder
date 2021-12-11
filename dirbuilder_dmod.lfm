@@ -123,7 +123,7 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
     Top = 16
   end
   object BooksDbConn: TMySQL57Connection
-    Connected = True
+    Connected = False
     LoginPrompt = False
     DatabaseName = 'books_db'
     KeepConnection = False
@@ -131,6 +131,7 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
       ''
       ''
       ''
+      'Port=3306'
     )
     Password = 'j33ves99'
     Transaction = BooksDbTx
@@ -141,7 +142,7 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
     Top = 88
   end
   object BooksDbTx: TSQLTransaction
-    Active = True
+    Active = False
     Database = BooksDbConn
     Left = 48
     Top = 88
@@ -243,7 +244,6 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
         Precision = -1
         Size = 4
       end>
-    Active = True
     Database = BooksDbConn
     Transaction = BooksDbTx
     SQL.Strings = (
@@ -263,7 +263,6 @@ object DirBuilder_dataModule: TDirBuilder_dataModule
       ''
     )
     Params = <>
-    ParamCheck = False
     Macros = <>
     Left = 328
     Top = 88

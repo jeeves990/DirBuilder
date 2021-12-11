@@ -171,9 +171,11 @@ type
     FChgParserProp: integer;
 
     FFromCheckBox: boolean;
+    FCSVFileName : TFileName;
     FDisplay_filenames : TfmDisplayCSVFile;
     FDisplay_filenames_isAlive : Boolean;
     FAuto_directory : TFileName;
+    FHandle_automatically : Boolean;
 
     function countSubDirs(path: string): integer;
 		procedure Handle_automatically;
@@ -326,10 +328,11 @@ end;
 
 procedure TfrmFayesDirBuilder.Handle_automatically;
 var
-  i : Integer;
-  csv_fileName : TFileName;
+  i, flSize : Integer;
   file_list : TStringList;
   Paths: array of UnicodeString;
+  fl : File of byte;
+  flName : AnsiString;
 begin
   FAuto_directory := paramstr(1);
   FDisplay_filenames := TfmDisplayCSVFile.Create(self);
@@ -344,16 +347,29 @@ begin
     FDisplay_filenames.BringToFront;
     Application.ProcessMessages;
 	end;
-
+  flSize := 0;
   repeat
   	begin
-      csv_fileName := FDisplay_filenames.Get_A_Line.Line;
+
+      FCSVFileName := FDisplay_filenames.Get_A_Line.Line;
+
       SetLength(Paths, 0);
       SetLength(Paths, 2);
       Paths[0] := IncludeTrailingPathDelimiter(FAuto_directory);
-      Paths[1] := csv_fileName;
-      csv_fileName := ConcatPaths(Paths);
-      cb_CSVFile.Text := csv_fileName;
+      Paths[1] := FCSVFileName;
+      FCSVFileName := ConcatPaths(Paths);
+
+      if not FileExists(FCSVFileName) then
+        Continue;
+
+      AssignFile(fl, FCSVFileName);
+      Reset(fl);
+      flSize := FileSize(fl);
+      CloseFile(fl);
+      if flSize < 15 then     // that is 15 bytes
+        Continue;
+
+      cb_CSVFile.Text := FCSVFileName;
       ActionDoAuto.Execute;
   	end;
   until not FDisplay_filenames_isAlive;
@@ -372,10 +388,12 @@ begin
   Setup_cb_lineending;
   parm_count := ParamCount;
   str := ParamStr(0);
+  FHandle_automatically := False;
 
   if ParamCount > 0 then
   begin
     try
+      FHandle_automatically := True;
       Handle_automatically;
 		except on Ex : Exception do
       ShowMessage('Automatic operation has failed: ' +Ex.Message);
@@ -385,10 +403,14 @@ begin
 	if DirectoryExists(cb_OutDir.Text) then
     cb_OutDir.Items.Add(cb_OutDir.Text);
 
-  pgCtrl.ActivePage := tab_CSVFile;
+  if not FHandle_automatically then
+  begin
+    pgCtrl.ActivePage := tab_CSVFile;
 
-  DirBuilderPropIni.Restore;
-  Test_file_exists;
+    DirBuilderPropIni.Restore;
+    Test_file_exists;
+
+	end;
 end;
 
 procedure TfrmFayesDirBuilder.Setup_cb_delimiter;
@@ -639,6 +661,9 @@ begin
 end;
 
 procedure TfrmFayesDirBuilder.ActionDoAutoExecute(Sender: TObject);
+(*
+ *  ActionDoAutoExecute: guess what this does, or is supposed to do.
+ *)
 begin
   ActionRead_withParser.Execute;
   ActionWriteGridToBooksDb.Execute;
@@ -1046,12 +1071,18 @@ var
   fileName, first_line: string;
   parmRec: TParmRec;
 begin
-  fileName := cb_CSVFile.Text;
+  if not FHandle_automatically then
+    fileName := cb_CSVFile.Text
+  else
+    fileName := FCSVFileName;
+
+
   if not FileExists(fileName) then
   begin
     ShowMessage(fileName + ' does not exist. Try again');
     Exit;
   end;
+
   File_grid.Clear;
   Application.ProcessMessages;
 

@@ -7,7 +7,7 @@
       <fmDisplayCSVFile_2 fmDisplayCSVFile_2_Top="255" fmDisplayCSVFile_2_Left="1234" fmDisplayCSVFile_2_Width="556" fmDisplayCSVFile_2_Height="451" fmDisplayCSVFile_2_BorderStyle="bsSizeable" fmDisplayCSVFile_2_WindowState="wsNormal" fmDisplayCSVFile_2_ActiveControl="pgCtrl"/>
     </frmFayesDirBuilder>
   </TApplication>
-  <fmDisplayCSVFile fmDisplayCSVFile_Top="481" fmDisplayCSVFile_Left="870" fmDisplayCSVFile_Width="837" fmDisplayCSVFile_Height="451" fmDisplayCSVFile_BorderStyle="bsSizeable" fmDisplayCSVFile_WindowState="wsNormal" fmDisplayCSVFile_ActiveControl="pgCtrl"/>
+  <fmDisplayCSVFile fmDisplayCSVFile_Top="180" fmDisplayCSVFile_Left="1123" fmDisplayCSVFile_Width="477" fmDisplayCSVFile_Height="451" fmDisplayCSVFile_BorderStyle="bsSizeable" fmDisplayCSVFile_WindowState="wsMinimized" fmDisplayCSVFile_ActiveControl="pgCtrl"/>
   <fmDisplayCSVFile_1 fmDisplayCSVFile_1_Top="255" fmDisplayCSVFile_1_Left="1234" fmDisplayCSVFile_1_Width="556" fmDisplayCSVFile_1_Height="451" fmDisplayCSVFile_1_BorderStyle="bsSizeable" fmDisplayCSVFile_1_WindowState="wsNormal" fmDisplayCSVFile_1_ActiveControl="ed"/>
   <fmDisplayCSVFile_2 fmDisplayCSVFile_2_Top="255" fmDisplayCSVFile_2_Left="1234" fmDisplayCSVFile_2_Width="556" fmDisplayCSVFile_2_Height="451" fmDisplayCSVFile_2_BorderStyle="bsSizeable" fmDisplayCSVFile_2_WindowState="wsNormal" fmDisplayCSVFile_2_ActiveControl="pgCtrl"/>
 </CONFIG>
