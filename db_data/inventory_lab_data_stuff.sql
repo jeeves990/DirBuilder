@@ -1,3 +1,4 @@
+SELECT count(*) FROM books_db.books;
 SELECT * FROM books_db.books;
 
 SET SQL_SAFE_UPDATES = 0;
