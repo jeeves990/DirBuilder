@@ -58,14 +58,14 @@ type
     destructor Destroy; reintroduce;
     procedure BeforeDestruction; reintroduce;
     procedure Db_insert_controller(dmod : TDirBuilder_dataModule;
-                      grid : TStringGrid);
+                      grid : TStringGrid; file_name : TFileName);
   var
     DbColsCallback: TColumnListCallbackMethod;
     CsvColsCallback: TColumnListCallbackMethod;
   end;
 
 procedure Clean_up_quotes(grid: TStringGrid);
-
+procedure String_grid_clean_data(grid : TStringGrid);
 
 implementation
 
@@ -102,6 +102,11 @@ begin
     end;
     Inc(row);
   end;
+end;
+
+procedure String_grid_clean_data(grid : TStringGrid);
+begin
+  grid.Clean(0, 1, grid.ColCount - 1, grid.RowCount - 1, []);
 end;
 
 (******************************************************************************)
@@ -257,12 +262,8 @@ begin
   end;
 end;  // function WriteGridToBooksDb(parm_dmod : TDirBuilder_dataModule;
 
-
-
-
-
 procedure TStringGridUtil.Db_insert_controller(dmod : TDirBuilder_dataModule;
-			grid : TStringGrid);
+			grid : TStringGrid; file_name : TFileName);
 var
   cmp_list : TStringList;
   i, parm_count : Integer;
@@ -281,8 +282,8 @@ begin
   cmp_list := TStringList.Create;
 
   try
-    Fdmod.Get_list_from_books_table(dmod.BooksDbConn.DatabaseName,
-        'books', FDb_col_list);    // FDb_col_list is initiated
+    Fdmod.Get_column_list_from_books_db(dmod.BooksDbConn.DatabaseName,
+        'inventory_lab_data', FDb_col_list);    // FDb_col_list is initiated
     Prep_from_grid;
     FQry_cols_string := Make_query_columns;
     { FCSV_col_list is initiated
@@ -290,6 +291,7 @@ begin
     FCol_values_list := String_together_values_into_list;
 
     sql := Get_InvLab_insert_sql ;
+    //exit;
     FDmod.qryInsertBooks.SQL.BeginUpdate;
     FDmod.qryInsertBooks.SQL.Text := sql;
     FDmod.qryInsertBooks.SQL.EndUpdate;

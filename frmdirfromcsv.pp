@@ -35,6 +35,7 @@ type
   { TfrmFayesDirBuilder }
 
   TfrmFayesDirBuilder = class(TForm)
+    ActionClean_grid: TAction;
     ActionDoAuto: TAction;
     ActionClose_CSV_dataset: TAction;
     ActionGetFilename_2_clipboard: TAction;
@@ -53,29 +54,42 @@ type
     ActionClose: TAction;
     ActionList: TActionList;
     btn_doAuto: TBitBtn;
-		btn_find_output_directory : TBitBtn;
-    btn_mk_dirs: TBitBtn;
+    btn_find_output_directory: TBitBtn;
     btn_close: TBitBtn;
-		btn_read_CSV_wDataset : TBitBtn;
+		btn_mk_dirs : TBitBtn;
+    btn_read_CSV_wDataset: TBitBtn;
 		btn_read_CSV_wParser : TBitBtn;
     btn_read_raw_file: TBitBtn;
     btn_find_csv_file: TBitBtn;
     btn_resize_table_columns: TBitBtn;
-		cb_1stRowIsTitles : TCheckBox;
-		cb_delimiter : TComboBox;
+    cb_1stRowIsTitles: TCheckBox;
     cb_CSVFile: TComboBox;
+		cb_delimiter : TComboBox;
 		cb_lineending : TComboBox;
-		cb_OutDir : TComboBox;
+    cb_OutDir: TComboBox;
     DBG: TDBGrid;
     DirBuilderPropIni: TIniPropStorage;
-    edCellContent: TEdit;
+		edCellContent : TEdit;
+		lbl_cur_csv_filename : TEdit;
+    File_grid: TStringGrid;
 		Label1 : TLabel;
 		Label2 : TLabel;
-    lblCellContents: TLabel;
+		cap_csv_filename : TLabel;
+		lblCellContents : TLabel;
     lblCSVFile: TLabel;
-		lblOutDir : TLabel;
+    lblOutDir: TLabel;
     mainMnu: TMainMenu;
     MenuItem1: TMenuItem;
+    MenuItem13: TMenuItem;
+    mnuItm_WriteGrid_2_BooksDb: TMenuItem;
+		Panel1 : TPanel;
+		pnl_mkDir_btn : TPanel;
+		pnl_cell_content : TPanel;
+		pnl_read_csv_parser_btn : TPanel;
+		pnl_row_delim : TPanel;
+		pnl_col_delim : TPanel;
+    Separator1: TMenuItem;
+    mnuItm_copy_filename_2_clipboard: TMenuItem;
     mnuItm_close_dataset: TMenuItem;
     N11: TMenuItem;
     N10: TMenuItem;
@@ -83,7 +97,6 @@ type
     MenuItem10: TMenuItem;
     MenuItem11: TMenuItem;
     MenuItem12: TMenuItem;
-    MenuItem13: TMenuItem;
     mnuWriteGridToBooksDb: TMenuItem;
     mnuItmDltCurCsvFile: TMenuItem;
     MenuItem15: TMenuItem;
@@ -106,14 +119,13 @@ type
     Operations: TMenuItem;
     N1: TMenuItem;
     MenuItemFile: TMenuItem;
-		pnl_read_w_dataset : TPanel;
+    pnl_read_w_dataset: TPanel;
     pnlCellContent: TPanel;
     pgCtrl: TPageControl;
     pnlTop: TPanel;
-		pnl_output_directory : TPanel;
+    pnl_output_directory: TPanel;
     popupMnu: TPopupMenu;
     cb_Popup: TPopupMenu;
-    sg_parser_config_popup: TPopupMenu;
     StatusBar: TStatusBar;
     statBar_first_line: TStatusBar;
     CSV_col_grid: TStringGrid;
@@ -121,14 +133,26 @@ type
     tb_columns_test: TTabSheet;
     tab_CSVFile: TTabSheet;
     ActionRead_withParser: TAction;
-    File_grid: TStringGrid;
     pnlBottom: TPanel;
     ActionChangeCSVDelimiter: TAction;
     gridPopup: TPopupMenu;
     ActionAddToDB: TAction;
     MenuItem14: TMenuItem;
     tab_csv_dataset: TTabSheet;
+    toolBar: TToolBar;
+    tbtn_exit: TToolButton;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    ToolButton8: TToolButton;
+    tbtn_sep_4: TToolButton;
+    tbtn_WriteGrid_2_BooksDb: TToolButton;
     procedure ActionBooksDbExecute(Sender: TObject);
+    procedure ActionClean_gridExecute(Sender: TObject);
     procedure ActionCloseExecute(Sender: TObject);
     procedure ActionClose_CSV_datasetExecute(Sender: TObject);
     procedure ActionDoAutoExecute(Sender: TObject);
@@ -151,8 +175,9 @@ type
     procedure dbgridCSVTitleClick(Column: TColumn);
     procedure DirBuilderPropIniRestoringProperties(Sender: TObject);
     procedure DirBuilderPropIniSaveProperties(Sender: TObject);
-		procedure FormActivate(Sender : TObject);
+    procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure File_gridHeaderClick(Sender: TObject; IsColumn: boolean; Index: integer);
     procedure File_gridDblClick(Sender: TObject);
@@ -173,21 +198,22 @@ type
     FChgParserProp: integer;
 
     FFromCheckBox: boolean;
-    FCSVFileName : TFileName;
-    FDisplay_filenames : TfmDisplayCSVFile;
-    FDisplay_filenames_isAlive : Boolean;
-    FAuto_directory : TFileName;
-    FHandle_automatically : Boolean;
+    FCSVFileName: TFileName;
+    FDisplay_filenames: TfmDisplayCSVFile;
+    FDisplay_filenames_isAlive: boolean;
+    FAuto_directory: TFileName;
+    FHandle_automatically: boolean;
 
     function countSubDirs(path: string): integer;
-		procedure Handle_automatically;
+    procedure Handle_automatically;
+    procedure init_cb_CSVFile(ptr: PtrInt);
     function isGridPopulated: boolean;
-		procedure Is_display_filenames_alive(b : Boolean);
+    procedure Is_display_filenames_alive(b: boolean);
     procedure move_grid_first_line;
     procedure Pop_CSV_columns(lst: TColumnList);
     procedure Pop_DB_columns(lst: TColumnList);
     procedure Pop_test_sgrid(lst: TColumnList; sg: TStringGrid);
-		function Read_directory(const aDir : String) : TStringList;
+    function Read_directory(const aDir: string): TStringList;
     procedure reset_dbGrid;
     procedure resize_dbGrid_columns;
     procedure resize_file_grid_columns;
@@ -300,43 +326,43 @@ begin
   FCurReportType := cb_CSVFile.Text;
 end;
 
-function TfrmFayesDirBuilder.Read_directory(const aDir: String) : TStringList;
+function TfrmFayesDirBuilder.Read_directory(const aDir: string): TStringList;
 var
-  Info : TSearchRec;
-  DN : String;
-  ext : String;
+  Info: TSearchRec;
+  DN: string;
+  ext: string;
 begin
   Result := TStringList.Create;
   DN := IncludeTrailingPathDelimiter(aDir);
 
   if FindFirst(DN + AllFilesMask, faAnyFile, Info) = 0 then
-  try
-    Repeat
-      ext := ExtractFileExt(Info.Name);
-      if ext <> '.csv' then
-        Continue;
+    try
+      repeat
+        ext := ExtractFileExt(Info.Name);
+        if ext <> '.csv' then
+          Continue;
 
-      Result.Add(Info.Name);
-    Until FindNext(Info)<>0;
-  finally
-    FindClose(info);
-  end;
+        Result.Add(Info.Name);
+      until FindNext(Info) <> 0;
+    finally
+      FindClose(info);
+    end;
 end;
 
-procedure TfrmFayesDirBuilder.Is_display_filenames_alive(b: Boolean);
+procedure TfrmFayesDirBuilder.Is_display_filenames_alive(b: boolean);
 begin
   FDisplay_filenames_isAlive := b;
 end;
 
 procedure TfrmFayesDirBuilder.Handle_automatically;
 var
-  i, flSize : Integer;
-  file_list : TStringList;
-  Paths: array of UnicodeString;
-  fl : File of byte;
-  flName : AnsiString;
+  i, flSize: integer;
+  file_list: TStringList;
+  Paths: array of unicodestring;
+  fl: file of byte;
+  flName: ansistring;
 begin
-  FAuto_directory := paramstr(1);
+  FAuto_directory := ParamStr(1);
   FDisplay_filenames := TfmDisplayCSVFile.Create(self);
   FDisplay_filenames.AmIAlive := @Is_display_filenames_alive;
   // handle a single file
@@ -348,10 +374,10 @@ begin
     FDisplay_filenames.Show;
     FDisplay_filenames.BringToFront;
     Application.ProcessMessages;
-	end;
+  end;
   flSize := 0;
   repeat
-  	begin
+    begin
 
       FCSVFileName := FDisplay_filenames.Get_A_Line.Line;
 
@@ -373,14 +399,14 @@ begin
 
       cb_CSVFile.Text := FCSVFileName;
       ActionDoAuto.Execute;
-  	end;
+    end;
   until not FDisplay_filenames_isAlive;
 end;
 
 procedure TfrmFayesDirBuilder.FormCreate(Sender: TObject);
 var
-  parm_count : Integer;
-  str : string;
+  parm_count: integer;
+  str: string;
 begin
   Fdmod := TDirBuilder_dataModule.Create(self);
   File_grid.Clear;
@@ -398,12 +424,13 @@ begin
     try
       FHandle_automatically := True;
       Handle_automatically;
-		except on Ex : Exception do
-      ShowMessage('Automatic operation has failed: ' +Ex.Message);
-		end;
-		Application.Terminate;
-	end;
-	if DirectoryExists(cb_OutDir.Text) then
+    except
+      on Ex: Exception do
+        ShowMessage('Automatic operation has failed: ' + Ex.Message);
+    end;
+    Application.Terminate;
+  end;
+  if DirectoryExists(cb_OutDir.Text) then
     cb_OutDir.Items.Add(cb_OutDir.Text);
 
   if not FHandle_automatically then
@@ -412,8 +439,13 @@ begin
 
     DirBuilderPropIni.Restore;
     Test_file_exists;
+  end;
+  Application.QueueAsyncCall(@init_cb_CSVFile, 0);
+end;
 
-	end;
+procedure TfrmFayesDirBuilder.init_cb_CSVFile(ptr: PtrInt);
+begin
+  cb_CSVFileCloseUp(self);
 end;
 
 procedure TfrmFayesDirBuilder.Setup_cb_delimiter;
@@ -462,7 +494,8 @@ var
   grid: TStringGrid;
 begin
   grid := db_col_grid;
-  grid.Clean(0, 1, grid.ColCount - 1, grid.RowCount - 1, []);
+  //grid.Clean(0, 1, grid.ColCount - 1, grid.RowCount - 1, []);
+  String_grid_clean_data(grid);
   for i := 0 to lst.Count do
   begin
     rec := lst[i];
@@ -480,7 +513,8 @@ var
   grid: TStringGrid;
 begin
   grid := CSV_col_grid;
-  grid.Clean(0, 1, grid.ColCount - 1, grid.RowCount - 1, []);
+  //grid.Clean(0, 1, grid.ColCount - 1, grid.RowCount - 1, []);
+  String_grid_clean_data(grid);
   for i := 0 to lst.Count do
   begin
     rec := lst[i];
@@ -496,6 +530,20 @@ end;
 procedure TfrmFayesDirBuilder.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   DirBuilderPropIni.Save;
+end;
+
+procedure TfrmFayesDirBuilder.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+begin
+  case QuestionDlg('Closing DirBuilder',
+      'Do you wish to close DirBuilder?',
+       mtConfirmation,
+       [mrNo, '&No', 'isDefault', mrYes, '&Yes']
+       , 0) of
+          mrNo : CanClose := False;
+          mrYes : CanClose := True;
+          else
+            CanClose := False;
+					end;
 end;
 
 procedure TfrmFayesDirBuilder.dbgridCSVCellClick(Column: TColumn);
@@ -537,7 +585,7 @@ begin
   props.IniSection := 'DirBuilderMain';
 end;
 
-procedure TfrmFayesDirBuilder.FormActivate(Sender : TObject);
+procedure TfrmFayesDirBuilder.FormActivate(Sender: TObject);
 begin
   //if ParamCount > 0 then
   //  self.Visible := False;
@@ -626,19 +674,23 @@ procedure TfrmFayesDirBuilder.ActionWriteGridToBooksDbExecute(Sender: TObject);
 var
   outCnt: integer;
   util: TStringGridUtil;
+  file_name: TFileName;
+  dir, fn, ext: shortstring;
 begin
   util := TStringGridUtil.Create;
   util.DbColsCallback := TColumnListCallbackMethod(@Pop_DB_columns);
   util.CsvColsCallback := TColumnListCallbackMethod(@Pop_CSV_columns);
 
+  file_name := cb_CSVFile.Text;
+  file_name := ExtractFileName(file_name);
   outCnt := BAD_CHOICE;
   try
     try
-      util.Db_insert_controller(dmod, File_grid);
-  except
-    on Ex : Exception do
-      ShowMessage('ActionWriteGridToBooksDbExecute: ' + Ex.message);
-  end;
+      util.Db_insert_controller(dmod, File_grid, file_name);
+    except
+      on Ex: Exception do
+        ShowMessage('ActionWriteGridToBooksDbExecute: ' + Ex.message);
+    end;
   finally
     util.Free;
   end;
@@ -693,6 +745,11 @@ begin
   if FBooksDbDlg = nil then
     FBooksDbDlg := TfmNewBooksDb.Create(self);
   FBooksDbDlg.Show;
+end;
+
+procedure TfrmFayesDirBuilder.ActionClean_gridExecute(Sender: TObject);
+begin
+  String_grid_clean_data(File_grid);
 end;
 
 
@@ -1070,8 +1127,12 @@ var
   fileName, first_line: string;
   parmRec: TParmRec;
 begin
+  lbl_cur_csv_filename.Text := '';
   if not FHandle_automatically then
-    fileName := cb_CSVFile.Text
+    begin
+  		fileName := cb_CSVFile.Text;
+      lbl_cur_csv_filename.Text := ExtractFileName(filename);
+		end
   else
     fileName := FCSVFileName;
 

@@ -8,9 +8,7 @@ uses
    {$ENDIF} {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms,
-  frmDirFromCSV
-
- ;
+  frmDirFromCSV, upd_inv_lab_data_with_filenames;
 
 {$R *.res}
 

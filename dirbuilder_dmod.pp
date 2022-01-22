@@ -135,7 +135,7 @@ type  { TDirBuilder_dataModule }
       ColNames1stLine: boolean = False): boolean;
     property FileName: TFileName read FFileName write FFileName;
     procedure setFieldNames;
-    procedure Get_list_from_books_table(const db_name, table_name : string;
+    procedure Get_column_list_from_books_db(const db_name, table_name : string;
 					var db_col_list : TColumnList);
   end;
 
@@ -543,9 +543,9 @@ begin
 end;
 
 { TDirBuilder_dataModule }
-procedure TDirBuilder_dataModule.Get_list_from_books_table(const db_name,
+procedure TDirBuilder_dataModule.Get_column_list_from_books_db(const db_name,
 			table_name : string; var db_col_list : TColumnList);
-(*   TDirBuilder_dataModule.Get_list_from_books_table
+(*   TDirBuilder_dataModule.Get_column_list_from_books_db
  *    caller is responsible for freeing return'd list.
  *)
 const

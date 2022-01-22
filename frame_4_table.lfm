@@ -1,0 +1,9 @@
+object Frame4Table: TFrame4Table
+  Left = 0
+  Height = 372
+  Top = 0
+  Width = 348
+  TabOrder = 0
+  DesignLeft = 1352
+  DesignTop = 207
+end
